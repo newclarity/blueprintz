@@ -29,10 +29,10 @@ type Blueprintz struct {
 	Type    global.BlueprintType `json:"type"`
 	Local   global.Domain        `json:"local"`
 	Theme   global.ComponentName `json:"theme"`
+	Meta    *Meta                `json:"meta"`
 	Layout  *Layout              `json:"layout"`
 	Themes  Themes               `json:"themes"`
 	Plugins Plugins              `json:"plugins"`
-	Meta    *Meta                `json:"meta"`
 }
 
 func NewBlueprintz(blueprintz Blueprinter) *Blueprintz {
