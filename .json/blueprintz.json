@@ -1,0 +1,25 @@
+{
+   "name": "Blueprintz",
+   "desc": "Manage and use blueprintz for your WordPress websites, plugins and themes",
+   "type": "website",
+   "meta": {
+      "about_url": "https://blueprintz.dev",
+      "schema_ver": "0.1.0"
+   },
+   "layout": {
+      "project_dir": "./",
+      "webroot_dir": "./www",
+      "content_dir": "./www/content",
+      "core_dir": "./www/wp"
+   },
+   "theme": "",
+   "themes": [],
+   "plugins": [
+      {
+         "name": "Jetpack by WordPress.com",
+         "version": "7.1.1",
+         "local_slug": "jetpack",
+         "source_url": "https://wordpress.org/plugins/jetpack/"
+      }
+   ]
+}
