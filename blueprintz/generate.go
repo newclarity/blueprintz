@@ -31,18 +31,17 @@ import (
 func Generate() {
 	var sts Status
 	for range only.Once {
-		bpz := jsonfile.NewBlueprintz(&jsonfile.BlueprintzArgs{
+		bpz := NewBlueprintz(&Args{
 			Name: filepath.Base(util.GetCurrentDir()),
 		})
-		lo := NewLayout()
-		sts = lo.ScanDir()
+		sts = bpz.Layout.ScanDir()
 		if is.Error(sts) {
 			break
 		}
-		bpz.Layout = jsonfile.NewLayout(lo)
-		sts = bpz.WriteFile()
+		jsbpz := jsonfile.NewBlueprintz(bpz)
+		sts = jsbpz.WriteFile()
 		if is.Error(sts) {
-		    break
+			break
 		}
 	}
 	if is.Error(sts) {

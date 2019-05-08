@@ -4,6 +4,14 @@ import (
 	"blueprintz/global"
 )
 
+type Layouter interface {
+	GetProjectDir() global.RelativeDir
+	GetWebrootDir() global.RelativeDir
+	GetContentDir() global.RelativeDir
+	GetPluginsDir() global.RelativeDir
+	GetCoreDir() global.RelativeDir
+}
+
 type Layout struct {
 	ProjectDir global.RelativeDir `json:"project_dir"`
 	WebrootDir global.RelativeDir `json:"webroot_dir"`
@@ -11,7 +19,7 @@ type Layout struct {
 	CoreDir    global.RelativeDir `json:"core_dir"`
 }
 
-func NewLayout(layout global.Layouter) *Layout {
+func NewLayout(layout Layouter) *Layout {
 	return &Layout{
 		ProjectDir: layout.GetProjectDir(),
 		WebrootDir: layout.GetWebrootDir(),

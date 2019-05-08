@@ -1,7 +1,7 @@
 package global
 
 type BlueprintType = string
-type PartName = string
+type ComponentName = string
 
 type Url = string
 type Slug = string
@@ -11,11 +11,3 @@ type Domain = string
 
 type AbsoluteDirs []AbsoluteDir
 type AbsoluteDir = string
-
-
-type Layouter interface {
-	GetProjectDir() RelativeDir
-	GetWebrootDir() RelativeDir
-	GetContentDir() RelativeDir
-	GetCoreDir() RelativeDir   
-}

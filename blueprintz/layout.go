@@ -2,6 +2,7 @@ package blueprintz
 
 import (
 	"blueprintz/global"
+	"blueprintz/jsonfile"
 	"blueprintz/only"
 	"blueprintz/util"
 	"fmt"
@@ -13,6 +14,9 @@ import (
 	"regexp"
 	"strings"
 )
+
+var NilLayout = (*Layout)(nil)
+var _ jsonfile.Layouter = NilLayout
 
 type Layout struct {
 	workingDir global.AbsoluteDir
@@ -26,17 +30,35 @@ func NewLayout() *Layout {
 	return &Layout{}
 }
 
-func (me *Layout) 	GetProjectDir() global.RelativeDir {
+func (me *Layout) GetProjectDir() global.RelativeDir {
 	return me.ProjectDir
 }
-func (me *Layout) 	GetWebrootDir() global.RelativeDir {
+func (me *Layout) GetWebrootDir() global.RelativeDir {
 	return me.WebrootDir
 }
-func (me *Layout) 	GetContentDir() global.RelativeDir {
+func (me *Layout) GetContentDir() global.RelativeDir {
 	return me.ContentDir
 }
-func (me *Layout) 	GetCoreDir() global.RelativeDir {
+func (me *Layout) GetCoreDir() global.RelativeDir {
 	return me.CoreDir
+}
+func (me *Layout) GetPluginsDir() global.RelativeDir {
+	return fmt.Sprintf("%s%cplugins",
+		me.GetContentDir(),
+		os.PathSeparator,
+	)
+}
+func (me *Layout) GetMustUsePluginsDir() global.RelativeDir {
+	return fmt.Sprintf("%s%cmu-plugins",
+		me.GetContentDir(),
+		os.PathSeparator,
+	)
+}
+func (me *Layout) GetThemesDir() global.RelativeDir {
+	return fmt.Sprintf("%s%cthemes",
+		me.GetContentDir(),
+		os.PathSeparator,
+	)
 }
 
 func (me *Layout) String() string {
@@ -89,7 +111,7 @@ func (me *Layout) ScanDir() (sts Status) {
 		me.ProjectDir = me.getRelativeDir(wd)
 		content := 0
 		err = util.WalkDirFilesFirst(wd,
-			func(fp,bf string, f os.FileInfo,lvl int) (result error) {
+			func(fp, bf string, f os.FileInfo, lvl int) (result error) {
 				for range only.Once {
 					if bf[0] == '.' {
 						break
@@ -110,7 +132,7 @@ func (me *Layout) ScanDir() (sts Status) {
 				}
 				return result
 			},
-			func(fp,bf string, f os.FileInfo,lvl int) (result error) {
+			func(fp, bf string, f os.FileInfo, lvl int) (result error) {
 				for range only.Once {
 					if skipDirs.MatchString(bf) {
 						result = filepath.SkipDir
@@ -170,4 +192,3 @@ func (me *Layout) getRelativeDir(fp string) (dir string) {
 	}
 	return dir
 }
-

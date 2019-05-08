@@ -2,14 +2,19 @@ package jsonfile
 
 import "blueprintz/global"
 
+type Metaer interface {
+	GetAboutUrl() global.Url
+	GetSchemaVer() global.Version
+}
+
 type Meta struct {
 	AboutUrl  global.Url     `json:"about_url"`
 	SchemaVer global.Version `json:"schema_ver"`
 }
 
-func NewMeta() *Meta {
+func NewMeta(metaer Metaer) *Meta {
 	return &Meta{
-		AboutUrl:  "https://blueprintz.dev",
-		SchemaVer: "0.1.0",
+		AboutUrl:  metaer.GetAboutUrl(),
+		SchemaVer: metaer.GetSchemaVer(),
 	}
 }
