@@ -3,8 +3,10 @@ package blueprintz
 import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
+	"blueprintz/only"
 	"fmt"
 	"github.com/Machiel/slugify"
+	"github.com/gearboxworks/go-status/is"
 	"regexp"
 	"strings"
 )
@@ -13,59 +15,90 @@ var NilBlueprintz = (*Blueprintz)(nil)
 var _ jsonfile.Blueprinter = NilBlueprintz
 
 type Blueprintz struct {
-	Name    string               `json:"name"`
-	Desc    string               `json:"desc"`
-	Type    global.BlueprintType `json:"type"`
-	Local   global.Domain        `json:"local"`
-	Theme   global.ComponentName `json:"theme"`
-	Layout  *Layout              `json:"layout"`
-	Themes  Themes               `json:"themes"`
-	Plugins Plugins              `json:"plugins"`
-	Meta    *Meta                `json:"meta"`
+	Name    string
+	Desc    string
+	Type    global.BlueprintType
+	Local   global.Domain
+	Theme   global.ComponentName
+	Layout  *Layout
+	Themes  Themes
+	Plugins Plugins
+	Meta    *Meta
 }
 
 type Args Blueprintz
 
 func NewBlueprintz(args ...*Args) *Blueprintz {
-	var bpz *Blueprintz
+	var _args Args
 	if len(args) == 0 {
-		bpz = &Blueprintz{}
+		_args = Args{}
 	} else {
-		bpz = (*Blueprintz)(args[0])
+		_args = *args[0]
 	}
-	if bpz.Name == "" {
-		bpz.Name = "Unnamed"
+	blueprintz := &Blueprintz{}
+	return blueprintz.Renew(&_args)
+}
+
+var localDomainRegex *regexp.Regexp
+
+func init() {
+	localDomainRegex = regexp.MustCompile(`.local$`)
+}
+func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
+	*me = Blueprintz{}
+	var blueprintz *Blueprintz
+	if len(args) == 0 {
+		blueprintz = &Blueprintz{}
+	} else {
+		blueprintz = (*Blueprintz)(args[0])
 	}
-	re := regexp.MustCompile(`.local$`)
-	bpz.Name = re.ReplaceAllLiteralString(bpz.Name, "")
-	bpz.Name = strings.Title(bpz.Name)
-	if bpz.Desc == "" {
-		bpz.Desc = fmt.Sprintf("Description about %s", bpz.Name)
+	if blueprintz.Name == "" {
+		blueprintz.Name = "Unnamed"
 	}
-	if bpz.Local == "" {
-		bpz.Local = fmt.Sprintf("%s.local",
-			slugify.Slugify(bpz.Name),
+	blueprintz.Name = strings.Title(
+		localDomainRegex.ReplaceAllLiteralString(blueprintz.Name, ""),
+	)
+	if blueprintz.Desc == "" {
+		blueprintz.Desc = fmt.Sprintf("Description about %s", blueprintz.Name)
+	}
+	if blueprintz.Local == "" {
+		blueprintz.Local = fmt.Sprintf("%s.local",
+			slugify.Slugify(blueprintz.Name),
 		)
 	}
-	if bpz.Type == "" {
-		bpz.Type = global.WebsiteBlueprint
+	if blueprintz.Type == "" {
+		blueprintz.Type = global.WebsiteBlueprint
 	}
-	if bpz.Theme == "" {
-		bpz.Theme = "default"
+	if blueprintz.Theme == "" {
+		blueprintz.Theme = "default"
 	}
-	if bpz.Meta == nil {
-		bpz.Meta = NewMeta()
+	if blueprintz.Meta == nil {
+		blueprintz.Meta = NewMeta()
 	}
-	if bpz.Layout == nil {
-		bpz.Layout = NewLayout()
+	if blueprintz.Layout == nil {
+		blueprintz.Layout = NewLayout()
 	}
-	if bpz.Themes == nil {
-		bpz.Themes = make(Themes, 0)
+	if blueprintz.Themes == nil {
+		blueprintz.Themes = make(Themes, 0)
 	}
-	if bpz.Plugins == nil {
-		bpz.Plugins = make(Plugins, 0)
+	if blueprintz.Plugins == nil {
+		blueprintz.Plugins = make(Plugins, 0)
 	}
-	return bpz
+	return blueprintz
+}
+
+func (me *Blueprintz) Scandir() (sts Status) {
+	for range only.Once {
+		sts = me.Layout.ScanDir()
+		if is.Error(sts) {
+			break
+		}
+		sts = me.Plugins.Scandir(me.Layout)
+		if is.Error(sts) {
+			break
+		}
+	}
+	return sts
 }
 
 func (me *Blueprintz) GetName() string {

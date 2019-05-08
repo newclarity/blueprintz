@@ -34,16 +34,11 @@ func Generate() {
 		blueprintz := NewBlueprintz(&Args{
 			Name: filepath.Base(util.GetCurrentDir()),
 		})
-		sts = blueprintz.Layout.ScanDir()
+		sts = blueprintz.Scandir()
 		if is.Error(sts) {
 			break
 		}
-		sts = blueprintz.Plugins.Scandir(blueprintz.Layout)
-		if is.Error(sts) {
-			break
-		}
-		jsbpz := jsonfile.NewBlueprintz(blueprintz)
-		sts = jsbpz.WriteFile()
+		sts = jsonfile.NewBlueprintz(blueprintz).WriteFile()
 		if is.Error(sts) {
 			break
 		}
