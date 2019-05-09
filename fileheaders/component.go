@@ -17,10 +17,10 @@ import (
 var NilComponent = (*Component)(nil)
 var _ Componenter = NilComponent
 
-type ValueMap = map[global.FileHeader]*reflect.Value
+type HeaderValueFieldMap = map[global.FileHeader]*reflect.Value
 
 type Componenter interface {
-	GetHeaderFields(component ...Componenter) ValueMap
+	GetHeaderValueFieldMap(component ...Componenter) HeaderValueFieldMap
 }
 
 type Component struct {
@@ -68,13 +68,14 @@ func (me *Component) Read(component Componenter) (sts Status) {
 				SetMessage("unable to read from '%s'", me.Filepath)
 		}
 		if !strings.Contains(string(b), "Plugin Name:") {
+			sts = status.Warn("file '%s' is not a plugin header file", me.Filepath)
 			break
 		}
 		// @TODO Replace these two lines with on regex
 		headertxt := strings.Replace(string(b), "\r", "\n", -1)
 		headertxt = strings.Replace(headertxt, "\n\n", "\n", -1)
 
-		for h, f := range me.GetHeaderFields(component) {
+		for h, f := range me.GetHeaderValueFieldMap(component) {
 			// Same regex logic in WordPress' get_file_data()
 			regex := fmt.Sprintf("(?im)^[ \t/*#@]*%s:(.*)$", regexp.QuoteMeta(h))
 			re := regexp.MustCompile(regex)
@@ -82,16 +83,13 @@ func (me *Component) Read(component Componenter) (sts Status) {
 			if m == nil {
 				continue
 			}
-			f.SetString(m[1])
+			f.SetString(strings.TrimSpace(m[1]))
 		}
 	}
 	return sts
 }
 
-// @TODO Update to return a map of header and reflect values that can be updated
-// @see https://stackoverflow.com/a/6402606/102699
-//
-func (me *Component) GetHeaderFields(component ...Componenter) (vm ValueMap) {
+func (me *Component) GetHeaderValueFieldMap(component ...Componenter) (vm HeaderValueFieldMap) {
 	if len(component) == 0 {
 		panic("component not passed as a parameter")
 	}
@@ -107,7 +105,7 @@ func (me *Component) GetHeaderFields(component ...Componenter) (vm ValueMap) {
 		tc = tc.Elem()
 		vc = vc.Elem()
 	}
-	vm = make(ValueMap, tme.NumField()+tc.NumField())
+	vm = make(HeaderValueFieldMap, tme.NumField()+tc.NumField())
 	vs := []reflect.Value{vc, vme}
 	for x, t := range []reflect.Type{tc, tme} {
 		for i := 0; i < t.NumField(); i++ {

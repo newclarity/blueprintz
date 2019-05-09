@@ -4,6 +4,8 @@ import (
 	"blueprintz/jsonfile"
 	"blueprintz/only"
 	"blueprintz/util"
+	"encoding/json"
+	"fmt"
 	"github.com/gearboxworks/go-status/is"
 	"log"
 	"path/filepath"
@@ -42,6 +44,9 @@ func Init() {
 		if is.Error(sts) {
 			break
 		}
+		b, _ := json.MarshalIndent(blueprintz, "", "    ")
+		fmt.Println(string(b))
+
 	}
 	if is.Error(sts) {
 		log.Fatal(sts.FullError())

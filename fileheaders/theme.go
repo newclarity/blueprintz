@@ -20,6 +20,6 @@ func NewTheme(fp global.Filepath) *Theme {
 	}
 }
 
-func (me *Theme) GetHeaderFields(...Componenter) ValueMap {
-	return me.Component.GetHeaderFields(me)
+func (me *Theme) GetHeaderValueFieldMap(...Componenter) HeaderValueFieldMap {
+	return me.Component.GetHeaderValueFieldMap(me)
 }

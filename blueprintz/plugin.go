@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type PluginMap map[global.ComponentName]*Plugin
@@ -42,11 +43,11 @@ func (me Plugins) ReadHeaders(file global.Filepath) (fh *fileheaders.Plugin, sts
 	for range only.Once {
 		fh = fileheaders.NewPlugin(file)
 		sts = fh.Read(fh)
-		if is.Error(sts) {
+		if is.Error(sts) || is.Warn(sts) {
 			break
 		}
 	}
-	if fh.Filepath == "" {
+	if is.Error(sts) || is.Warn(sts) {
 		fh = nil
 	}
 	return fh, sts
@@ -59,16 +60,18 @@ func (me Plugins) FindHeaderFile(dp global.Dir) (fp global.Filepath, fh *filehea
 	fn = fmt.Sprintf("%s.php", filepath.Base(dp))
 	for {
 		tryfile := fmt.Sprintf("%s%c%s", dp, os.PathSeparator, fn)
-		fh, sts = me.ReadHeaders(tryfile)
-		if is.Error(sts) {
-			break
-		}
-		if fh != nil {
-			fp = tryfile
-			sts = status.Success("header file for plugin '%s' found", fh.PluginName).
-				SetDetail("plugin header file is '%s'", dp).
-				SetData(dp)
-			break
+		if util.FileExists(tryfile) {
+			fh, sts = me.ReadHeaders(tryfile)
+			if is.Error(sts) {
+				break
+			}
+			if fh != nil {
+				fp = tryfile
+				sts = status.Success("header file for plugin '%s' found", fh.PluginName).
+					SetDetail("plugin header file is '%s'", dp).
+					SetData(dp)
+				break
+			}
 		}
 		if files == nil {
 			var err error
@@ -82,8 +85,16 @@ func (me Plugins) FindHeaderFile(dp global.Dir) (fp global.Filepath, fh *filehea
 			sts = status.Warn("'%s' is not a plugin directory", dp)
 			break
 		}
-		fn = files[i].Name()
-		i++
+		for {
+			fn = files[i].Name()
+			i++
+			if strings.HasSuffix(strings.ToLower(fn), ".php") {
+				break
+			}
+			if i >= len(files) {
+				break
+			}
+		}
 	}
 	return fp, fh, sts
 }
@@ -103,7 +114,17 @@ func (me *Plugins) Scandir(layouter jsonfile.Layouter) (sts Status) {
 				continue
 			}
 			fp := fmt.Sprintf("%s%c%s", dp, os.PathSeparator, f.Name())
-			_, fh, sts = me.FindHeaderFile(fp)
+			if f.IsDir() {
+				_, fh, sts = me.FindHeaderFile(fp)
+			} else {
+				fh, sts = me.ReadHeaders(fp)
+			}
+			if is.Error(sts) {
+				break
+			}
+			if fh == nil {
+				continue
+			}
 			*me = append(*me, NewPlugin(fh))
 		}
 	}

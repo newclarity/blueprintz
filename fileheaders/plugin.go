@@ -22,6 +22,6 @@ func NewPlugin(fp global.Filepath) *Plugin {
 	}
 }
 
-func (me *Plugin) GetHeaderFields(...Componenter) ValueMap {
-	return me.Component.GetHeaderFields(me)
+func (me *Plugin) GetHeaderValueFieldMap(...Componenter) HeaderValueFieldMap {
+	return me.Component.GetHeaderValueFieldMap(me)
 }
