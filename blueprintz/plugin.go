@@ -15,6 +15,9 @@ import (
 	"strings"
 )
 
+var NilPlugin = (*Plugin)(nil)
+var _ jsonfile.Componenter = NilPlugin
+
 type PluginMap map[global.ComponentName]*Plugin
 type Plugins []*Plugin
 
@@ -24,13 +27,21 @@ type Plugin struct {
 	*Component
 }
 
+func (me *Plugin) GetName() global.ComponentName {
+	return me.PluginName
+}
+
+func (me *Plugin) GetWebsite() global.Url {
+	return me.PluginURI
+}
+
 func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 	return &Plugin{
 		PluginName: fh.PluginName,
 		PluginURI:  fh.PluginURI,
 		Component: &Component{
 			Version:   fh.Version,
-			LocalSlug: fh.GetSlug(),
+			LocalSlug: fh.GetLocalDir(),
 		},
 	}
 }

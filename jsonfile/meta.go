@@ -5,15 +5,18 @@ import "blueprintz/global"
 type Metaer interface {
 	GetAboutUrl() global.Url
 	GetSchemaVer() global.Version
+	GetCreatedBy() string
 }
 
 type Meta struct {
+	CreatedBy string         `json:"created_by"`
 	AboutUrl  global.Url     `json:"about_url"`
 	SchemaVer global.Version `json:"schema_ver"`
 }
 
 func NewMeta(metaer Metaer) *Meta {
 	return &Meta{
+		CreatedBy: metaer.GetCreatedBy(),
 		AboutUrl:  metaer.GetAboutUrl(),
 		SchemaVer: metaer.GetSchemaVer(),
 	}

@@ -130,9 +130,17 @@ func (me *Blueprintz) GetMeta() *jsonfile.Meta {
 }
 
 func (me *Blueprintz) GetThemes() jsonfile.Themes {
-	return jsonfile.Themes{}
+	themes := make(jsonfile.Themes, len(me.Themes))
+	for i, p := range me.Themes {
+		themes[i] = jsonfile.NewTheme(p)
+	}
+	return themes
 }
 
 func (me *Blueprintz) GetPlugins() jsonfile.Plugins {
-	return jsonfile.Plugins{}
+	plugins := make(jsonfile.Plugins, len(me.Plugins))
+	for i, p := range me.Plugins {
+		plugins[i] = jsonfile.NewPlugin(p)
+	}
+	return plugins
 }

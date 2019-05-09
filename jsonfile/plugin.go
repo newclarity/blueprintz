@@ -8,5 +8,11 @@ type PluginMap map[global.ComponentName]*Plugin
 type Plugins []*Plugin
 
 type Plugin struct {
-	Component
+	*Component
+}
+
+func NewPlugin(plugin Componenter) *Plugin {
+	return &Plugin{
+		Component: NewComponent(plugin),
+	}
 }

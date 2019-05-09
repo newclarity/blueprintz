@@ -40,11 +40,12 @@ func Init() {
 		if is.Error(sts) {
 			break
 		}
-		sts = jsonfile.NewBlueprintz(blueprintz).WriteFile()
+		jbp := jsonfile.NewBlueprintz(blueprintz)
+		sts = jbp.WriteFile()
 		if is.Error(sts) {
 			break
 		}
-		b, _ := json.MarshalIndent(blueprintz, "", "    ")
+		b, _ := json.MarshalIndent(jbp, "", "    ")
 		fmt.Println(string(b))
 
 	}

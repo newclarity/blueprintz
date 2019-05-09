@@ -6,5 +6,11 @@ type ThemeMap map[global.ComponentName]*Theme
 type Themes []*Theme
 
 type Theme struct {
-	Component
+	*Component
+}
+
+func NewTheme(theme Componenter) *Theme {
+	return &Theme{
+		Component: NewComponent(theme),
+	}
 }

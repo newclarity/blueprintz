@@ -1,9 +1,13 @@
 package fileheaders
 
-import "blueprintz/global"
+import (
+	"blueprintz/global"
+	"blueprintz/jsonfile"
+)
 
 var NilTheme = (*Theme)(nil)
 var _ Componenter = NilTheme
+var _ jsonfile.Componenter = NilTheme
 
 type Theme struct {
 	ThemeName string     `fileheader:"Theme Name"`
@@ -22,4 +26,12 @@ func NewTheme(fp global.Filepath) *Theme {
 
 func (me *Theme) GetHeaderValueFieldMap(...Componenter) HeaderValueFieldMap {
 	return me.Component.GetHeaderValueFieldMap(me)
+}
+
+func (me *Theme) GetName() global.ComponentName {
+	return me.ThemeName
+}
+
+func (me *Theme) GetWebsite() global.Url {
+	return me.ThemeURI
 }

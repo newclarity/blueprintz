@@ -2,6 +2,7 @@ package fileheaders
 
 import (
 	"blueprintz/global"
+	"blueprintz/jsonfile"
 	"blueprintz/only"
 	"blueprintz/util"
 	"fmt"
@@ -16,6 +17,7 @@ import (
 
 var NilComponent = (*Component)(nil)
 var _ Componenter = NilComponent
+var _ jsonfile.Componenter = NilComponent
 
 type HeaderValueFieldMap = map[global.FileHeader]*reflect.Value
 
@@ -41,8 +43,26 @@ func NewComponent(fp global.Filepath) *Component {
 	}
 }
 
-func (me *Component) GetSlug() global.Slug {
+var panicMsg = "Cannot %s() of fileheaders.Component; use fileheaders.Plugin or fileheaders.Theme instead."
+
+func (me *Component) GetName() global.ComponentName {
+	panic(fmt.Sprintf(panicMsg, "GetName"))
+}
+
+func (me *Component) GetVersion() global.Version {
+	return me.Version
+}
+
+func (me *Component) GetSourceUrl() global.Url {
+	panic(fmt.Sprintf(panicMsg, "GetSourceUrl"))
+}
+
+func (me *Component) GetLocalDir() global.Slug {
 	return filepath.Base(filepath.Dir(me.Filepath))
+}
+
+func (me *Component) GetWebsite() global.Url {
+	panic(fmt.Sprintf(panicMsg, "GetWebsite"))
 }
 
 func (me *Component) Read(component Componenter) (sts Status) {
@@ -71,7 +91,7 @@ func (me *Component) Read(component Componenter) (sts Status) {
 			sts = status.Warn("file '%s' is not a plugin header file", me.Filepath)
 			break
 		}
-		// @TODO Replace these two lines with on regex
+		// @TODO Replace these two lines with a regex
 		headertxt := strings.Replace(string(b), "\r", "\n", -1)
 		headertxt = strings.Replace(headertxt, "\n\n", "\n", -1)
 
