@@ -100,6 +100,9 @@ func (me *Component) Read(component Componenter) (sts Status) {
 			regex := fmt.Sprintf("(?im)^[ \t/*#@]*%s:(.*)$", regexp.QuoteMeta(h))
 			re := regexp.MustCompile(regex)
 			m := re.FindStringSubmatch(headertxt)
+			// @todo Include this fix:  https://core.trac.wordpress.org/ticket/8497
+			// Look in WordPress core code for get_file_data() to see the regex used, or:
+			// https://core.trac.wordpress.org/attachment/ticket/8497/8497.diff
 			if m == nil {
 				continue
 			}
