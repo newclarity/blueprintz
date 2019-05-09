@@ -6,8 +6,13 @@ type ComponentName = string
 type Url = string
 type Slug = string
 type Version = string
-type RelativeDir = string
+type Path = string
 type Domain = string
 
-type AbsoluteDirs []AbsoluteDir
-type AbsoluteDir = string
+type Dirs = []Dir
+type Dir = string
+type Filepath = string
+type Basefile = string
+type Entry = string
+
+type FileHeader = string

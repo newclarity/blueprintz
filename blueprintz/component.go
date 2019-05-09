@@ -1,10 +1,12 @@
 package blueprintz
 
-import "blueprintz/global"
+import (
+	"blueprintz/global"
+)
 
 type Component struct {
-	Name      global.ComponentName
-	Version   global.Version
-	SourceUrl global.Url
-	LocalSlug global.Slug
+	Version    global.Version
+	SourceUrl  global.Url
+	LocalSlug  global.Slug
+	HeaderFile global.Dir
 }

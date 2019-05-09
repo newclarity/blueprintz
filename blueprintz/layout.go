@@ -19,42 +19,42 @@ var NilLayout = (*Layout)(nil)
 var _ jsonfile.Layouter = NilLayout
 
 type Layout struct {
-	workingDir global.AbsoluteDir
-	ProjectDir global.RelativeDir
-	WebrootDir global.RelativeDir
-	ContentDir global.RelativeDir
-	CoreDir    global.RelativeDir
+	workingDir global.Dir
+	ProjectDir global.Path
+	WebrootDir global.Path
+	ContentDir global.Path
+	CoreDir    global.Path
 }
 
 func NewLayout() *Layout {
 	return &Layout{}
 }
 
-func (me *Layout) GetProjectDir() global.RelativeDir {
+func (me *Layout) GetProjectDir() global.Path {
 	return me.ProjectDir
 }
-func (me *Layout) GetWebrootDir() global.RelativeDir {
+func (me *Layout) GetWebrootDir() global.Path {
 	return me.WebrootDir
 }
-func (me *Layout) GetContentDir() global.RelativeDir {
+func (me *Layout) GetContentDir() global.Path {
 	return me.ContentDir
 }
-func (me *Layout) GetCoreDir() global.RelativeDir {
+func (me *Layout) GetCoreDir() global.Path {
 	return me.CoreDir
 }
-func (me *Layout) GetPluginsDir() global.RelativeDir {
+func (me *Layout) GetPluginsDir() global.Path {
 	return fmt.Sprintf("%s%cplugins",
 		me.GetContentDir(),
 		os.PathSeparator,
 	)
 }
-func (me *Layout) GetMustUsePluginsDir() global.RelativeDir {
+func (me *Layout) GetMustUsePluginsDir() global.Path {
 	return fmt.Sprintf("%s%cmu-plugins",
 		me.GetContentDir(),
 		os.PathSeparator,
 	)
 }
-func (me *Layout) GetThemesDir() global.RelativeDir {
+func (me *Layout) GetThemesDir() global.Path {
 	return fmt.Sprintf("%s%cthemes",
 		me.GetContentDir(),
 		os.PathSeparator,
