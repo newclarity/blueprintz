@@ -3,10 +3,14 @@ package global
 const BlueprintzFile = "blueprintz.json"
 
 const (
-	WebsiteBlueprint = "website"
-	ThemeBlueprint = "theme"
-	PluginBlueprint = "plugin"
-	LibraryBlueprint = "library"
-	ModuleBlueprint = "module"
-	AddOnBlueprint = "add-on"
+	WebsiteBlueprint BlueprintType = "website"
+	ThemeBlueprint   BlueprintType = "theme"
+	PluginBlueprint  BlueprintType = "plugin"
+	LibraryBlueprint BlueprintType = "library"
+	ModuleBlueprint  BlueprintType = "module"
+	AddOnBlueprint   BlueprintType = "add-on"
+)
+
+const (
+	WordPressOrgCourier CourierName = "wordpress.org"
 )

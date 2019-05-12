@@ -1,6 +1,7 @@
 package blueprintz
 
 import (
+	"blueprintz/courier"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"fmt"
@@ -8,11 +9,13 @@ import (
 
 var NilComponent = (*Component)(nil)
 var _ jsonfile.Componenter = NilComponent
+var _ courier.Componenter = NilComponent
 
 type Component struct {
 	Version    global.Version
+	Website    global.Url
 	SourceUrl  global.Url
-	LocalSlug  global.Slug
+	Subdir     global.Slug
 	HeaderFile global.Dir
 }
 
@@ -26,10 +29,14 @@ func (me *Component) GetVersion() global.Version {
 	return me.Version
 }
 
-func (me *Component) GetLocalDir() global.Slug {
-	return me.LocalSlug
+func (me *Component) GetSubdir() global.Slug {
+	return me.Subdir
 }
 
 func (me *Component) GetWebsite() global.Url {
-	panic(fmt.Sprintf(panicMsg, "GetWebsite"))
+	return me.Website
+}
+
+func (me *Component) GetSlug() global.Slug {
+	return me.Subdir
 }

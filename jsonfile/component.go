@@ -7,7 +7,7 @@ import (
 type Componenter interface {
 	GetName() global.ComponentName
 	GetVersion() global.Version
-	GetLocalDir() global.Slug
+	GetSubdir() global.Slug
 	GetWebsite() global.Url
 }
 
@@ -23,7 +23,7 @@ func NewComponent(c Componenter) *Component {
 	return &Component{
 		Name:    c.GetName(),
 		Version: c.GetVersion(),
-		Subdir:  c.GetLocalDir(),
+		Subdir:  c.GetSubdir(),
 		Website: c.GetWebsite(),
 	}
 }

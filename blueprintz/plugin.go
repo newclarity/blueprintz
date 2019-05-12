@@ -1,6 +1,7 @@
 package blueprintz
 
 import (
+	"blueprintz/courier"
 	"blueprintz/fileheaders"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
@@ -17,6 +18,7 @@ import (
 
 var NilPlugin = (*Plugin)(nil)
 var _ jsonfile.Componenter = NilPlugin
+var _ courier.Componenter = NilPlugin
 
 type PluginMap map[global.ComponentName]*Plugin
 type Plugins []*Plugin
@@ -40,8 +42,8 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 		PluginName: fh.PluginName,
 		PluginURI:  fh.PluginURI,
 		Component: &Component{
-			Version:   fh.Version,
-			LocalSlug: fh.GetLocalDir(),
+			Version: fh.Version,
+			Subdir:  fh.GetSubdir(),
 		},
 	}
 }
@@ -110,9 +112,9 @@ func (me Plugins) FindHeaderFile(dp global.Dir) (fp global.Filepath, fh *filehea
 	return fp, fh, sts
 }
 
-func (me *Plugins) Scandir(layouter jsonfile.Layouter) (sts Status) {
+func (me *Plugins) Scandir(path global.Path) (sts Status) {
 	for range only.Once {
-		dp := util.ToAbsoluteDir(layouter.GetPluginsDir())
+		dp := util.ToAbsoluteDir(path)
 		files, err := ioutil.ReadDir(dp)
 		if err != nil {
 			sts = status.Wrap(err).SetMessage("unable to read directory '%s'", dp)

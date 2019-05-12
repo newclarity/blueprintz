@@ -16,3 +16,5 @@ type Basefile = string
 type Entry = string
 
 type FileHeader = string
+
+type CourierName = string

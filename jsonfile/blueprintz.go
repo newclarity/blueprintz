@@ -12,15 +12,15 @@ import (
 )
 
 type Blueprinter interface {
-	GetName() string
-	GetDesc() string
-	GetType() global.BlueprintType
-	GetLocal() global.Domain
-	GetTheme() global.ComponentName
-	GetLayout() *Layout
-	GetThemes() Themes
-	GetPlugins() Plugins
-	GetMeta() *Meta
+	GetJsonName() string
+	GetJsonDesc() string
+	GetJsonType() global.BlueprintType
+	GetJsonLocal() global.Domain
+	GetJsonTheme() global.ComponentName
+	GetJsonLayout() *Layout
+	GetJsonThemes() Themes
+	GetJsonPlugins() Plugins
+	GetJsonMeta() *Meta
 }
 
 type Blueprintz struct {
@@ -37,15 +37,15 @@ type Blueprintz struct {
 
 func NewBlueprintz(blueprintz Blueprinter) *Blueprintz {
 	return &Blueprintz{
-		Name:    blueprintz.GetName(),
-		Desc:    blueprintz.GetDesc(),
-		Type:    blueprintz.GetType(),
-		Local:   blueprintz.GetLocal(),
-		Theme:   blueprintz.GetTheme(),
-		Layout:  blueprintz.GetLayout(),
-		Themes:  blueprintz.GetThemes(),
-		Plugins: blueprintz.GetPlugins(),
-		Meta:    blueprintz.GetMeta(),
+		Name:    blueprintz.GetJsonName(),
+		Desc:    blueprintz.GetJsonDesc(),
+		Type:    blueprintz.GetJsonType(),
+		Local:   blueprintz.GetJsonLocal(),
+		Theme:   blueprintz.GetJsonTheme(),
+		Layout:  blueprintz.GetJsonLayout(),
+		Themes:  blueprintz.GetJsonThemes(),
+		Plugins: blueprintz.GetJsonPlugins(),
+		Meta:    blueprintz.GetJsonMeta(),
 	}
 }
 

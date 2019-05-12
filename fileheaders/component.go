@@ -57,7 +57,7 @@ func (me *Component) GetSourceUrl() global.Url {
 	panic(fmt.Sprintf(panicMsg, "GetSourceUrl"))
 }
 
-func (me *Component) GetLocalDir() global.Slug {
+func (me *Component) GetSubdir() global.Slug {
 	return filepath.Base(filepath.Dir(me.Filepath))
 }
 

@@ -5,25 +5,25 @@ import (
 )
 
 type Layouter interface {
-	GetProjectDir() global.Path
-	GetWebrootDir() global.Path
-	GetContentDir() global.Path
-	GetPluginsDir() global.Path
-	GetCoreDir() global.Path
+	GetProjectPath() global.Path
+	GetWebrootPath() global.Path
+	GetContentPath() global.Path
+	GetPluginsPath() global.Path
+	GetCorePath() global.Path
 }
 
 type Layout struct {
-	ProjectDir global.Path `json:"project_dir"`
-	WebrootDir global.Path `json:"webroot_dir"`
-	ContentDir global.Path `json:"content_dir"`
-	CoreDir    global.Path `json:"core_dir"`
+	ProjectPath global.Path `json:"project_path"`
+	WebrootPath global.Path `json:"webroot_path"`
+	ContentPath global.Path `json:"content_path"`
+	CorePath    global.Path `json:"core_path"`
 }
 
 func NewLayout(layout Layouter) *Layout {
 	return &Layout{
-		ProjectDir: layout.GetProjectDir(),
-		WebrootDir: layout.GetWebrootDir(),
-		ContentDir: layout.GetContentDir(),
-		CoreDir:    layout.GetCoreDir(),
+		ProjectPath: layout.GetProjectPath(),
+		WebrootPath: layout.GetWebrootPath(),
+		ContentPath: layout.GetContentPath(),
+		CorePath:    layout.GetCorePath(),
 	}
 }

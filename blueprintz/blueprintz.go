@@ -1,11 +1,13 @@
 package blueprintz
 
 import (
+	"blueprintz/courier"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/only"
 	"fmt"
 	"github.com/Machiel/slugify"
+	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
 	"regexp"
 	"strings"
@@ -15,15 +17,16 @@ var NilBlueprintz = (*Blueprintz)(nil)
 var _ jsonfile.Blueprinter = NilBlueprintz
 
 type Blueprintz struct {
-	Name    string
-	Desc    string
-	Type    global.BlueprintType
-	Local   global.Domain
-	Theme   global.ComponentName
-	Layout  *Layout
-	Themes  Themes
-	Plugins Plugins
-	Meta    *Meta
+	Name       string
+	Desc       string
+	Type       global.BlueprintType
+	Local      global.Domain
+	Theme      global.ComponentName
+	Layout     *Layout
+	Themes     Themes
+	Plugins    Plugins
+	Meta       *Meta
+	couriermap courier.Map
 }
 
 type Args Blueprintz
@@ -36,6 +39,7 @@ func NewBlueprintz(args ...*Args) *Blueprintz {
 		_args = *args[0]
 	}
 	blueprintz := &Blueprintz{}
+
 	return blueprintz.Renew(&_args)
 }
 
@@ -52,6 +56,8 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	} else {
 		blueprintz = (*Blueprintz)(args[0])
 	}
+	blueprintz.couriermap = make(courier.Map, 0)
+
 	if blueprintz.Name == "" {
 		blueprintz.Name = "Unnamed"
 	}
@@ -84,6 +90,7 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	if blueprintz.Plugins == nil {
 		blueprintz.Plugins = make(Plugins, 0)
 	}
+
 	return blueprintz
 }
 
@@ -93,7 +100,7 @@ func (me *Blueprintz) Scandir() (sts Status) {
 		if is.Error(sts) {
 			break
 		}
-		sts = me.Plugins.Scandir(me.Layout)
+		sts = me.Plugins.Scandir(me.Layout.GetPluginsPath())
 		if is.Error(sts) {
 			break
 		}
@@ -101,35 +108,35 @@ func (me *Blueprintz) Scandir() (sts Status) {
 	return sts
 }
 
-func (me *Blueprintz) GetName() string {
+func (me *Blueprintz) GetJsonName() string {
 	return me.Name
 }
 
-func (me *Blueprintz) GetDesc() string {
+func (me *Blueprintz) GetJsonDesc() string {
 	return me.Desc
 }
 
-func (me *Blueprintz) GetType() global.BlueprintType {
+func (me *Blueprintz) GetJsonType() global.BlueprintType {
 	return me.Type
 }
 
-func (me *Blueprintz) GetLocal() global.Domain {
+func (me *Blueprintz) GetJsonLocal() global.Domain {
 	return me.Local
 }
 
-func (me *Blueprintz) GetTheme() global.ComponentName {
+func (me *Blueprintz) GetJsonTheme() global.ComponentName {
 	return me.Theme
 }
 
-func (me *Blueprintz) GetLayout() *jsonfile.Layout {
+func (me *Blueprintz) GetJsonLayout() *jsonfile.Layout {
 	return jsonfile.NewLayout(me.Layout)
 }
 
-func (me *Blueprintz) GetMeta() *jsonfile.Meta {
+func (me *Blueprintz) GetJsonMeta() *jsonfile.Meta {
 	return jsonfile.NewMeta(me.Meta)
 }
 
-func (me *Blueprintz) GetThemes() jsonfile.Themes {
+func (me *Blueprintz) GetJsonThemes() jsonfile.Themes {
 	themes := make(jsonfile.Themes, len(me.Themes))
 	for i, p := range me.Themes {
 		themes[i] = jsonfile.NewTheme(p)
@@ -137,10 +144,50 @@ func (me *Blueprintz) GetThemes() jsonfile.Themes {
 	return themes
 }
 
-func (me *Blueprintz) GetPlugins() jsonfile.Plugins {
+func (me *Blueprintz) GetJsonPlugins() jsonfile.Plugins {
 	plugins := make(jsonfile.Plugins, len(me.Plugins))
 	for i, p := range me.Plugins {
 		plugins[i] = jsonfile.NewPlugin(p)
 	}
 	return plugins
+}
+
+func (me *Blueprintz) FindCourier(args *courier.Args) (courier courier.Courier, sts Status) {
+	for range only.Once {
+		for n, c := range me.couriermap {
+			if !c.Match(args) {
+				continue
+			}
+			sts = status.Success("found courier '%s'", n)
+			courier = c
+			break
+		}
+	}
+	if courier == nil {
+		sts = status.Fail().
+			SetMessage("courier not found for '%s'", args.String())
+	}
+	return courier, sts
+}
+
+func (me *Blueprintz) GetCourier(name global.CourierName) courier.Courier {
+	c, _ := me.couriermap[name]
+	return c
+}
+
+func (me *Blueprintz) RegisterCourier(name global.CourierName, c courier.Courier) {
+	me.couriermap[name] = c
+}
+
+func (me *Blueprintz) GetComponentSourceUrl(comp *Component) (url global.Url, sts Status) {
+	for range only.Once {
+		c, sts := me.FindCourier(&courier.Args{
+			Website: comp.GetWebsite(),
+		})
+		if is.Error(sts) {
+			break
+		}
+		url = c.GetSourceUrl(comp)
+	}
+	return url, sts
 }

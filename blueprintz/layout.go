@@ -30,43 +30,43 @@ func NewLayout() *Layout {
 	return &Layout{}
 }
 
-func (me *Layout) GetProjectDir() global.Path {
+func (me *Layout) GetProjectPath() global.Path {
 	return me.ProjectDir
 }
-func (me *Layout) GetWebrootDir() global.Path {
+func (me *Layout) GetWebrootPath() global.Path {
 	return me.WebrootDir
 }
-func (me *Layout) GetContentDir() global.Path {
+func (me *Layout) GetContentPath() global.Path {
 	return me.ContentDir
 }
-func (me *Layout) GetCoreDir() global.Path {
+func (me *Layout) GetCorePath() global.Path {
 	return me.CoreDir
 }
-func (me *Layout) GetPluginsDir() global.Path {
+func (me *Layout) GetPluginsPath() global.Path {
 	return fmt.Sprintf("%s%cplugins",
-		me.GetContentDir(),
+		me.GetContentPath(),
 		os.PathSeparator,
 	)
 }
 func (me *Layout) GetMustUsePluginsDir() global.Path {
 	return fmt.Sprintf("%s%cmu-plugins",
-		me.GetContentDir(),
+		me.GetContentPath(),
 		os.PathSeparator,
 	)
 }
 func (me *Layout) GetThemesDir() global.Path {
 	return fmt.Sprintf("%s%cthemes",
-		me.GetContentDir(),
+		me.GetContentPath(),
 		os.PathSeparator,
 	)
 }
 
 func (me *Layout) String() string {
 	return fmt.Sprintf("%s%s%s%s",
-		fmt.Sprintf("ProjectDir %s\n", me.ProjectDir),
-		fmt.Sprintf("WebrootDir %s\n", me.WebrootDir),
-		fmt.Sprintf("ContentDir %s\n", me.ContentDir),
-		fmt.Sprintf("CoreDir:   %s\n", me.CoreDir),
+		fmt.Sprintf("ProjectPath %s\n", me.ProjectDir),
+		fmt.Sprintf("WebrootPath %s\n", me.WebrootDir),
+		fmt.Sprintf("ContentPath %s\n", me.ContentDir),
+		fmt.Sprintf("CorePath:   %s\n", me.CoreDir),
 	)
 }
 
