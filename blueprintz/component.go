@@ -1,7 +1,7 @@
 package blueprintz
 
 import (
-	"blueprintz/courier"
+	"blueprintz/agent"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 var NilComponent = (*Component)(nil)
 var _ jsonfile.Componenter = NilComponent
-var _ courier.Componenter = NilComponent
+var _ agent.Componenter = NilComponent
 
 type Component struct {
 	Version    global.Version

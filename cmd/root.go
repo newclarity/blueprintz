@@ -34,3 +34,33 @@ func init() {
 	pf := RootCmd.PersistentFlags()
 	pf.BoolVarP(&NoCache, "no-cache", "", false, "Disable caching")
 }
+
+/*
+ * Possible command names
+ *
+ *	- survey
+ *	- extract
+ *	- build
+ *	- assemble
+ *	- verify
+ *	- validate
+ *	- update
+ *	- upgrade
+ *	- generate
+ *	- create
+ *	- new
+ *	- init
+ *	- make
+ *	- run
+ *	- download
+ *	- upload
+ *	- package
+ *	- bundle
+ *	- ???
+ *	- ???
+ *	- ???
+ *	- ???
+ *	- ???
+ *	- ???
+ *
+ */

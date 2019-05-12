@@ -12,5 +12,5 @@ const (
 )
 
 const (
-	WordPressOrgCourier CourierName = "wordpress.org"
+	WordPressOrgAgent AgentName = "wordpress.org"
 )

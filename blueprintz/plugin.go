@@ -1,7 +1,7 @@
 package blueprintz
 
 import (
-	"blueprintz/courier"
+	"blueprintz/agent"
 	"blueprintz/fileheaders"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
@@ -18,7 +18,7 @@ import (
 
 var NilPlugin = (*Plugin)(nil)
 var _ jsonfile.Componenter = NilPlugin
-var _ courier.Componenter = NilPlugin
+var _ agent.Componenter = NilPlugin
 
 type PluginMap map[global.ComponentName]*Plugin
 type Plugins []*Plugin

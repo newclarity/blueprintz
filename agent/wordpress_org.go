@@ -1,4 +1,4 @@
-package courier
+package agent
 
 import (
 	"blueprintz/global"
@@ -12,7 +12,7 @@ const PluginDownloadUriTemplate = "https://downloads.wordpress.org/plugin/{plugi
 const PluginRepoUrlRegex = "^https?://wordpress.org/plugins/([^/]+)/?"
 
 var NilWordPressOrg = (*WordPressOrg)(nil)
-var _ Courier = NilWordPressOrg
+var _ Agenter = NilWordPressOrg
 
 type WordPressOrg struct {
 }
@@ -26,12 +26,12 @@ func (me *WordPressOrg) GetSourceUrl(c Componenter) (url global.Url) {
 	return url
 }
 
-var regexPluginUrl *regexp.Regexp
+var re *regexp.Regexp
 
 func init() {
-	regexPluginUrl = regexp.MustCompile(PluginRepoUrlRegex)
+	re = regexp.MustCompile(PluginRepoUrlRegex)
 }
 
 func (me *WordPressOrg) Match(args *Args) (match bool) {
-	return regexPluginUrl.MatchString(args.Website)
+	return re.MatchString(args.Website)
 }

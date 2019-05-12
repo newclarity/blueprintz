@@ -17,4 +17,4 @@ type Entry = string
 
 type FileHeader = string
 
-type CourierName = string
+type AgentName = string

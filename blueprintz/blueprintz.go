@@ -1,7 +1,7 @@
 package blueprintz
 
 import (
-	"blueprintz/courier"
+	"blueprintz/agent"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/only"
@@ -26,7 +26,7 @@ type Blueprintz struct {
 	Themes     Themes
 	Plugins    Plugins
 	Meta       *Meta
-	couriermap courier.Map
+	couriermap agent.Map
 }
 
 type Args Blueprintz
@@ -56,7 +56,7 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	} else {
 		blueprintz = (*Blueprintz)(args[0])
 	}
-	blueprintz.couriermap = make(courier.Map, 0)
+	blueprintz.couriermap = make(agent.Map, 0)
 
 	if blueprintz.Name == "" {
 		blueprintz.Name = "Unnamed"
@@ -152,36 +152,36 @@ func (me *Blueprintz) GetJsonPlugins() jsonfile.Plugins {
 	return plugins
 }
 
-func (me *Blueprintz) FindCourier(args *courier.Args) (courier courier.Courier, sts Status) {
+func (me *Blueprintz) FindAgent(args *agent.Args) (courier agent.Agenter, sts Status) {
 	for range only.Once {
 		for n, c := range me.couriermap {
 			if !c.Match(args) {
 				continue
 			}
-			sts = status.Success("found courier '%s'", n)
+			sts = status.Success("found agent '%s'", n)
 			courier = c
 			break
 		}
 	}
 	if courier == nil {
 		sts = status.Fail().
-			SetMessage("courier not found for '%s'", args.String())
+			SetMessage("agent not found for '%s'", args.String())
 	}
 	return courier, sts
 }
 
-func (me *Blueprintz) GetCourier(name global.CourierName) courier.Courier {
+func (me *Blueprintz) GetAgent(name global.AgentName) agent.Agenter {
 	c, _ := me.couriermap[name]
 	return c
 }
 
-func (me *Blueprintz) RegisterCourier(name global.CourierName, c courier.Courier) {
+func (me *Blueprintz) RegisterAgent(name global.AgentName, c agent.Agenter) {
 	me.couriermap[name] = c
 }
 
 func (me *Blueprintz) GetComponentSourceUrl(comp *Component) (url global.Url, sts Status) {
 	for range only.Once {
-		c, sts := me.FindCourier(&courier.Args{
+		c, sts := me.FindAgent(&agent.Args{
 			Website: comp.GetWebsite(),
 		})
 		if is.Error(sts) {

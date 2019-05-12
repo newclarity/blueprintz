@@ -1,7 +1,7 @@
 package blueprintz
 
 import (
-	"blueprintz/courier"
+	"blueprintz/agent"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/only"
@@ -38,9 +38,9 @@ func Init() {
 		blueprintz := NewBlueprintz(&Args{
 			Name: filepath.Base(util.GetCurrentDir()),
 		})
-		blueprintz.RegisterCourier(
-			global.WordPressOrgCourier,
-			courier.NewWordPressOrg(),
+		blueprintz.RegisterAgent(
+			global.WordPressOrgAgent,
+			agent.NewWordPressOrg(),
 		)
 		sts = blueprintz.Scandir()
 		if is.Error(sts) {
