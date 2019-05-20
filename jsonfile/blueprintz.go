@@ -2,11 +2,11 @@ package jsonfile
 
 import (
 	"blueprintz/global"
-	"blueprintz/only"
 	"blueprintz/util"
 	"encoding/json"
 	"fmt"
 	"github.com/gearboxworks/go-status"
+	"github.com/gearboxworks/go-status/only"
 	"io/ioutil"
 	"os"
 )
@@ -16,6 +16,7 @@ type Blueprinter interface {
 	GetJsonDesc() string
 	GetJsonType() global.BlueprintType
 	GetJsonLocal() global.Domain
+	GetJsonCore() *Core
 	GetJsonTheme() global.ComponentName
 	GetJsonLayout() *Layout
 	GetJsonThemes() Themes
@@ -29,24 +30,82 @@ type Blueprintz struct {
 	Type    global.BlueprintType `json:"type"`
 	Local   global.Domain        `json:"local"`
 	Theme   global.ComponentName `json:"theme"`
+	Core    *Core                `json:"core"`
 	Meta    *Meta                `json:"meta"`
 	Layout  *Layout              `json:"layout"`
 	Themes  Themes               `json:"themes"`
 	Plugins Plugins              `json:"plugins"`
 }
 
-func NewBlueprintz(blueprintz Blueprinter) *Blueprintz {
+func NewBlueprintz() *Blueprintz {
+	b := Blueprintz{}
+	b.Renew()
+	return &b
+}
+
+func (me *Blueprintz) Renew() {
+	if me.Core == nil {
+		me.Core = NewCore()
+	}
+	if me.Meta == nil {
+		me.Meta = NewMeta()
+	}
+	if me.Layout == nil {
+		me.Layout = NewLayout()
+	}
+	if me.Themes == nil {
+		me.Themes = NewThemes()
+	}
+	if me.Plugins == nil {
+		me.Plugins = NewPlugins()
+	}
+}
+
+func NewBlueprintzFromBlueprintz(blueprintz Blueprinter) *Blueprintz {
 	return &Blueprintz{
 		Name:    blueprintz.GetJsonName(),
 		Desc:    blueprintz.GetJsonDesc(),
 		Type:    blueprintz.GetJsonType(),
 		Local:   blueprintz.GetJsonLocal(),
+		Core:    blueprintz.GetJsonCore(),
 		Theme:   blueprintz.GetJsonTheme(),
 		Layout:  blueprintz.GetJsonLayout(),
 		Themes:  blueprintz.GetJsonThemes(),
 		Plugins: blueprintz.GetJsonPlugins(),
 		Meta:    blueprintz.GetJsonMeta(),
 	}
+}
+
+func (me *Blueprintz) LoadFile() (sts Status) {
+	for range only.Once {
+		fp := GetFilepath()
+		if !util.FileExists(fp) {
+			sts = status.YourBad("file '%s' does not exist", fp)
+			break
+		}
+		b, err := ioutil.ReadFile(fp)
+		if err != nil {
+			sts = status.Wrap(err).SetMessage("cannot read '%s'", fp)
+			break
+		}
+		err = json.Unmarshal(b, me)
+		if err != nil {
+			sts = status.Wrap(err).SetMessage("unable to unmarshal '%s'", fp)
+			break
+		}
+	}
+	return sts
+}
+
+func GetFilepath() global.Dir {
+	return fmt.Sprintf("%s%c%s",
+		util.GetCurrentDir(),
+		os.PathSeparator,
+		global.BlueprintzFile,
+	)
+}
+func GetBasefile() string {
+	return global.BlueprintzFile
 }
 
 func (me *Blueprintz) WriteFile() (sts Status) {
@@ -56,11 +115,7 @@ func (me *Blueprintz) WriteFile() (sts Status) {
 			sts = status.Wrap(err).SetMessage("cannot marshal Blueprintz")
 			break
 		}
-		fp := fmt.Sprintf("%s%c%s",
-			util.GetCurrentDir(),
-			os.PathSeparator,
-			global.BlueprintzFile,
-		)
+		fp := GetFilepath()
 		err = ioutil.WriteFile(fp, b, os.ModePerm)
 		if err != nil {
 			sts = status.Wrap(err).SetMessage("cannot write '%s'", fp)

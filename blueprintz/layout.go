@@ -3,10 +3,10 @@ package blueprintz
 import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
-	"blueprintz/only"
 	"blueprintz/util"
 	"fmt"
 	"github.com/gearboxworks/go-status"
+	"github.com/gearboxworks/go-status/only"
 	"io"
 	"io/ioutil"
 	"os"
@@ -19,29 +19,42 @@ var NilLayout = (*Layout)(nil)
 var _ jsonfile.Layouter = NilLayout
 
 type Layout struct {
-	workingDir global.Dir
-	ProjectDir global.Path
-	WebrootDir global.Path
-	ContentDir global.Path
-	CoreDir    global.Path
+	workingDir  global.Dir
+	CorePath    global.Path
+	ProjectPath global.Path
+	WebrootPath global.Path
+	ContentPath global.Path
+	VendorPath  global.Path
 }
 
 func NewLayout() *Layout {
 	return &Layout{}
 }
-
-func (me *Layout) GetProjectPath() global.Path {
-	return me.ProjectDir
-}
-func (me *Layout) GetWebrootPath() global.Path {
-	return me.WebrootDir
-}
-func (me *Layout) GetContentPath() global.Path {
-	return me.ContentDir
+func ConvertJsonfileLayout(jflo *jsonfile.Layout) *Layout {
+	return &Layout{
+		CorePath:    jflo.CorePath,
+		ProjectPath: jflo.ProjectPath,
+		WebrootPath: jflo.WebrootPath,
+		ContentPath: jflo.ContentPath,
+		VendorPath:  jflo.VendorPath,
+	}
 }
 func (me *Layout) GetCorePath() global.Path {
-	return me.CoreDir
+	return me.CorePath
 }
+func (me *Layout) GetProjectPath() global.Path {
+	return me.ProjectPath
+}
+func (me *Layout) GetWebrootPath() global.Path {
+	return me.WebrootPath
+}
+func (me *Layout) GetContentPath() global.Path {
+	return me.ContentPath
+}
+func (me *Layout) GetVendorPath() global.Path {
+	return me.VendorPath
+}
+
 func (me *Layout) GetPluginsPath() global.Path {
 	return fmt.Sprintf("%s%cplugins",
 		me.GetContentPath(),
@@ -54,7 +67,7 @@ func (me *Layout) GetMustUsePluginsDir() global.Path {
 		os.PathSeparator,
 	)
 }
-func (me *Layout) GetThemesDir() global.Path {
+func (me *Layout) GetThemesPath() global.Path {
 	return fmt.Sprintf("%s%cthemes",
 		me.GetContentPath(),
 		os.PathSeparator,
@@ -62,19 +75,25 @@ func (me *Layout) GetThemesDir() global.Path {
 }
 
 func (me *Layout) String() string {
-	return fmt.Sprintf("%s%s%s%s",
-		fmt.Sprintf("ProjectPath %s\n", me.ProjectDir),
-		fmt.Sprintf("WebrootPath %s\n", me.WebrootDir),
-		fmt.Sprintf("ContentPath %s\n", me.ContentDir),
-		fmt.Sprintf("CorePath:   %s\n", me.CoreDir),
+	var vp string
+	if me.VendorPath != "" {
+		vp = fmt.Sprintf("VendorPath: %s\n", me.VendorPath)
+	}
+	return fmt.Sprintf("%s%s%s%s%s",
+		fmt.Sprintf("ProjectPath %s\n", me.ProjectPath),
+		fmt.Sprintf("CorePath:   %s\n", me.CorePath),
+		fmt.Sprintf("WebrootPath %s\n", me.WebrootPath),
+		fmt.Sprintf("ContentPath %s\n", me.ContentPath),
+		vp,
 	)
 }
 
 func (me *Layout) IsComplete() bool {
-	return me.ProjectDir != "" &&
-		me.WebrootDir != "" &&
-		me.ContentDir != "" &&
-		me.CoreDir != ""
+	return me.CorePath != "" &&
+		me.ProjectPath != "" &&
+		me.WebrootPath != "" &&
+		me.ContentPath != ""
+
 }
 
 var indexRegex *regexp.Regexp
@@ -108,7 +127,7 @@ func (me *Layout) ScanDir() (sts Status) {
 	wd := util.GetCurrentDir()
 	for range only.Once {
 		me.workingDir = wd
-		me.ProjectDir = me.getRelativeDir(wd)
+		me.ProjectPath = me.getRelativeDir(wd)
 		content := 0
 		err = util.WalkDirFilesFirst(wd,
 			func(fp, bf string, f os.FileInfo, lvl int) (result error) {
@@ -119,11 +138,11 @@ func (me *Layout) ScanDir() (sts Status) {
 					if !strings.HasSuffix(bf, ".php") {
 						break
 					}
-					if me.WebrootDir == "" && bf == "index.php" && me.isWebRoot(fp) {
-						me.WebrootDir = me.getRelativeDir(fp)
+					if me.WebrootPath == "" && bf == "index.php" && me.isWebRoot(fp) {
+						me.WebrootPath = me.getRelativeDir(fp)
 					}
-					if me.CoreDir == "" && bf == "wp-load.php" {
-						me.CoreDir = me.getRelativeDir(fp)
+					if me.CorePath == "" && bf == "wp-load.php" {
+						me.CorePath = me.getRelativeDir(fp)
 					}
 					if me.IsComplete() {
 						result = io.EOF
@@ -141,7 +160,7 @@ func (me *Layout) ScanDir() (sts Status) {
 					if bf[0] == '.' {
 						break
 					}
-					if me.ContentDir == "" {
+					if me.ContentPath == "" {
 						switch bf {
 						case "mu-plugins":
 							content++
@@ -154,7 +173,7 @@ func (me *Layout) ScanDir() (sts Status) {
 							result = filepath.SkipDir
 						}
 						if content == 2 {
-							me.ContentDir = me.getRelativeDir(fp)
+							me.ContentPath = me.getRelativeDir(fp)
 						}
 					}
 					if me.IsComplete() {

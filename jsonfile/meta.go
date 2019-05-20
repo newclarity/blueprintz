@@ -14,7 +14,15 @@ type Meta struct {
 	SchemaVer global.Version `json:"schema_ver"`
 }
 
-func NewMeta(metaer Metaer) *Meta {
+func NewMeta() *Meta {
+	return &Meta{
+		CreatedBy: global.JsonSchemaCreatedBy,
+		AboutUrl:  global.AboutBlueprintzUrl,
+		SchemaVer: global.JsonSchemaVersion,
+	}
+}
+
+func NewMetaFromMetaer(metaer Metaer) *Meta {
 	return &Meta{
 		CreatedBy: metaer.GetCreatedBy(),
 		AboutUrl:  metaer.GetAboutUrl(),

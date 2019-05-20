@@ -38,7 +38,8 @@ func init() {
 /*
  * Possible command names
  *
- *	- survey
+ *	- survey - Document core, plugins and theme
+ *	- research - Discover plug download URLs
  *	- extract
  *	- build
  *	- assemble
@@ -56,7 +57,6 @@ func init() {
  *	- upload
  *	- package
  *	- bundle
- *	- ???
  *	- ???
  *	- ???
  *	- ???

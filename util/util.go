@@ -2,8 +2,8 @@ package util
 
 import (
 	"blueprintz/global"
-	"blueprintz/only"
 	"fmt"
+	"github.com/gearboxworks/go-status/only"
 	"io/ioutil"
 	"log"
 	"os"

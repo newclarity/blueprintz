@@ -1,8 +1,11 @@
 package cmd
 
 import (
-	"blueprintz/blueprintz"
+	"blueprintz/jsonfile"
+	"blueprintz/run"
+	"fmt"
 	"github.com/spf13/cobra"
+	"path/filepath"
 )
 
 //
@@ -25,10 +28,12 @@ import (
 //
 
 var InitCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Initialize a blueprintz.json file from an existing WordPress install",
-	Run: func(cmd *cobra.Command, args []string) {
-		blueprintz.Init()
+	Use: "init",
+	Short: fmt.Sprintf("Initialize a %s file from an existing WordPress install",
+		filepath.Base(jsonfile.GetFilepath()),
+	),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return run.Init()
 	},
 }
 

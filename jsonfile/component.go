@@ -19,9 +19,9 @@ type Component struct {
 	SourceUrl global.Url           `json:"source,omitempty"`
 }
 
-func NewComponent(c Componenter) *Component {
+func NewComponent(n global.ComponentName, c Componenter) *Component {
 	return &Component{
-		Name:    c.GetName(),
+		Name:    n,
 		Version: c.GetVersion(),
 		Subdir:  c.GetSubdir(),
 		Website: c.GetWebsite(),

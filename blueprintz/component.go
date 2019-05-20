@@ -1,15 +1,15 @@
 package blueprintz
 
 import (
-	"blueprintz/agent"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
+	"blueprintz/recognize"
 	"fmt"
 )
 
 var NilComponent = (*Component)(nil)
 var _ jsonfile.Componenter = NilComponent
-var _ agent.Componenter = NilComponent
+var _ recognize.Componenter = NilComponent
 
 type Component struct {
 	Version    global.Version

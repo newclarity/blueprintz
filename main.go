@@ -2,8 +2,6 @@ package main
 
 import (
 	"blueprintz/cmd"
-	"fmt"
-	"os"
 )
 
 //
@@ -29,8 +27,15 @@ import (
 //
 
 func main() {
-	if err := cmd.RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	_ = cmd.RootCmd.Execute()
+	//sts,ok := err.(status.Status)
+	//if !ok {
+	//	log.Fatal(err)
+	//}
+	//if is.Error(sts) {
+	//	log.Fatal(sts.FullError())
+	//}
+	//if is.Success(sts) && sts != nil {
+	//	log.Println(sts.Message())
+	//}
 }

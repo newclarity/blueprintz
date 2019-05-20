@@ -16,10 +16,13 @@ type Meta struct {
 
 func NewMeta() *Meta {
 	return &Meta{
-		CreatedBy: "Blueprintz Composer for WordPress",
-		AboutUrl:  "https://blueprintz.dev",
-		SchemaVer: "0.1.0",
+		CreatedBy: global.JsonSchemaCreatedBy,
+		AboutUrl:  global.AboutBlueprintzUrl,
+		SchemaVer: global.JsonSchemaVersion,
 	}
+}
+func ConvertJsonfileMeta() *Meta {
+	return NewMeta()
 }
 
 func (me *Meta) GetCreatedBy() global.Url {

@@ -1,15 +1,15 @@
 package blueprintz
 
 import (
-	"blueprintz/agent"
 	"blueprintz/fileheaders"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
-	"blueprintz/only"
+	"blueprintz/recognize"
 	"blueprintz/util"
 	"fmt"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
+	"github.com/gearboxworks/go-status/only"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -18,23 +18,23 @@ import (
 
 var NilPlugin = (*Plugin)(nil)
 var _ jsonfile.Componenter = NilPlugin
-var _ agent.Componenter = NilPlugin
+var _ recognize.Componenter = NilPlugin
 
 type PluginMap map[global.ComponentName]*Plugin
 type Plugins []*Plugin
+
+func ConvertJsonfilePlugns(jfps jsonfile.Plugins) (ps Plugins) {
+	ps = make(Plugins, len(jfps))
+	for i, p := range jfps {
+		ps[i] = ConvertJsonfilePlugin(p)
+	}
+	return ps
+}
 
 type Plugin struct {
 	PluginName global.ComponentName
 	PluginURI  global.Url
 	*Component
-}
-
-func (me *Plugin) GetName() global.ComponentName {
-	return me.PluginName
-}
-
-func (me *Plugin) GetWebsite() global.Url {
-	return me.PluginURI
 }
 
 func NewPlugin(fh *fileheaders.Plugin) *Plugin {
@@ -48,68 +48,12 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 	}
 }
 
-//
-// Given an assumed known header file, read the plugin headers
-// Return nil if no headers found
-//
-func (me Plugins) ReadHeaders(file global.Filepath) (fh *fileheaders.Plugin, sts Status) {
-	for range only.Once {
-		fh = fileheaders.NewPlugin(file)
-		sts = fh.Read(fh)
-		if is.Error(sts) || is.Warn(sts) {
-			break
-		}
-	}
-	if is.Error(sts) || is.Warn(sts) {
-		fh = nil
-	}
-	return fh, sts
+func (me *Plugin) GetName() global.ComponentName {
+	return me.PluginName
 }
 
-func (me Plugins) FindHeaderFile(dp global.Dir) (fp global.Filepath, fh *fileheaders.Plugin, sts Status) {
-	var files []os.FileInfo
-	var i int
-	var fn global.Basefile
-	fn = fmt.Sprintf("%s.php", filepath.Base(dp))
-	for {
-		tryfile := fmt.Sprintf("%s%c%s", dp, os.PathSeparator, fn)
-		if util.FileExists(tryfile) {
-			fh, sts = me.ReadHeaders(tryfile)
-			if is.Error(sts) {
-				break
-			}
-			if fh != nil {
-				fp = tryfile
-				sts = status.Success("header file for plugin '%s' found", fh.PluginName).
-					SetDetail("plugin header file is '%s'", dp).
-					SetData(dp)
-				break
-			}
-		}
-		if files == nil {
-			var err error
-			files, err = ioutil.ReadDir(dp)
-			if err != nil {
-				sts = status.Wrap(err).SetMessage("unable to read directory '%s'", dp)
-				break
-			}
-		}
-		if i >= len(files) {
-			sts = status.Warn("'%s' is not a plugin directory", dp)
-			break
-		}
-		for {
-			fn = files[i].Name()
-			i++
-			if strings.HasSuffix(strings.ToLower(fn), ".php") {
-				break
-			}
-			if i >= len(files) {
-				break
-			}
-		}
-	}
-	return fp, fh, sts
+func (me *Plugin) GetWebsite() global.Url {
+	return me.PluginURI
 }
 
 func (me *Plugins) Scandir(path global.Path) (sts Status) {
@@ -120,26 +64,48 @@ func (me *Plugins) Scandir(path global.Path) (sts Status) {
 			sts = status.Wrap(err).SetMessage("unable to read directory '%s'", dp)
 			break
 		}
-		var fh *fileheaders.Plugin
 		for _, f := range files {
 			if f.Name()[0] == '.' {
 				// Ignore "hidden" plugins
 				continue
 			}
 			fp := fmt.Sprintf("%s%c%s", dp, os.PathSeparator, f.Name())
+			ctype := strings.TrimRight(filepath.Base(path), "s")
+			c := fileheaders.MakeComponenter(ctype, fp)
 			if f.IsDir() {
-				_, fh, sts = me.FindHeaderFile(fp)
+				c, sts = fileheaders.FindHeaderFile(c, fp, ".php")
 			} else {
-				fh, sts = me.ReadHeaders(fp)
+				c, sts = fileheaders.ReadFileHeaders(c)
 			}
 			if is.Error(sts) {
 				break
 			}
-			if fh == nil {
+			if c == nil {
 				continue
 			}
-			*me = append(*me, NewPlugin(fh))
+			p, ok := c.(*fileheaders.Plugin)
+			if !ok {
+				sts = status.Fail().SetMessage("Type '%T' does not implement '*fileheaders.Plugin'", c)
+				break
+			}
+			if p == nil {
+				continue
+			}
+			*me = append(*me, NewPlugin(p))
 		}
 	}
 	return sts
+}
+
+func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) (ts *Plugin) {
+	return &Plugin{
+		PluginName: jfp.Name,
+		PluginURI:  jfp.Website,
+		Component: &Component{
+			Version:   jfp.Version,
+			Subdir:    jfp.Subdir,
+			SourceUrl: jfp.SourceUrl,
+			Website:   jfp.Website,
+		},
+	}
 }

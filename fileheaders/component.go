@@ -3,10 +3,10 @@ package fileheaders
 import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
-	"blueprintz/only"
 	"blueprintz/util"
 	"fmt"
 	"github.com/gearboxworks/go-status"
+	"github.com/gearboxworks/go-status/only"
 	"log"
 	"os"
 	"path/filepath"
@@ -22,7 +22,12 @@ var _ jsonfile.Componenter = NilComponent
 type HeaderValueFieldMap = map[global.FileHeader]*reflect.Value
 
 type Componenter interface {
-	GetHeaderValueFieldMap(component ...Componenter) HeaderValueFieldMap
+	GetName() global.ComponentName
+	GetType() ComponenterType
+	SetFilepath(global.Filepath)
+	GetFilepath() global.Filepath
+	ReadHeader(Componenter) Status
+	GetHeaderValueFieldMap(...Componenter) HeaderValueFieldMap
 }
 
 type Component struct {
@@ -35,6 +40,14 @@ type Component struct {
 	LicenseURI  global.Url     `fileheader:"License URI"`
 	TextDomain  string         `fileheader:"Text Domain"`
 	DomainPath  string         `fileheader:"Domain Path"`
+}
+
+func (me *Component) GetFilepath() global.Filepath {
+	return me.Filepath
+}
+
+func (me *Component) SetFilepath(fp global.Filepath) {
+	me.Filepath = fp
 }
 
 func NewComponent(fp global.Filepath) *Component {
@@ -65,7 +78,17 @@ func (me *Component) GetWebsite() global.Url {
 	panic(fmt.Sprintf(panicMsg, "GetWebsite"))
 }
 
-func (me *Component) Read(component Componenter) (sts Status) {
+func (me *Component) GetType() ComponenterType {
+	panic(fmt.Sprintf(panicMsg, "GetType"))
+}
+
+var headerFinder *regexp.Regexp
+
+func init() {
+	headerFinder = regexp.MustCompile(`(Plugin|Theme)\s+Name:`)
+}
+
+func (me *Component) ReadHeader(component Componenter) (sts Status) {
 	for range only.Once {
 		if me.Filepath == "" {
 			log.Fatalf("component filepath is empty")
@@ -87,8 +110,8 @@ func (me *Component) Read(component Componenter) (sts Status) {
 				SetWarning(true).
 				SetMessage("unable to read from '%s'", me.Filepath)
 		}
-		if !strings.Contains(string(b), "Plugin Name:") {
-			sts = status.Warn("file '%s' is not a plugin header file", me.Filepath)
+		if !headerFinder.Match(b) {
+			sts = status.Warn("file '%s' is not a %s header file", me.Filepath, component.GetType())
 			break
 		}
 		// @TODO Replace these two lines with a regex

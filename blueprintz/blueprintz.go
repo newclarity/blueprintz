@@ -1,14 +1,14 @@
 package blueprintz
 
 import (
-	"blueprintz/agent"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
-	"blueprintz/only"
+	"blueprintz/recognize"
 	"fmt"
 	"github.com/Machiel/slugify"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
+	"github.com/gearboxworks/go-status/only"
 	"regexp"
 	"strings"
 )
@@ -17,16 +17,17 @@ var NilBlueprintz = (*Blueprintz)(nil)
 var _ jsonfile.Blueprinter = NilBlueprintz
 
 type Blueprintz struct {
-	Name       string
-	Desc       string
-	Type       global.BlueprintType
-	Local      global.Domain
-	Theme      global.ComponentName
-	Layout     *Layout
-	Themes     Themes
-	Plugins    Plugins
-	Meta       *Meta
-	couriermap agent.Map
+	Name          string
+	Desc          string
+	Type          global.BlueprintType
+	Local         global.Domain
+	Theme         global.ComponentName
+	Layout        *Layout
+	Core          *Core
+	Themes        Themes
+	Plugins       Plugins
+	Meta          *Meta
+	recognizermap recognize.Map
 }
 
 type Args Blueprintz
@@ -43,11 +44,27 @@ func NewBlueprintz(args ...*Args) *Blueprintz {
 	return blueprintz.Renew(&_args)
 }
 
+func NewBlueprintzFromJsonfile(jfbp *jsonfile.Blueprintz) *Blueprintz {
+	return NewBlueprintz(&Args{
+		Name:    jfbp.Name,
+		Desc:    jfbp.Desc,
+		Type:    jfbp.Type,
+		Local:   jfbp.Local,
+		Theme:   jfbp.Theme,
+		Core:    ConvertJsonfileCore(jfbp.Core),
+		Layout:  ConvertJsonfileLayout(jfbp.Layout),
+		Themes:  ConvertJsonfileThemes(jfbp.Themes),
+		Plugins: ConvertJsonfilePlugns(jfbp.Plugins),
+		Meta:    ConvertJsonfileMeta(),
+	})
+}
+
 var localDomainRegex *regexp.Regexp
 
 func init() {
 	localDomainRegex = regexp.MustCompile(`.local$`)
 }
+
 func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	*me = Blueprintz{}
 	var blueprintz *Blueprintz
@@ -56,7 +73,7 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	} else {
 		blueprintz = (*Blueprintz)(args[0])
 	}
-	blueprintz.couriermap = make(agent.Map, 0)
+	blueprintz.recognizermap = make(recognize.Map, 0)
 
 	if blueprintz.Name == "" {
 		blueprintz.Name = "Unnamed"
@@ -90,13 +107,20 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	if blueprintz.Plugins == nil {
 		blueprintz.Plugins = make(Plugins, 0)
 	}
-
 	return blueprintz
 }
 
 func (me *Blueprintz) Scandir() (sts Status) {
 	for range only.Once {
 		sts = me.Layout.ScanDir()
+		if is.Error(sts) {
+			break
+		}
+		sts = me.Core.Scandir(me.Layout.GetCorePath())
+		if is.Error(sts) {
+			break
+		}
+		sts = me.Themes.Scandir(me.Layout.GetThemesPath())
 		if is.Error(sts) {
 			break
 		}
@@ -124,16 +148,20 @@ func (me *Blueprintz) GetJsonLocal() global.Domain {
 	return me.Local
 }
 
+func (me *Blueprintz) GetJsonCore() *jsonfile.Core {
+	return jsonfile.NewCoreFromCoreer(me.Core)
+}
+
 func (me *Blueprintz) GetJsonTheme() global.ComponentName {
 	return me.Theme
 }
 
 func (me *Blueprintz) GetJsonLayout() *jsonfile.Layout {
-	return jsonfile.NewLayout(me.Layout)
+	return jsonfile.NewLayoutFromLayouter(me.Layout)
 }
 
 func (me *Blueprintz) GetJsonMeta() *jsonfile.Meta {
-	return jsonfile.NewMeta(me.Meta)
+	return jsonfile.NewMetaFromMetaer(me.Meta)
 }
 
 func (me *Blueprintz) GetJsonThemes() jsonfile.Themes {
@@ -152,36 +180,36 @@ func (me *Blueprintz) GetJsonPlugins() jsonfile.Plugins {
 	return plugins
 }
 
-func (me *Blueprintz) FindAgent(args *agent.Args) (courier agent.Agenter, sts Status) {
+func (me *Blueprintz) FindRecognizer(args *recognize.Args) (recognizer recognize.Recognizer, sts Status) {
 	for range only.Once {
-		for n, c := range me.couriermap {
+		for n, c := range me.recognizermap {
 			if !c.Match(args) {
 				continue
 			}
-			sts = status.Success("found agent '%s'", n)
-			courier = c
+			sts = status.Success("found recognizer '%s'", n)
+			recognizer = c
 			break
 		}
 	}
-	if courier == nil {
+	if recognizer == nil {
 		sts = status.Fail().
-			SetMessage("agent not found for '%s'", args.String())
+			SetMessage("recognizer not found for '%s'", args.String())
 	}
-	return courier, sts
+	return recognizer, sts
 }
 
-func (me *Blueprintz) GetAgent(name global.AgentName) agent.Agenter {
-	c, _ := me.couriermap[name]
+func (me *Blueprintz) GetRecognizer(name global.RecognizerName) recognize.Recognizer {
+	c, _ := me.recognizermap[name]
 	return c
 }
 
-func (me *Blueprintz) RegisterAgent(name global.AgentName, c agent.Agenter) {
-	me.couriermap[name] = c
+func (me *Blueprintz) RegisterRecognizer(name global.RecognizerName, c recognize.Recognizer) {
+	me.recognizermap[name] = c
 }
 
 func (me *Blueprintz) GetComponentSourceUrl(comp *Component) (url global.Url, sts Status) {
 	for range only.Once {
-		c, sts := me.FindAgent(&agent.Args{
+		c, sts := me.FindRecognizer(&recognize.Args{
 			Website: comp.GetWebsite(),
 		})
 		if is.Error(sts) {
