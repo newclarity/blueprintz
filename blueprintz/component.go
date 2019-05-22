@@ -17,6 +17,8 @@ type Component struct {
 	SourceUrl  global.Url
 	Subdir     global.Slug
 	HeaderFile global.Dir
+	AuthorType global.AuthorType
+	Maintainer global.Maintainer
 }
 
 var panicMsg = "Cannot %s() of blueprintz.Component; use blueprintz.Plugin or blueprintz.Theme instead."
@@ -39,4 +41,8 @@ func (me *Component) GetWebsite() global.Url {
 
 func (me *Component) GetSlug() global.Slug {
 	return me.Subdir
+}
+
+func (me *Component) GetAuthorType() global.AuthorType {
+	return me.AuthorType
 }

@@ -18,3 +18,7 @@ type Entry = string
 type FileHeader = string
 
 type RecognizerName = string
+
+type AuthorType string
+
+type Maintainer string

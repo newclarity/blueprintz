@@ -44,6 +44,20 @@ func NewBlueprintz(args ...*Args) *Blueprintz {
 	return blueprintz.Renew(&_args)
 }
 
+func (me *Blueprintz) Research() {
+
+	me.Core.Research()
+
+	for _, p := range me.Plugins {
+		p.Research()
+	}
+
+	for _, t := range me.Themes {
+		t.Research()
+	}
+
+}
+
 func NewBlueprintzFromJsonfile(jfbp *jsonfile.Blueprintz) *Blueprintz {
 	return NewBlueprintz(&Args{
 		Name:    jfbp.Name,
@@ -54,7 +68,7 @@ func NewBlueprintzFromJsonfile(jfbp *jsonfile.Blueprintz) *Blueprintz {
 		Core:    ConvertJsonfileCore(jfbp.Core),
 		Layout:  ConvertJsonfileLayout(jfbp.Layout),
 		Themes:  ConvertJsonfileThemes(jfbp.Themes),
-		Plugins: ConvertJsonfilePlugns(jfbp.Plugins),
+		Plugins: ConvertJsonfilePlugins(jfbp.Plugins),
 		Meta:    ConvertJsonfileMeta(),
 	})
 }

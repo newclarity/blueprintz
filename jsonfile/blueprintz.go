@@ -37,6 +37,12 @@ type Blueprintz struct {
 	Plugins Plugins              `json:"plugins"`
 }
 
+func LoadJsonFile() (jbp *Blueprintz, sts Status) {
+	jbp = &Blueprintz{}
+	sts = jbp.LoadFile()
+	return jbp, sts
+}
+
 func NewBlueprintz() *Blueprintz {
 	b := Blueprintz{}
 	b.Renew()

@@ -31,6 +31,10 @@ func ConvertJsonfileCore(jfc *jsonfile.Core) *Core {
 	}
 }
 
+func (me *Core) Research() {
+	noop()
+}
+
 func (me *Core) GetVersion() global.Version {
 	return me.Version
 }

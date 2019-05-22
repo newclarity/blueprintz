@@ -1,6 +1,12 @@
 package global
 
+const JsonSchemaCreatedBy = "Blueprintz Composer for WordPress"
+const AboutBlueprintzUrl = "https://blueprintz.dev"
+const JsonSchemaVersion = "0.1.0"
+
 const BlueprintzFile = "blueprintz.json"
+
+const UnknownVersion Version = "?.?.?"
 
 const (
 	WebsiteBlueprint BlueprintType = "website"
@@ -12,11 +18,21 @@ const (
 )
 
 const (
-	WordPressOrgRecognizer RecognizerName = "wordpress.org"
+	SiteBuilderAuthor AuthorType = "sitebuilder"
+	OpenSourceAuthor  AuthorType = "opensource"
+	CommercialAuthor  AuthorType = "commercial"
+	ContractorAuthor  AuthorType = "contractor"
+	OtherAuthorType   AuthorType = "other"
 )
 
-const UnknownVersion Version = "?.?.?"
+const (
+	ProjectOwner      Maintainer = "owner"
+	OwnerEmployees    Maintainer = "employees"
+	SoftwareVendor    Maintainer = "vendor"
+	OpenSourceProject Maintainer = "opensource"
+	OtherMaintainer   Maintainer = "other"
+)
 
-const JsonSchemaCreatedBy = "Blueprintz Composer for WordPress"
-const AboutBlueprintzUrl = "https://blueprintz.dev"
-const JsonSchemaVersion = "0.1.0"
+const (
+	WordPressOrgRecognizer RecognizerName = "wordpress.org"
+)

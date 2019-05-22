@@ -17,14 +17,6 @@ var _ recognize.Componenter = NilPlugin
 type PluginMap map[global.Slug]*Plugin
 type Plugins []*Plugin
 
-func ConvertJsonfilePlugns(jfps jsonfile.Plugins) (ps Plugins) {
-	ps = make(Plugins, len(jfps))
-	for i, p := range jfps {
-		ps[i] = ConvertJsonfilePlugin(p)
-	}
-	return ps
-}
-
 type Plugin struct {
 	PluginName global.ComponentName
 	PluginURI  global.Url
@@ -40,6 +32,10 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 			Subdir:  fh.GetSubdir(),
 		},
 	}
+}
+
+func (me *Plugin) Research() {
+	noop()
 }
 
 func (me *Plugin) GetName() global.ComponentName {
@@ -78,6 +74,14 @@ func (me *Plugins) GetFileHeadersComponenterMap() ComponenterMap {
 		cm[t.Subdir] = fileheaders.NewPlugin(t.Subdir)
 	}
 	return cm
+}
+
+func ConvertJsonfilePlugins(jfps jsonfile.Plugins) (ps Plugins) {
+	ps = make(Plugins, len(jfps))
+	for i, p := range jfps {
+		ps[i] = ConvertJsonfilePlugin(p)
+	}
+	return ps
 }
 
 func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) (ts *Plugin) {

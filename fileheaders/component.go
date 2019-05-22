@@ -91,7 +91,7 @@ func (me *Component) GetType() ComponenterType {
 	panic(fmt.Sprintf(panicMsg, "GetType"))
 }
 
-func (me *Component) Append(Componenter) {
+func (me *Component) GetAuthorType() global.AuthorType {
 	panic("implement me")
 }
 

@@ -9,21 +9,24 @@ type Componenter interface {
 	GetVersion() global.Version
 	GetSubdir() global.Slug
 	GetWebsite() global.Url
+	GetAuthorType() global.AuthorType
 }
 
 type Component struct {
-	Name      global.ComponentName `json:"name"`
-	Website   global.Url           `json:"website"`
-	Version   global.Version       `json:"version"`
-	Subdir    global.Slug          `json:"subdir"`
-	SourceUrl global.Url           `json:"source,omitempty"`
+	Name       global.ComponentName `json:"name"`
+	Website    global.Url           `json:"website"`
+	Version    global.Version       `json:"version"`
+	Subdir     global.Slug          `json:"subdir"`
+	SourceUrl  global.Url           `json:"source,omitempty"`
+	AuthorType global.AuthorType    `json:"source,omitempty"`
 }
 
 func NewComponent(n global.ComponentName, c Componenter) *Component {
 	return &Component{
-		Name:    n,
-		Version: c.GetVersion(),
-		Subdir:  c.GetSubdir(),
-		Website: c.GetWebsite(),
+		Name:       n,
+		Version:    c.GetVersion(),
+		Subdir:     c.GetSubdir(),
+		Website:    c.GetWebsite(),
+		AuthorType: c.GetAuthorType(),
 	}
 }

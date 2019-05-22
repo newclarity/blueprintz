@@ -55,6 +55,9 @@ func ConvertJsonfileTheme(jft *jsonfile.Theme) (ts *Theme) {
 	}
 }
 
+func (me *Theme) Research() {
+	noop()
+}
 func (me *Theme) GetName() global.ComponentName {
 	return me.ThemeName
 }

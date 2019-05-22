@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
 //
@@ -42,41 +40,9 @@ func Compose() (sts Status) {
 			break
 		}
 
-		r, err := git.PlainClone("/tmp/go-status",
-			false,
-			&git.CloneOptions{
-				URL:        "https://github.com/gearboxworks/go-status.git",
-				RemoteName: "origin",
-				Progress:   &Out{},
-			},
-		)
-		if err != nil {
-			panic(err)
-		}
-		var cos object.CommitIter
-		cos, err = r.CommitObjects()
-		if err != nil {
-			break
-		}
-		for {
-			var co *object.Commit
-			co, err = cos.Next()
-			if err != nil {
-				break
-			}
-			fmt.Println(co.Message)
-		}
-
 		fmt.Printf("WordPress project '%s' composed.",
 			jsonfile.GetBasefile(),
 		)
 	}
 	return sts
-}
-
-type Out struct{}
-
-func (me *Out) Write(p []byte) (n int, err error) {
-	fmt.Println(string(p))
-	return len(p), nil
 }
