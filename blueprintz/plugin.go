@@ -5,22 +5,16 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
-	"blueprintz/util"
-	"fmt"
 	"github.com/gearboxworks/go-status"
-	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
+	"sort"
 )
 
 var NilPlugin = (*Plugin)(nil)
 var _ jsonfile.Componenter = NilPlugin
 var _ recognize.Componenter = NilPlugin
 
-type PluginMap map[global.ComponentName]*Plugin
+type PluginMap map[global.Slug]*Plugin
 type Plugins []*Plugin
 
 func ConvertJsonfilePlugns(jfps jsonfile.Plugins) (ps Plugins) {
@@ -58,43 +52,32 @@ func (me *Plugin) GetWebsite() global.Url {
 
 func (me *Plugins) Scandir(path global.Path) (sts Status) {
 	for range only.Once {
-		dp := util.ToAbsoluteDir(path)
-		files, err := ioutil.ReadDir(dp)
-		if err != nil {
-			sts = status.Wrap(err).SetMessage("unable to read directory '%s'", dp)
-			break
-		}
-		for _, f := range files {
-			if f.Name()[0] == '.' {
-				// Ignore "hidden" plugins
-				continue
-			}
-			fp := fmt.Sprintf("%s%c%s", dp, os.PathSeparator, f.Name())
-			ctype := strings.TrimRight(filepath.Base(path), "s")
-			c := fileheaders.MakeComponenter(ctype, fp)
-			if f.IsDir() {
-				c, sts = fileheaders.FindHeaderFile(c, fp, ".php")
-			} else {
-				c, sts = fileheaders.ReadFileHeaders(c)
-			}
-			if is.Error(sts) {
-				break
-			}
-			if c == nil {
-				continue
-			}
+		var cs Componenters
+		// Scan dir returning only plugins not in GetFileHeadersComponenterMap()
+		cs, sts = fileheaders.Scandir(
+			path,
+			me.GetFileHeadersComponenterMap(),
+		)
+		for _, c := range cs {
 			p, ok := c.(*fileheaders.Plugin)
 			if !ok {
-				sts = status.Fail().SetMessage("Type '%T' does not implement '*fileheaders.Plugin'", c)
-				break
-			}
-			if p == nil {
-				continue
+				sts = status.OurBad("type '%T' does not implement *fileheaders.Theme", c)
 			}
 			*me = append(*me, NewPlugin(p))
 		}
+		sort.Slice(*me, func(i, j int) bool {
+			return (*me)[i].GetName() < (*me)[j].GetName()
+		})
 	}
 	return sts
+}
+
+func (me *Plugins) GetFileHeadersComponenterMap() ComponenterMap {
+	cm := make(ComponenterMap, 0)
+	for _, t := range *me {
+		cm[t.Subdir] = fileheaders.NewPlugin(t.Subdir)
+	}
+	return cm
 }
 
 func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) (ts *Plugin) {

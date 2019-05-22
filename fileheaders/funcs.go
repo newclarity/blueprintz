@@ -82,3 +82,43 @@ func FindHeaderFile(component Componenter, dp global.Dir, ext string) (c Compone
 	}
 	return c, sts
 }
+
+func Scandir(path global.Path, cm ComponenterMap) (cs Componenters, sts Status) {
+	for range only.Once {
+		dp := util.ToAbsoluteDir(path)
+		files, err := ioutil.ReadDir(dp)
+		if err != nil {
+			sts = status.Wrap(err).SetMessage("unable to read directory '%s'", dp)
+			break
+		}
+		cs = make(Componenters, 0)
+		for _, f := range files {
+			n := f.Name()
+			if n[0] == '.' {
+				// Ignore "hidden" plugins and themes
+				continue
+			}
+			if _, ok := cm[n]; ok {
+				// Tell them we already got a one
+				continue
+			}
+			fp := fmt.Sprintf("%s%c%s", dp, os.PathSeparator, n)
+			ctype := strings.TrimRight(filepath.Base(path), "s")
+			c := MakeComponenter(ctype, fp)
+			if f.IsDir() {
+				c, sts = FindHeaderFile(c, fp, ".css")
+			} else {
+				c, sts = ReadFileHeaders(c)
+			}
+			if is.Error(sts) {
+				break
+			}
+			if c == nil {
+				// File was not a valid Componenter
+				continue
+			}
+			cs = append(cs, c)
+		}
+	}
+	return cs, sts
+}

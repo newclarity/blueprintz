@@ -29,7 +29,7 @@ import (
 
 var InitCmd = &cobra.Command{
 	Use: "init",
-	Short: fmt.Sprintf("Initialize a %s file from an existing WordPress install",
+	Short: fmt.Sprintf("Initialize a '%s' file in the current directory",
 		filepath.Base(jsonfile.GetFilepath()),
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {

@@ -27,7 +27,7 @@ var NoCache bool
 
 var RootCmd = &cobra.Command{
 	Use:   "blueprintz",
-	Short: "Manage and use blueprintz for your WordPress websites, plugins and themes.",
+	Short: "Manage and use blueprints for your WordPress websites, plugins and themes.",
 }
 
 func init() {

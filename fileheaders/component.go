@@ -21,9 +21,14 @@ var _ jsonfile.Componenter = NilComponent
 
 type HeaderValueFieldMap = map[global.FileHeader]*reflect.Value
 
+type ComponenterMap map[global.Slug]Componenter
+
+type Componenters []Componenter
+
 type Componenter interface {
 	GetName() global.ComponentName
 	GetType() ComponenterType
+	GetSlug() global.Slug
 	SetFilepath(global.Filepath)
 	GetFilepath() global.Filepath
 	ReadHeader(Componenter) Status
@@ -40,6 +45,10 @@ type Component struct {
 	LicenseURI  global.Url     `fileheader:"License URI"`
 	TextDomain  string         `fileheader:"Text Domain"`
 	DomainPath  string         `fileheader:"Domain Path"`
+}
+
+func (me *Component) GetSlug() global.Slug {
+	return filepath.Base(me.Filepath)
 }
 
 func (me *Component) GetFilepath() global.Filepath {
@@ -80,6 +89,10 @@ func (me *Component) GetWebsite() global.Url {
 
 func (me *Component) GetType() ComponenterType {
 	panic(fmt.Sprintf(panicMsg, "GetType"))
+}
+
+func (me *Component) Append(Componenter) {
+	panic("implement me")
 }
 
 var headerFinder *regexp.Regexp

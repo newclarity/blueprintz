@@ -95,6 +95,9 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	if blueprintz.Theme == "" {
 		blueprintz.Theme = "default"
 	}
+	if blueprintz.Core == nil {
+		blueprintz.Core = NewCore()
+	}
 	if blueprintz.Meta == nil {
 		blueprintz.Meta = NewMeta()
 	}

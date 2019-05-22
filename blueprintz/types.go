@@ -1,7 +1,13 @@
 package blueprintz
 
-import "github.com/gearboxworks/go-status"
+import (
+	"blueprintz/fileheaders"
+	"github.com/gearboxworks/go-status"
+)
 
 type (
 	Status = status.Status
+
+	Componenters   = fileheaders.Componenters
+	ComponenterMap = fileheaders.ComponenterMap
 )

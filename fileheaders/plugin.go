@@ -9,6 +9,7 @@ var NilPlugin = (*Plugin)(nil)
 var _ Componenter = NilPlugin
 var _ jsonfile.Componenter = NilPlugin
 
+type Plugins []*Plugin
 type Plugin struct {
 	PluginName global.ComponentName `fileheader:"Plugin Name"`
 	PluginURI  global.Url           `fileheader:"Plugin URI"`

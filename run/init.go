@@ -5,9 +5,7 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
-	"blueprintz/util"
 	"fmt"
-	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
 )
@@ -34,12 +32,12 @@ import (
 func Init() (sts Status) {
 
 	for range only.Once {
-		if util.FileExists(jsonfile.GetFilepath()) {
-			sts = status.YourBad("The file '%s' already exists; aborting.",
-				jsonfile.GetBasefile(),
-			)
+
+		sts = EnsureBlueprintJsonDoesNotExist()
+		if is.Error(sts) {
 			break
 		}
+
 		bpz := blueprintz.NewBlueprintz(&blueprintz.Args{
 			Name: jsonfile.GetBasefile(),
 		})

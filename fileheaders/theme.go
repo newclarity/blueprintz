@@ -9,6 +9,7 @@ var NilTheme = (*Theme)(nil)
 var _ Componenter = NilTheme
 var _ jsonfile.Componenter = NilTheme
 
+type Themes []*Theme
 type Theme struct {
 	ThemeName string     `fileheader:"Theme Name"`
 	ThemeURI  global.Url `fileheader:"Theme URI"`

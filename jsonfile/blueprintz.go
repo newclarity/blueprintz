@@ -93,6 +93,9 @@ func (me *Blueprintz) LoadFile() (sts Status) {
 			sts = status.Wrap(err).SetMessage("unable to unmarshal '%s'", fp)
 			break
 		}
+		me.Plugins.Dedup()
+		me.Themes.Dedup()
+
 	}
 	return sts
 }

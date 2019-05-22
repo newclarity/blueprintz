@@ -5,22 +5,16 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
-	"blueprintz/util"
-	"fmt"
 	"github.com/gearboxworks/go-status"
-	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
+	"sort"
 )
 
 var NilTheme = (*Theme)(nil)
 var _ jsonfile.Componenter = NilTheme
 var _ recognize.Componenter = NilTheme
 
-type ThemeMap map[global.ComponentName]*Theme
+type ThemeMap map[global.Slug]*Theme
 type Themes []*Theme
 
 type Theme struct {
@@ -71,41 +65,30 @@ func (me *Theme) GetWebsite() global.Url {
 
 func (me *Themes) Scandir(path global.Path) (sts Status) {
 	for range only.Once {
-		dp := util.ToAbsoluteDir(path)
-		files, err := ioutil.ReadDir(dp)
-		if err != nil {
-			sts = status.Wrap(err).SetMessage("unable to read directory '%s'", dp)
-			break
-		}
-		for _, f := range files {
-			if f.Name()[0] == '.' {
-				// Ignore "hidden" themes
-				continue
-			}
-			fp := fmt.Sprintf("%s%c%s", dp, os.PathSeparator, f.Name())
-			ctype := strings.TrimRight(filepath.Base(path), "s")
-			c := fileheaders.MakeComponenter(ctype, fp)
-			if f.IsDir() {
-				c, sts = fileheaders.FindHeaderFile(c, fp, ".css")
-			} else {
-				c, sts = fileheaders.ReadFileHeaders(c)
-			}
-			if is.Error(sts) {
-				break
-			}
-			if c == nil {
-				continue
-			}
+		var cs Componenters
+		// Scan dir returning only themes not in GetFileHeadersComponenterMap()
+		cs, sts = fileheaders.Scandir(
+			path,
+			me.GetFileHeadersComponenterMap(),
+		)
+		for _, c := range cs {
 			t, ok := c.(*fileheaders.Theme)
 			if !ok {
-				sts = status.Fail().SetMessage("Type '%T' does not implement '*fileheaders.Theme'", c)
-				break
-			}
-			if t == nil {
-				continue
+				sts = status.OurBad("type '%T' does not implement *fileheaders.Theme", c)
 			}
 			*me = append(*me, NewTheme(t))
 		}
+		sort.Slice(*me, func(i, j int) bool {
+			return (*me)[i].GetName() < (*me)[j].GetName()
+		})
 	}
 	return sts
+}
+
+func (me *Themes) GetFileHeadersComponenterMap() ComponenterMap {
+	cm := make(ComponenterMap, 0)
+	for _, t := range *me {
+		cm[t.Subdir] = fileheaders.NewTheme(t.Subdir)
+	}
+	return cm
 }
