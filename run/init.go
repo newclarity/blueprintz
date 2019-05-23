@@ -5,9 +5,11 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
+	"blueprintz/util"
 	"fmt"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
+	"path/filepath"
 )
 
 //
@@ -39,7 +41,7 @@ func Init() (sts Status) {
 		}
 
 		bpz := blueprintz.NewBlueprintz(&blueprintz.Args{
-			Name: jsonfile.GetBasefile(),
+			Name: filepath.Base(util.GetCurrentDir()),
 		})
 		bpz.RegisterRecognizer(
 			global.WordPressOrgRecognizer,
