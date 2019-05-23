@@ -5,6 +5,7 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
+	"fmt"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/only"
 	"sort"
@@ -34,10 +35,30 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 	}
 }
 
-func (me *Plugin) Research() {
-	noop()
+func (me *Plugin) Research(rm recognize.Map) {
+	for _, r := range rm {
+		if !me.Recognizes(r) {
+			continue
+		}
+		fmt.Printf("it recognizes %s\n", me.GetType())
+	}
 }
 
+func (me *Plugin) Recognizes(r recognize.Recognizer) (ok bool) {
+	cts := r.Recognizes()
+	for _, ct := range cts {
+		if ct != me.GetType() {
+			continue
+		}
+		ok = true
+		break
+	}
+	return ok
+}
+
+func (me *Plugin) GetType() global.ComponentType {
+	return global.PluginComponent
+}
 func (me *Plugin) GetName() global.ComponentName {
 	return me.PluginName
 }

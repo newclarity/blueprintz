@@ -1,7 +1,12 @@
 package main
 
 import (
+	"blueprintz/blueprintz"
 	"blueprintz/cmd"
+	"blueprintz/global"
+	"blueprintz/recognize"
+	"blueprintz/util"
+	"path/filepath"
 )
 
 //
@@ -27,6 +32,13 @@ import (
 //
 
 func main() {
+	blueprintz.Instance = blueprintz.NewBlueprintz(&blueprintz.Args{
+		Name: filepath.Base(util.GetCurrentDir()),
+	})
+	blueprintz.Instance.RegisterRecognizer(
+		global.WordPressOrgRecognizer,
+		recognize.NewWordPressOrg(),
+	)
 	_ = cmd.RootCmd.Execute()
 	//sts,ok := err.(status.Status)
 	//if !ok {

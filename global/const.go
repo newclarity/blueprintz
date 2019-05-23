@@ -9,6 +9,11 @@ const BlueprintzFile = "blueprintz.json"
 const UnknownVersion Version = "?.?.?"
 
 const (
+	PluginComponent ComponentType = "plugin"
+	ThemeComponent  ComponentType = "theme"
+)
+
+const (
 	WebsiteBlueprint BlueprintType = "website"
 	ThemeBlueprint   BlueprintType = "theme"
 	PluginBlueprint  BlueprintType = "plugin"

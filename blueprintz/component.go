@@ -21,7 +21,11 @@ type Component struct {
 	Maintainer global.Maintainer
 }
 
-var panicMsg = "Cannot %s() of blueprintz.Component; use blueprintz.Plugin or blueprintz.Theme instead."
+var panicMsg = "Cannot call %s() of blueprintz.Component; use blueprintz.Plugin or blueprintz.Theme instead."
+
+func (me *Component) GetType() global.ComponentType {
+	panic(fmt.Sprintf(panicMsg, "GetType"))
+}
 
 func (me *Component) GetName() global.ComponentName {
 	panic(fmt.Sprintf(panicMsg, "GetName"))

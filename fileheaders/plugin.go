@@ -25,8 +25,8 @@ func NewPlugin(fp global.Filepath) *Plugin {
 	}
 }
 
-func (me *Plugin) GetType() ComponenterType {
-	return PluginComponenter
+func (me *Plugin) GetType() global.ComponentType {
+	return global.PluginComponent
 }
 
 func (me *Plugin) GetHeaderValueFieldMap(...Componenter) HeaderValueFieldMap {

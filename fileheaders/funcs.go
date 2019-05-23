@@ -17,9 +17,9 @@ func noop(i ...interface{}) {}
 
 func MakeComponenter(typ string, fp global.Filepath) (c Componenter) {
 	switch typ {
-	case PluginComponenter:
+	case global.PluginComponent:
 		c = NewPlugin(fp)
-	case ThemeComponenter:
+	case global.ThemeComponent:
 		c = NewTheme(fp)
 	default:
 		panic(fmt.Sprintf("Invalid Componenter type '%s'", typ))

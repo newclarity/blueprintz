@@ -17,6 +17,13 @@ var _ Recognizer = NilWordPressOrg
 type WordPressOrg struct {
 }
 
+func (me *WordPressOrg) Recognizes() (cts global.ComponentTypes) {
+	return global.ComponentTypes{
+		global.PluginComponent,
+		global.ThemeComponent,
+	}
+}
+
 func NewWordPressOrg() *WordPressOrg {
 	return &WordPressOrg{}
 }

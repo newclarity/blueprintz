@@ -2,6 +2,9 @@ package global
 
 type BlueprintType = string
 type ComponentName = string
+type BoolComponentTypeMap = map[ComponentType]bool
+type ComponentTypes = []ComponentType
+type ComponentType = string
 
 type Url = string
 type Slug = string

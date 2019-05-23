@@ -34,30 +34,14 @@ func NewTheme(fh *fileheaders.Theme) *Theme {
 	}
 }
 
-func ConvertJsonfileThemes(jfts jsonfile.Themes) (ts Themes) {
-	ts = make(Themes, len(jfts))
-	for i, t := range jfts {
-		ts[i] = ConvertJsonfileTheme(t)
-	}
-	return ts
-}
-
-func ConvertJsonfileTheme(jft *jsonfile.Theme) (ts *Theme) {
-	return &Theme{
-		ThemeName: jft.Name,
-		ThemeURI:  jft.Website,
-		Component: &Component{
-			Version:   jft.Version,
-			Subdir:    jft.Subdir,
-			SourceUrl: jft.SourceUrl,
-			Website:   jft.Website,
-		},
-	}
-}
-
-func (me *Theme) Research() {
+func (me *Theme) Research(rm recognize.Map) {
 	noop()
 }
+
+func (me *Theme) GetType() global.ComponentType {
+	return global.ThemeComponent
+}
+
 func (me *Theme) GetName() global.ComponentName {
 	return me.ThemeName
 }
@@ -94,4 +78,24 @@ func (me *Themes) GetFileHeadersComponenterMap() ComponenterMap {
 		cm[t.Subdir] = fileheaders.NewTheme(t.Subdir)
 	}
 	return cm
+}
+func ConvertJsonfileThemes(jfts jsonfile.Themes) (ts Themes) {
+	ts = make(Themes, len(jfts))
+	for i, t := range jfts {
+		ts[i] = ConvertJsonfileTheme(t)
+	}
+	return ts
+}
+
+func ConvertJsonfileTheme(jft *jsonfile.Theme) (ts *Theme) {
+	return &Theme{
+		ThemeName: jft.Name,
+		ThemeURI:  jft.Website,
+		Component: &Component{
+			Version:   jft.Version,
+			Subdir:    jft.Subdir,
+			SourceUrl: jft.SourceUrl,
+			Website:   jft.Website,
+		},
+	}
 }

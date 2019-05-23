@@ -27,7 +27,7 @@ type Componenters []Componenter
 
 type Componenter interface {
 	GetName() global.ComponentName
-	GetType() ComponenterType
+	GetType() global.ComponentType
 	GetSlug() global.Slug
 	SetFilepath(global.Filepath)
 	GetFilepath() global.Filepath
@@ -87,7 +87,7 @@ func (me *Component) GetWebsite() global.Url {
 	panic(fmt.Sprintf(panicMsg, "GetWebsite"))
 }
 
-func (me *Component) GetType() ComponenterType {
+func (me *Component) GetType() global.ComponentType {
 	panic(fmt.Sprintf(panicMsg, "GetType"))
 }
 

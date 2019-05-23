@@ -13,6 +13,7 @@ import (
 	"strings"
 )
 
+var Instance *Blueprintz
 var NilBlueprintz = (*Blueprintz)(nil)
 var _ jsonfile.Blueprinter = NilBlueprintz
 
@@ -40,8 +41,8 @@ func NewBlueprintz(args ...*Args) *Blueprintz {
 		_args = *args[0]
 	}
 	blueprintz := &Blueprintz{}
-
-	return blueprintz.Renew(&_args)
+	blueprintz.Renew(&_args)
+	return blueprintz
 }
 
 func (me *Blueprintz) Research() {
@@ -49,28 +50,47 @@ func (me *Blueprintz) Research() {
 	me.Core.Research()
 
 	for _, p := range me.Plugins {
-		p.Research()
+		p.Research(me.GetRecognizerMap())
 	}
 
 	for _, t := range me.Themes {
-		t.Research()
+		t.Research(me.GetRecognizerMap())
 	}
 
 }
 
 func NewBlueprintzFromJsonfile(jfbp *jsonfile.Blueprintz) *Blueprintz {
-	return NewBlueprintz(&Args{
-		Name:    jfbp.Name,
-		Desc:    jfbp.Desc,
-		Type:    jfbp.Type,
-		Local:   jfbp.Local,
-		Theme:   jfbp.Theme,
-		Core:    ConvertJsonfileCore(jfbp.Core),
-		Layout:  ConvertJsonfileLayout(jfbp.Layout),
-		Themes:  ConvertJsonfileThemes(jfbp.Themes),
-		Plugins: ConvertJsonfilePlugins(jfbp.Plugins),
-		Meta:    ConvertJsonfileMeta(),
+	bpz := Blueprintz{}
+	bpz.RenewFromJsonfile(jfbp)
+	return &bpz
+}
+
+func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
+	me.Renew(&Args{
+		Name:          jfbp.Name,
+		Desc:          jfbp.Desc,
+		Type:          jfbp.Type,
+		Local:         jfbp.Local,
+		Theme:         jfbp.Theme,
+		Core:          ConvertJsonfileCore(jfbp.Core),
+		Layout:        ConvertJsonfileLayout(jfbp.Layout),
+		Themes:        ConvertJsonfileThemes(jfbp.Themes),
+		Plugins:       ConvertJsonfilePlugins(jfbp.Plugins),
+		Meta:          ConvertJsonfileMeta(),
+		recognizermap: me.GetRecognizerMap(),
 	})
+}
+
+func (me *Blueprintz) LoadJsonfile() (sts Status) {
+	for range only.Once {
+		var jfbp *jsonfile.Blueprintz
+		jfbp, sts = jsonfile.LoadJsonFile()
+		if is.Error(sts) {
+			break
+		}
+		me.RenewFromJsonfile(jfbp)
+	}
+	return sts
 }
 
 var localDomainRegex *regexp.Regexp
@@ -80,14 +100,12 @@ func init() {
 }
 
 func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
-	*me = Blueprintz{}
 	var blueprintz *Blueprintz
 	if len(args) == 0 {
 		blueprintz = &Blueprintz{}
 	} else {
 		blueprintz = (*Blueprintz)(args[0])
 	}
-	blueprintz.recognizermap = make(recognize.Map, 0)
 
 	if blueprintz.Name == "" {
 		blueprintz.Name = "Unnamed"
@@ -124,6 +142,10 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	if blueprintz.Plugins == nil {
 		blueprintz.Plugins = make(Plugins, 0)
 	}
+	if blueprintz.recognizermap == nil {
+		blueprintz.recognizermap = make(recognize.Map, 0)
+	}
+	*me = *blueprintz
 	return blueprintz
 }
 
@@ -218,6 +240,10 @@ func (me *Blueprintz) FindRecognizer(args *recognize.Args) (recognizer recognize
 func (me *Blueprintz) GetRecognizer(name global.RecognizerName) recognize.Recognizer {
 	c, _ := me.recognizermap[name]
 	return c
+}
+
+func (me *Blueprintz) GetRecognizerMap() recognize.Map {
+	return me.recognizermap
 }
 
 func (me *Blueprintz) RegisterRecognizer(name global.RecognizerName, c recognize.Recognizer) {

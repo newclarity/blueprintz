@@ -36,16 +36,16 @@ func Research() (sts Status) {
 			break
 		}
 
-		jbp, sts := jsonfile.LoadJsonFile()
+		bpz := blueprintz.Instance
+
+		sts = bpz.LoadJsonfile()
 		if is.Error(sts) {
 			break
 		}
 
-		bpz := blueprintz.NewBlueprintzFromJsonfile(jbp)
-
 		bpz.Research()
 
-		jbp = jsonfile.NewBlueprintzFromBlueprintz(bpz)
+		jbp := jsonfile.NewBlueprintzFromBlueprintz(bpz)
 		sts = jbp.WriteFile()
 		if is.Error(sts) {
 			break

@@ -9,6 +9,7 @@ type Map map[global.RecognizerName]Recognizer
 type List []Recognizer
 
 type Recognizer interface {
+	Recognizes() global.ComponentTypes
 	Match(*Args) bool
 	GetSourceUrl(Componenter) global.Url
 }
