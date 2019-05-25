@@ -23,6 +23,7 @@ type Blueprintz struct {
 	Type          global.BlueprintType
 	Local         global.Domain
 	Theme         global.ComponentName
+	Source        *Source
 	Layout        *Layout
 	Core          *Core
 	Themes        Themes
@@ -56,7 +57,6 @@ func (me *Blueprintz) Research() {
 	for _, t := range me.Themes {
 		t.Research(me.GetRecognizerMap())
 	}
-
 }
 
 func NewBlueprintzFromJsonfile(jfbp *jsonfile.Blueprintz) *Blueprintz {
@@ -74,6 +74,7 @@ func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
 		Theme:         jfbp.Theme,
 		Core:          ConvertJsonfileCore(jfbp.Core),
 		Layout:        ConvertJsonfileLayout(jfbp.Layout),
+		Source:        ConvertJsonfileSource(jfbp.Source),
 		Themes:        ConvertJsonfileThemes(jfbp.Themes),
 		Plugins:       ConvertJsonfilePlugins(jfbp.Plugins),
 		Meta:          ConvertJsonfileMeta(),
@@ -195,6 +196,10 @@ func (me *Blueprintz) GetJsonTheme() global.ComponentName {
 	return me.Theme
 }
 
+func (me *Blueprintz) GetJsonSource() *jsonfile.Source {
+	return jsonfile.NewSourceFromSourcer(me.Source)
+}
+
 func (me *Blueprintz) GetJsonLayout() *jsonfile.Layout {
 	return jsonfile.NewLayoutFromLayouter(me.Layout)
 }
@@ -219,20 +224,18 @@ func (me *Blueprintz) GetJsonPlugins() jsonfile.Plugins {
 	return plugins
 }
 
-func (me *Blueprintz) FindRecognizer(args *recognize.Args) (recognizer recognize.Recognizer, sts Status) {
-	for range only.Once {
-		for n, c := range me.recognizermap {
-			if !c.Match(args) {
-				continue
-			}
-			sts = status.Success("found recognizer '%s'", n)
-			recognizer = c
-			break
+func (me *Blueprintz) FindRecognizer(c recognize.Componenter) (recognizer recognize.Recognizer, sts Status) {
+	for n, r := range me.recognizermap {
+		if !r.Matches(c) {
+			continue
 		}
+		sts = status.Success("found recognizer '%s'", n)
+		recognizer = r
+		break
 	}
 	if recognizer == nil {
 		sts = status.Fail().
-			SetMessage("recognizer not found for '%s'", args.String())
+			SetMessage("recognizer not found for '%s'", c.GetWebsite())
 	}
 	return recognizer, sts
 }
@@ -248,17 +251,4 @@ func (me *Blueprintz) GetRecognizerMap() recognize.Map {
 
 func (me *Blueprintz) RegisterRecognizer(name global.RecognizerName, c recognize.Recognizer) {
 	me.recognizermap[name] = c
-}
-
-func (me *Blueprintz) GetComponentSourceUrl(comp *Component) (url global.Url, sts Status) {
-	for range only.Once {
-		c, sts := me.FindRecognizer(&recognize.Args{
-			Website: comp.GetWebsite(),
-		})
-		if is.Error(sts) {
-			break
-		}
-		url = c.GetSourceUrl(comp)
-	}
-	return url, sts
 }

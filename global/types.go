@@ -6,6 +6,7 @@ type BoolComponentTypeMap = map[ComponentType]bool
 type ComponentTypes = []ComponentType
 type ComponentType = string
 
+type Urls []Url
 type Url = string
 type Slug = string
 type Version = string
@@ -22,6 +23,6 @@ type FileHeader = string
 
 type RecognizerName = string
 
-type AuthorType string
+type Source string
 
 type Maintainer string

@@ -5,7 +5,6 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
-	"fmt"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/only"
 	"sort"
@@ -37,23 +36,17 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 
 func (me *Plugin) Research(rm recognize.Map) {
 	for _, r := range rm {
-		if !me.Recognizes(r) {
+		if !recognize.IsValidType(me, r) {
 			continue
 		}
-		fmt.Printf("it recognizes %s\n", me.GetType())
-	}
-}
-
-func (me *Plugin) Recognizes(r recognize.Recognizer) (ok bool) {
-	cts := r.Recognizes()
-	for _, ct := range cts {
-		if ct != me.GetType() {
+		if r.Matches(me) {
+			me.DownloadUrl = r.GetDownloadUrl(me)
+			me.Source = global.OpenSourceCode
 			continue
 		}
-		ok = true
-		break
+		me.DownloadUrl = ""
+		me.Source = ""
 	}
-	return ok
 }
 
 func (me *Plugin) GetType() global.ComponentType {
@@ -110,10 +103,10 @@ func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) (ts *Plugin) {
 		PluginName: jfp.Name,
 		PluginURI:  jfp.Website,
 		Component: &Component{
-			Version:   jfp.Version,
-			Subdir:    jfp.Subdir,
-			SourceUrl: jfp.SourceUrl,
-			Website:   jfp.Website,
+			Version:     jfp.Version,
+			Subdir:      jfp.Subdir,
+			DownloadUrl: jfp.DownloadUrl,
+			Website:     jfp.Website,
 		},
 	}
 }

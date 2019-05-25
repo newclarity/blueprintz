@@ -23,19 +23,9 @@ const (
 )
 
 const (
-	SiteBuilderAuthor AuthorType = "sitebuilder"
-	OpenSourceAuthor  AuthorType = "opensource"
-	CommercialAuthor  AuthorType = "commercial"
-	ContractorAuthor  AuthorType = "contractor"
-	OtherAuthorType   AuthorType = "other"
-)
-
-const (
-	ProjectOwner      Maintainer = "owner"
-	OwnerEmployees    Maintainer = "employees"
-	SoftwareVendor    Maintainer = "vendor"
-	OpenSourceProject Maintainer = "opensource"
-	OtherMaintainer   Maintainer = "other"
+	CustomCode     Source = "custom"
+	CommercialCode Source = "commercial"
+	OpenSourceCode Source = "opensource"
 )
 
 const (

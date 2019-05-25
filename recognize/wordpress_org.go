@@ -2,43 +2,60 @@ package recognize
 
 import (
 	"blueprintz/global"
+	"github.com/gearboxworks/go-status"
+	"github.com/gearboxworks/go-status/is"
+	"github.com/gearboxworks/go-status/only"
 	"regexp"
 	"strings"
 )
 
-const PluginUriPluginVar = "{plugin}"
-const PluginUriVersionVar = "{version}"
-const PluginDownloadUriTemplate = "https://downloads.wordpress.org/plugin/{plugin}.{version}.zip"
-const PluginRepoUrlRegex = "^https?://wordpress.org/plugins/([^/]+)/?"
-
 var NilWordPressOrg = (*WordPressOrg)(nil)
 var _ Recognizer = NilWordPressOrg
 
+const ComponentUriSlugVar = "{component}"
+const ComponentUriTypeVar = "{type}"
+const ComponentUriVersionVar = "{version}"
+const ComponentDownloadUriTemplate = "https://downloads.wordpress.org/{type}/{component}.{version}.zip"
+const ComponentRepoUrlRegex = "^https?://wordpress.org/{type}s/([^/]+)/?"
+
 type WordPressOrg struct {
+	R
 }
 
-func (me *WordPressOrg) Recognizes() (cts global.ComponentTypes) {
+func NewWordPressOrg() *WordPressOrg {
+	return &WordPressOrg{}
+}
+
+func (me *WordPressOrg) ValidTypes() (cts global.ComponentTypes) {
 	return global.ComponentTypes{
 		global.PluginComponent,
 		global.ThemeComponent,
 	}
 }
 
-func NewWordPressOrg() *WordPressOrg {
-	return &WordPressOrg{}
+func (me *WordPressOrg) Matches(c Componenter) (match bool) {
+	for range only.Once {
+		match = true
+		regex := strings.ReplaceAll(ComponentRepoUrlRegex, ComponentUriTypeVar, c.GetType())
+		re := regexp.MustCompile(regex)
+		if re.MatchString(c.GetWebsite()) {
+			break
+		}
+		sts := VerifyUrl(me.GetDownloadUrl(c))
+		status.Log(sts)
+		if is.Success(sts) {
+			break
+		}
+		match = false
+	}
+	return match
+
 }
-func (me *WordPressOrg) GetSourceUrl(c Componenter) (url global.Url) {
-	url = strings.Replace(PluginDownloadUriTemplate, PluginUriPluginVar, c.GetSlug(), -1)
-	url = strings.Replace(url, PluginUriVersionVar, c.GetVersion(), -1)
+
+func (me *WordPressOrg) GetDownloadUrl(c Componenter) (url global.Url) {
+	url = ComponentDownloadUriTemplate
+	url = strings.ReplaceAll(url, ComponentUriTypeVar, c.GetType())
+	url = strings.ReplaceAll(url, ComponentUriSlugVar, c.GetSlug())
+	url = strings.ReplaceAll(url, ComponentUriVersionVar, c.GetVersion())
 	return url
-}
-
-var re *regexp.Regexp
-
-func init() {
-	re = regexp.MustCompile(PluginRepoUrlRegex)
-}
-
-func (me *WordPressOrg) Match(args *Args) (match bool) {
-	return re.MatchString(args.Website)
 }

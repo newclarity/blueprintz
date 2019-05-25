@@ -12,13 +12,13 @@ var _ jsonfile.Componenter = NilComponent
 var _ recognize.Componenter = NilComponent
 
 type Component struct {
-	Version    global.Version
-	Website    global.Url
-	SourceUrl  global.Url
-	Subdir     global.Slug
-	HeaderFile global.Dir
-	AuthorType global.AuthorType
-	Maintainer global.Maintainer
+	Version     global.Version
+	Website     global.Url
+	Subdir      global.Slug
+	HeaderFile  global.Dir
+	Source      global.Source
+	Maintainer  global.Maintainer
+	DownloadUrl global.Url
 }
 
 var panicMsg = "Cannot call %s() of blueprintz.Component; use blueprintz.Plugin or blueprintz.Theme instead."
@@ -47,6 +47,14 @@ func (me *Component) GetSlug() global.Slug {
 	return me.Subdir
 }
 
-func (me *Component) GetAuthorType() global.AuthorType {
-	return me.AuthorType
+func (me *Component) GetSource() global.Source {
+	return me.Source
+}
+
+func (me *Component) GetDownloadUrl() global.Url {
+	return me.DownloadUrl
+}
+
+func (me *Component) GetMaintainer() global.Maintainer {
+	return me.Maintainer
 }

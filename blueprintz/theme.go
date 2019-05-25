@@ -92,10 +92,10 @@ func ConvertJsonfileTheme(jft *jsonfile.Theme) (ts *Theme) {
 		ThemeName: jft.Name,
 		ThemeURI:  jft.Website,
 		Component: &Component{
-			Version:   jft.Version,
-			Subdir:    jft.Subdir,
-			SourceUrl: jft.SourceUrl,
-			Website:   jft.Website,
+			Version:     jft.Version,
+			Subdir:      jft.Subdir,
+			DownloadUrl: jft.DownloadUrl,
+			Website:     jft.Website,
 		},
 	}
 }

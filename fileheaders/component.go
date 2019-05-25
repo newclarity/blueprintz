@@ -47,6 +47,10 @@ type Component struct {
 	DomainPath  string         `fileheader:"Domain Path"`
 }
 
+func (me *Component) GetMaintainer() global.Maintainer {
+	panic("implement me")
+}
+
 func (me *Component) GetSlug() global.Slug {
 	return filepath.Base(me.Filepath)
 }
@@ -75,8 +79,8 @@ func (me *Component) GetVersion() global.Version {
 	return me.Version
 }
 
-func (me *Component) GetSourceUrl() global.Url {
-	panic(fmt.Sprintf(panicMsg, "GetSourceUrl"))
+func (me *Component) GetDownloadUrl() global.Url {
+	panic(fmt.Sprintf(panicMsg, "GetDownloadUrl"))
 }
 
 func (me *Component) GetSubdir() global.Slug {
@@ -91,7 +95,7 @@ func (me *Component) GetType() global.ComponentType {
 	panic(fmt.Sprintf(panicMsg, "GetType"))
 }
 
-func (me *Component) GetAuthorType() global.AuthorType {
+func (me *Component) GetSource() global.Source {
 	panic("implement me")
 }
 
@@ -113,14 +117,14 @@ func (me *Component) ReadHeader(component Componenter) (sts Status) {
 		file, err := os.Open(me.Filepath)
 		if err != nil {
 			sts = status.Wrap(err).
-				SetWarning(true).
+				SetWarn(true).
 				SetMessage("unable to open '%s'", me.Filepath)
 		}
 		b := make([]byte, 8192) // Same size as WordPress uses
 		_, err = file.Read(b)
 		if err != nil {
 			sts = status.Wrap(err).
-				SetWarning(true).
+				SetWarn(true).
 				SetMessage("unable to read from '%s'", me.Filepath)
 		}
 		if !headerFinder.Match(b) {

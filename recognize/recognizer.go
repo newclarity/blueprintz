@@ -2,22 +2,21 @@ package recognize
 
 import (
 	"blueprintz/global"
-	"fmt"
 )
 
-type Map map[global.RecognizerName]Recognizer
-type List []Recognizer
+var NilR = (*R)(nil)
+var _ Recognizer = NilR
 
-type Recognizer interface {
-	Recognizes() global.ComponentTypes
-	Match(*Args) bool
-	GetSourceUrl(Componenter) global.Url
+type R struct{}
+
+func (me *R) ValidTypes() (cts global.ComponentTypes) {
+	return global.ComponentTypes{}
 }
 
-type Args struct {
-	Website global.Url
+func (me *R) Matches(c Componenter) (match bool) {
+	return false
 }
 
-func (me *Args) String() string {
-	return fmt.Sprintf("Website=[%s]", me.Website)
+func (me *R) GetDownloadUrl(c Componenter) (url global.Url) {
+	return ""
 }
