@@ -9,9 +9,9 @@ type Sourcer interface {
 }
 
 type Source struct {
-	Custom     global.Urls `json:"custom"`
-	Commercial global.Urls `json:"commercial"`
-	OpenSource global.Urls `json:"opensource"`
+	Custom     global.Urls `json:"custom,omitempty"`
+	Commercial global.Urls `json:"commercial,omitempty"`
+	OpenSource global.Urls `json:"opensource,omitempty"`
 }
 
 func NewSourceFromSourcer(sourcer Sourcer) *Source {
