@@ -16,7 +16,7 @@ type Component struct {
 	Website     global.Url
 	Subdir      global.Slug
 	HeaderFile  global.Dir
-	Source      global.Source
+	SourceType  global.SourceType
 	Maintainer  global.Maintainer
 	DownloadUrl global.Url
 }
@@ -47,8 +47,8 @@ func (me *Component) GetSlug() global.Slug {
 	return me.Subdir
 }
 
-func (me *Component) GetSource() global.Source {
-	return me.Source
+func (me *Component) GetSourceType() global.SourceType {
+	return me.SourceType
 }
 
 func (me *Component) GetDownloadUrl() global.Url {

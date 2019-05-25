@@ -9,8 +9,7 @@ type Componenter interface {
 	GetVersion() global.Version
 	GetSubdir() global.Slug
 	GetWebsite() global.Url
-	GetSource() global.Source
-	GetMaintainer() global.Maintainer
+	GetSourceType() global.SourceType
 	GetDownloadUrl() global.Url
 }
 
@@ -20,8 +19,7 @@ type Component struct {
 	Version     global.Version       `json:"version"`
 	Subdir      global.Slug          `json:"subdir"`
 	DownloadUrl global.Url           `json:"download,omitempty"`
-	Maintainer  global.Maintainer    `json:"maintainer,omitempty"`
-	Source      global.Source        `json:"author_type,omitempty"`
+	SourceType  global.SourceType    `json:"type,omitempty"`
 }
 
 func NewComponent(n global.ComponentName, c Componenter) *Component {
@@ -30,8 +28,7 @@ func NewComponent(n global.ComponentName, c Componenter) *Component {
 		Version:     c.GetVersion(),
 		Subdir:      c.GetSubdir(),
 		Website:     c.GetWebsite(),
-		Source:      c.GetSource(),
-		Maintainer:  c.GetMaintainer(),
+		SourceType:  c.GetSourceType(),
 		DownloadUrl: c.GetDownloadUrl(),
 	}
 }

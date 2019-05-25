@@ -23,9 +23,9 @@ const (
 )
 
 const (
-	CustomCode     Source = "custom"
-	CommercialCode Source = "commercial"
-	OpenSourceCode Source = "opensource"
+	CustomCode     SourceType = "custom"
+	CommercialCode SourceType = "commercial"
+	OpenSourceCode SourceType = "opensource"
 )
 
 const (

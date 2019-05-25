@@ -24,5 +24,5 @@ type FileHeader = string
 type RecognizerName = string
 
 type Source string
-
+type SourceType string
 type Maintainer string

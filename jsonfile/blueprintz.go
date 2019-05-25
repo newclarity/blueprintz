@@ -18,7 +18,7 @@ type Blueprinter interface {
 	GetJsonLocal() global.Domain
 	GetJsonCore() *Core
 	GetJsonTheme() global.ComponentName
-	GetJsonSource() *Source
+	GetJsonSources() Sources
 	GetJsonLayout() *Layout
 	GetJsonThemes() Themes
 	GetJsonPlugins() Plugins
@@ -33,7 +33,7 @@ type Blueprintz struct {
 	Theme   global.ComponentName `json:"theme"`
 	Core    *Core                `json:"core"`
 	Meta    *Meta                `json:"meta"`
-	Source  *Source              `json:"source"`
+	Sources Sources              `json:"sources"`
 	Layout  *Layout              `json:"layout"`
 	Themes  Themes               `json:"themes"`
 	Plugins Plugins              `json:"plugins"`
@@ -78,7 +78,7 @@ func NewBlueprintzFromBlueprintz(blueprintz Blueprinter) *Blueprintz {
 		Core:    blueprintz.GetJsonCore(),
 		Theme:   blueprintz.GetJsonTheme(),
 		Layout:  blueprintz.GetJsonLayout(),
-		Source:  blueprintz.GetJsonSource(),
+		Sources: blueprintz.GetJsonSources(),
 		Themes:  blueprintz.GetJsonThemes(),
 		Plugins: blueprintz.GetJsonPlugins(),
 		Meta:    blueprintz.GetJsonMeta(),

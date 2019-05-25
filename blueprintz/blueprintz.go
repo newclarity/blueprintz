@@ -23,7 +23,7 @@ type Blueprintz struct {
 	Type          global.BlueprintType
 	Local         global.Domain
 	Theme         global.ComponentName
-	Source        *Source
+	Sources       Sources
 	Layout        *Layout
 	Core          *Core
 	Themes        Themes
@@ -51,11 +51,11 @@ func (me *Blueprintz) Research() {
 	me.Core.Research()
 
 	for _, p := range me.Plugins {
-		p.Research(me.GetRecognizerMap())
+		p.Research(me)
 	}
 
 	for _, t := range me.Themes {
-		t.Research(me.GetRecognizerMap())
+		t.Research(me)
 	}
 }
 
@@ -74,7 +74,7 @@ func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
 		Theme:         jfbp.Theme,
 		Core:          ConvertJsonfileCore(jfbp.Core),
 		Layout:        ConvertJsonfileLayout(jfbp.Layout),
-		Source:        ConvertJsonfileSource(jfbp.Source),
+		Sources:       ConvertJsonfileSources(jfbp.Sources),
 		Themes:        ConvertJsonfileThemes(jfbp.Themes),
 		Plugins:       ConvertJsonfilePlugins(jfbp.Plugins),
 		Meta:          ConvertJsonfileMeta(),
@@ -196,8 +196,12 @@ func (me *Blueprintz) GetJsonTheme() global.ComponentName {
 	return me.Theme
 }
 
-func (me *Blueprintz) GetJsonSource() *jsonfile.Source {
-	return jsonfile.NewSourceFromSourcer(me.Source)
+func (me *Blueprintz) GetJsonSources() jsonfile.Sources {
+	jss := make(jsonfile.Sources, len(me.Sources))
+	for i, s := range me.Sources {
+		jss[i] = jsonfile.NewSource(s)
+	}
+	return jss
 }
 
 func (me *Blueprintz) GetJsonLayout() *jsonfile.Layout {

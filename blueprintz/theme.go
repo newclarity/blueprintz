@@ -34,8 +34,10 @@ func NewTheme(fh *fileheaders.Theme) *Theme {
 	}
 }
 
-func (me *Theme) Research(rm recognize.Map) {
-	noop()
+func (me *Theme) Research(bpz *Blueprintz) {
+	for _, r := range bpz.GetRecognizerMap() {
+		noop(r)
+	}
 }
 
 func (me *Theme) GetType() global.ComponentType {

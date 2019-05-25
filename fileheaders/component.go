@@ -95,7 +95,7 @@ func (me *Component) GetType() global.ComponentType {
 	panic(fmt.Sprintf(panicMsg, "GetType"))
 }
 
-func (me *Component) GetSource() global.Source {
+func (me *Component) GetSourceType() global.SourceType {
 	panic("implement me")
 }
 

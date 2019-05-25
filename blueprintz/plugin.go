@@ -8,6 +8,7 @@ import (
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/only"
 	"sort"
+	"strings"
 )
 
 var NilPlugin = (*Plugin)(nil)
@@ -34,19 +35,47 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 	}
 }
 
-func (me *Plugin) Research(rm recognize.Map) {
-	for _, r := range rm {
+func (me *Plugin) Research(bpz *Blueprintz) {
+	me.DownloadUrl = ""
+	me.SourceType = "custom"
+	for _, r := range bpz.GetRecognizerMap() {
 		if !recognize.IsValidType(me, r) {
 			continue
 		}
 		if r.Matches(me) {
 			me.DownloadUrl = r.GetDownloadUrl(me)
-			me.Source = global.OpenSourceCode
+			me.SourceType = global.OpenSourceCode
 			continue
 		}
-		me.DownloadUrl = ""
-		me.Source = ""
 	}
+	if me.DownloadUrl == "" {
+		me.matchSourceType(bpz.Sources)
+	}
+}
+
+func normalizeUrl(url global.Url) global.Url {
+	return strings.ReplaceAll(url, "https:", "http:")
+}
+
+func (me *Plugin) matchSourceType(sources Sources) (matched bool) {
+	for range only.Once {
+		ws := normalizeUrl(me.GetWebsite())
+		if ws == "" {
+			break
+		}
+		for _, s := range sources {
+			if !strings.HasPrefix(ws, string(normalizeUrl(s.Website))) {
+				continue
+			}
+			me.SourceType = s.SourceType
+			matched = true
+			break
+		}
+		if matched {
+			break
+		}
+	}
+	return matched
 }
 
 func (me *Plugin) GetType() global.ComponentType {
