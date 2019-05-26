@@ -5,6 +5,7 @@ type ComponentName = string
 type BoolComponentTypeMap = map[ComponentType]bool
 type ComponentTypes = []ComponentType
 type ComponentType = string
+type CoreType = string
 
 type Urls []Url
 type Url = string
@@ -26,3 +27,5 @@ type RecognizerName = string
 type Source string
 type SourceType string
 type Maintainer string
+
+type Interfaces []interface{}

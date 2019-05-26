@@ -17,7 +17,7 @@ type Source struct {
 	SourceType global.SourceType `json:"type"`
 }
 
-func NewSource(s Sourcer) *Source {
+func NewSourceFromSourcer(s Sourcer) *Source {
 	return &Source{
 		Website:    s.GetWebsite(),
 		SourceType: s.GetSourceType(),

@@ -6,6 +6,7 @@ import (
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
 	"github.com/gearboxworks/go-status"
+	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
 	"sort"
 	"strings"
@@ -29,8 +30,9 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 		PluginName: fh.PluginName,
 		PluginURI:  fh.PluginURI,
 		Component: &Component{
-			Version: fh.Version,
-			Subdir:  fh.GetSubdir(),
+			Version:  fh.Version,
+			Subdir:   fh.GetSubdir(),
+			Basefile: fh.GetBasefile(),
 		},
 	}
 }
@@ -39,17 +41,17 @@ func (me *Plugin) Research(bpz *Blueprintz) {
 	me.DownloadUrl = ""
 	me.SourceType = "custom"
 	for _, r := range bpz.GetRecognizerMap() {
-		if !recognize.IsValidType(me, r) {
+		if !recognize.IsValidComponentType(me, r) {
 			continue
 		}
-		if r.Matches(me) {
-			me.DownloadUrl = r.GetDownloadUrl(me)
+		if r.MatchesComponent(me) {
+			me.DownloadUrl = r.GetComponentDownloadUrl(me)
 			me.SourceType = global.OpenSourceCode
 			continue
 		}
 	}
 	if me.DownloadUrl == "" {
-		me.matchSourceType(bpz.Sources)
+		me.matchSourceType(bpz.Legend.Sources)
 	}
 }
 
@@ -89,14 +91,19 @@ func (me *Plugin) GetWebsite() global.Url {
 	return me.PluginURI
 }
 
-func (me *Plugins) Scandir(path global.Path) (sts Status) {
+func (me *Plugins) Scandir(path global.Path, allowHeaderless bool) (sts Status) {
 	for range only.Once {
 		var cs Componenters
 		// Scan dir returning only plugins not in GetFileHeadersComponenterMap()
-		cs, sts = fileheaders.Scandir(
-			path,
-			me.GetFileHeadersComponenterMap(),
-		)
+		cs, sts = fileheaders.Scandir(&fileheaders.ScandirArgs{
+			ComponenterPath: path,
+			FileExtension:   ".php",
+			AllowHeaderless: allowHeaderless,
+			ComponenterMap:  me.GetFileHeadersComponenterMap(),
+		})
+		if is.Error(sts) {
+			break
+		}
 		for _, c := range cs {
 			p, ok := c.(*fileheaders.Plugin)
 			if !ok {
@@ -127,7 +134,7 @@ func ConvertJsonfilePlugins(jfps jsonfile.Plugins) (ps Plugins) {
 	return ps
 }
 
-func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) (ts *Plugin) {
+func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) *Plugin {
 	return &Plugin{
 		PluginName: jfp.Name,
 		PluginURI:  jfp.Website,

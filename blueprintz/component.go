@@ -15,6 +15,7 @@ type Component struct {
 	Version     global.Version
 	Website     global.Url
 	Subdir      global.Slug
+	Basefile    global.Basefile
 	HeaderFile  global.Dir
 	SourceType  global.SourceType
 	Maintainer  global.Maintainer
@@ -45,6 +46,10 @@ func (me *Component) GetWebsite() global.Url {
 
 func (me *Component) GetSlug() global.Slug {
 	return me.Subdir
+}
+
+func (me *Component) GetBasefile() global.Basefile {
+	return me.Basefile
 }
 
 func (me *Component) GetSourceType() global.SourceType {

@@ -15,16 +15,16 @@ import (
 
 func noop(i ...interface{}) {}
 
-func MakeComponenter(typ string, fp global.Filepath) (c Componenter) {
+func MakeComponenter(typ string, fp global.Filepath) (c Componenter, sts Status) {
 	switch typ {
-	case global.PluginComponent:
+	case global.PluginComponent, global.MuPluginComponent:
 		c = NewPlugin(fp)
 	case global.ThemeComponent:
 		c = NewTheme(fp)
 	default:
-		panic(fmt.Sprintf("Invalid Componenter type '%s'", typ))
+		sts = status.Fail().SetMessage("Invalid Componenter type '%s'", typ)
 	}
-	return c
+	return c, sts
 }
 
 func ReadFileHeaders(component Componenter) (c Componenter, sts util.Status) {
@@ -83,9 +83,16 @@ func FindHeaderFile(component Componenter, dp global.Dir, ext string) (c Compone
 	return c, sts
 }
 
-func Scandir(path global.Path, cm ComponenterMap) (cs Componenters, sts Status) {
+type ScandirArgs struct {
+	ComponenterPath global.Path
+	FileExtension   string
+	AllowHeaderless bool
+	ComponenterMap  ComponenterMap
+}
+
+func Scandir(args *ScandirArgs) (cs Componenters, sts Status) {
 	for range only.Once {
-		dp := util.ToAbsoluteDir(path)
+		dp := util.ToAbsoluteDir(args.ComponenterPath)
 		files, err := ioutil.ReadDir(dp)
 		if err != nil {
 			sts = status.Wrap(err).SetMessage("unable to read directory '%s'", dp)
@@ -98,16 +105,21 @@ func Scandir(path global.Path, cm ComponenterMap) (cs Componenters, sts Status) 
 				// Ignore "hidden" plugins and themes
 				continue
 			}
-			if _, ok := cm[n]; ok {
+			if _, ok := args.ComponenterMap[n]; ok {
 				// Tell them we already got a one
 				continue
 			}
 			fp := fmt.Sprintf("%s%c%s", dp, os.PathSeparator, n)
-			ctype := strings.TrimRight(filepath.Base(path), "s")
-			c := MakeComponenter(ctype, fp)
+			ctype := strings.TrimRight(filepath.Base(args.ComponenterPath), "s")
+			c, sts := MakeComponenter(ctype, fp)
+			if is.Error(sts) {
+				break
+			}
+			c.SetAllowHeaderless(args.AllowHeaderless)
 			if f.IsDir() {
-				c, sts = FindHeaderFile(c, fp, ".css")
+				c, sts = FindHeaderFile(c, fp, args.FileExtension)
 			} else {
+				c.SetIsRootFile(true)
 				c, sts = ReadFileHeaders(c)
 			}
 			if is.Error(sts) {

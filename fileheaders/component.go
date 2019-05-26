@@ -33,26 +33,24 @@ type Componenter interface {
 	GetFilepath() global.Filepath
 	ReadHeader(Componenter) Status
 	GetHeaderValueFieldMap(...Componenter) HeaderValueFieldMap
+	AllowHeaderless() bool
+	SetAllowHeaderless(bool)
+	IsRootFile() bool
+	SetIsRootFile(bool)
 }
 
 type Component struct {
-	Filepath    global.Filepath
-	Description string         `fileheader:"Description"`
-	Version     global.Version `fileheader:"Version"`
-	Author      string         `fileheader:"Author"`
-	AuthorURI   global.Url     `fileheader:"Author URI"`
-	License     string         `fileheader:"License"`
-	LicenseURI  global.Url     `fileheader:"License URI"`
-	TextDomain  string         `fileheader:"Text Domain"`
-	DomainPath  string         `fileheader:"Domain Path"`
-}
-
-func (me *Component) GetMaintainer() global.Maintainer {
-	panic("implement me")
-}
-
-func (me *Component) GetSlug() global.Slug {
-	return filepath.Base(me.Filepath)
+	Filepath        global.Filepath
+	Description     string         `fileheader:"Description"`
+	Version         global.Version `fileheader:"Version"`
+	Author          string         `fileheader:"Author"`
+	AuthorURI       global.Url     `fileheader:"Author URI"`
+	License         string         `fileheader:"License"`
+	LicenseURI      global.Url     `fileheader:"License URI"`
+	TextDomain      string         `fileheader:"Text Domain"`
+	DomainPath      string         `fileheader:"Domain Path"`
+	allowheaderless bool
+	isrootfile      bool
 }
 
 func (me *Component) GetFilepath() global.Filepath {
@@ -80,10 +78,18 @@ func (me *Component) GetVersion() global.Version {
 }
 
 func (me *Component) GetDownloadUrl() global.Url {
-	panic(fmt.Sprintf(panicMsg, "GetDownloadUrl"))
+	panic(fmt.Sprintf(panicMsg, "GetComponentDownloadUrl"))
 }
 
 func (me *Component) GetSubdir() global.Slug {
+	return filepath.Base(filepath.Dir(me.Filepath))
+}
+
+func (me *Component) GetBasefile() global.Slug {
+	return filepath.Base(me.Filepath)
+}
+
+func (me *Component) GetSlug() global.Slug {
 	return filepath.Base(filepath.Dir(me.Filepath))
 }
 
@@ -95,8 +101,22 @@ func (me *Component) GetType() global.ComponentType {
 	panic(fmt.Sprintf(panicMsg, "GetType"))
 }
 
+func (me *Component) AllowHeaderless() bool {
+	return me.allowheaderless
+}
+func (me *Component) SetAllowHeaderless(allow bool) {
+	me.allowheaderless = allow
+}
+
+func (me *Component) IsRootFile() bool {
+	return me.isrootfile
+}
+func (me *Component) SetIsRootFile(isrootfile bool) {
+	me.isrootfile = isrootfile
+}
+
 func (me *Component) GetSourceType() global.SourceType {
-	panic("implement me")
+	panic(fmt.Sprintf(panicMsg, "GetSourceType"))
 }
 
 var headerFinder *regexp.Regexp
@@ -127,27 +147,31 @@ func (me *Component) ReadHeader(component Componenter) (sts Status) {
 				SetWarn(true).
 				SetMessage("unable to read from '%s'", me.Filepath)
 		}
-		if !headerFinder.Match(b) {
-			sts = status.Warn("file '%s' is not a %s header file", me.Filepath, component.GetType())
+		if headerFinder.Match(b) {
+			// @TODO Replace these two lines with a regex
+			headertxt := strings.Replace(string(b), "\r", "\n", -1)
+			headertxt = strings.Replace(headertxt, "\n\n", "\n", -1)
+
+			for h, f := range me.GetHeaderValueFieldMap(component) {
+				// Same regex logic in WordPress' get_file_data()
+				regex := fmt.Sprintf("(?im)^[ \t/*#@]*%s:(.*)$", regexp.QuoteMeta(h))
+				re := regexp.MustCompile(regex)
+				m := re.FindStringSubmatch(headertxt)
+				// @todo Include this fix:  https://core.trac.wordpress.org/ticket/8497
+				// Look in WordPress core code for get_file_data() to see the regex used, or:
+				// https://core.trac.wordpress.org/attachment/ticket/8497/8497.diff
+				if m == nil {
+					continue
+				}
+				f.SetString(strings.TrimSpace(m[1]))
+			}
 			break
 		}
-		// @TODO Replace these two lines with a regex
-		headertxt := strings.Replace(string(b), "\r", "\n", -1)
-		headertxt = strings.Replace(headertxt, "\n\n", "\n", -1)
-
-		for h, f := range me.GetHeaderValueFieldMap(component) {
-			// Same regex logic in WordPress' get_file_data()
-			regex := fmt.Sprintf("(?im)^[ \t/*#@]*%s:(.*)$", regexp.QuoteMeta(h))
-			re := regexp.MustCompile(regex)
-			m := re.FindStringSubmatch(headertxt)
-			// @todo Include this fix:  https://core.trac.wordpress.org/ticket/8497
-			// Look in WordPress core code for get_file_data() to see the regex used, or:
-			// https://core.trac.wordpress.org/attachment/ticket/8497/8497.diff
-			if m == nil {
-				continue
-			}
-			f.SetString(strings.TrimSpace(m[1]))
+		if component.AllowHeaderless() && component.IsRootFile() {
+			noop()
+			break
 		}
+		sts = status.Warn("file '%s' is not a %s header file", me.Filepath, component.GetType())
 	}
 	return sts
 }

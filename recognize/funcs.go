@@ -7,8 +7,8 @@ import (
 	"net/http"
 )
 
-func IsValidType(c Componenter, r Recognizer) (ok bool) {
-	cts := r.ValidTypes()
+func IsValidComponentType(c Componenter, r ComponentRecognizer) (ok bool) {
+	cts := r.ValidComponentTypes()
 	for _, ct := range cts {
 		if ct != c.GetType() {
 			continue

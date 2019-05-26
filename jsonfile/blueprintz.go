@@ -18,25 +18,27 @@ type Blueprinter interface {
 	GetJsonLocal() global.Domain
 	GetJsonCore() *Core
 	GetJsonTheme() global.ComponentName
-	GetJsonSources() Sources
+	GetJsonLegend() *Legend
 	GetJsonLayout() *Layout
 	GetJsonThemes() Themes
 	GetJsonPlugins() Plugins
+	GetJsonMuPlugins() Plugins
 	GetJsonMeta() *Meta
 }
 
 type Blueprintz struct {
-	Name    string               `json:"name"`
-	Desc    string               `json:"desc"`
-	Type    global.BlueprintType `json:"type"`
-	Local   global.Domain        `json:"local"`
-	Theme   global.ComponentName `json:"theme"`
-	Core    *Core                `json:"core"`
-	Meta    *Meta                `json:"meta"`
-	Sources Sources              `json:"sources"`
-	Layout  *Layout              `json:"layout"`
-	Themes  Themes               `json:"themes"`
-	Plugins Plugins              `json:"plugins"`
+	Name      string               `json:"name"`
+	Desc      string               `json:"desc"`
+	Type      global.BlueprintType `json:"type"`
+	Local     global.Domain        `json:"local"`
+	Theme     global.ComponentName `json:"theme"`
+	Core      *Core                `json:"core"`
+	Meta      *Meta                `json:"meta"`
+	Legend    *Legend              `json:"legend"`
+	Layout    *Layout              `json:"layout"`
+	MuPlugins Plugins              `json:"mu-plugins"`
+	Plugins   Plugins              `json:"plugins"`
+	Themes    Themes               `json:"themes"`
 }
 
 func LoadJsonFile() (jbp *Blueprintz, sts Status) {
@@ -58,6 +60,9 @@ func (me *Blueprintz) Renew() {
 	if me.Meta == nil {
 		me.Meta = NewMeta()
 	}
+	if me.Legend == nil {
+		me.Legend = NewLegend()
+	}
 	if me.Layout == nil {
 		me.Layout = NewLayout()
 	}
@@ -67,21 +72,25 @@ func (me *Blueprintz) Renew() {
 	if me.Plugins == nil {
 		me.Plugins = NewPlugins()
 	}
+	if me.MuPlugins == nil {
+		me.MuPlugins = NewPlugins()
+	}
 }
 
 func NewBlueprintzFromBlueprintz(blueprintz Blueprinter) *Blueprintz {
 	return &Blueprintz{
-		Name:    blueprintz.GetJsonName(),
-		Desc:    blueprintz.GetJsonDesc(),
-		Type:    blueprintz.GetJsonType(),
-		Local:   blueprintz.GetJsonLocal(),
-		Core:    blueprintz.GetJsonCore(),
-		Theme:   blueprintz.GetJsonTheme(),
-		Layout:  blueprintz.GetJsonLayout(),
-		Sources: blueprintz.GetJsonSources(),
-		Themes:  blueprintz.GetJsonThemes(),
-		Plugins: blueprintz.GetJsonPlugins(),
-		Meta:    blueprintz.GetJsonMeta(),
+		Name:      blueprintz.GetJsonName(),
+		Desc:      blueprintz.GetJsonDesc(),
+		Type:      blueprintz.GetJsonType(),
+		Local:     blueprintz.GetJsonLocal(),
+		Core:      blueprintz.GetJsonCore(),
+		Theme:     blueprintz.GetJsonTheme(),
+		Legend:    blueprintz.GetJsonLegend(),
+		Layout:    blueprintz.GetJsonLayout(),
+		Themes:    blueprintz.GetJsonThemes(),
+		Plugins:   blueprintz.GetJsonPlugins(),
+		MuPlugins: blueprintz.GetJsonMuPlugins(),
+		Meta:      blueprintz.GetJsonMeta(),
 	}
 }
 

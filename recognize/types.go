@@ -9,6 +9,10 @@ type (
 	Status = status.Status
 )
 
+type Coreer interface {
+	GetVersion() global.Version
+}
+
 type Componenter interface {
 	GetType() global.ComponentType
 	GetSlug() global.Slug
@@ -16,11 +20,12 @@ type Componenter interface {
 	GetWebsite() global.Url
 }
 
-type Map map[global.RecognizerName]Recognizer
-type List []Recognizer
+type ComponentRecognizerMap map[global.RecognizerName]ComponentRecognizer
+type ComponentRecognizerList []ComponentRecognizer
 
-type Recognizer interface {
-	ValidTypes() global.ComponentTypes
-	Matches(Componenter) bool
-	GetDownloadUrl(Componenter) string
+type ComponentRecognizer interface {
+	ValidComponentTypes() global.ComponentTypes
+	MatchesComponent(Componenter) bool
+	GetComponentDownloadUrl(Componenter) string
+	GetCoreDownloadUrl(Coreer) string
 }

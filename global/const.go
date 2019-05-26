@@ -9,8 +9,10 @@ const BlueprintzFile = "blueprintz.json"
 const UnknownVersion Version = "?.?.?"
 
 const (
-	PluginComponent ComponentType = "plugin"
-	ThemeComponent  ComponentType = "theme"
+	ThemeComponent    ComponentType = "theme"
+	PluginComponent   ComponentType = "plugin"
+	MuPluginComponent ComponentType = "mu-plugin"
+	UnknownComponent  ComponentType = "unknown"
 )
 
 const (
@@ -26,6 +28,11 @@ const (
 	CustomCode     SourceType = "custom"
 	CommercialCode SourceType = "commercial"
 	OpenSourceCode SourceType = "opensource"
+)
+
+const (
+	WordPressCore    CoreType = "wordpress"
+	ClassicPressCore CoreType = "classicpress"
 )
 
 const (

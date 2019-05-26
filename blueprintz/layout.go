@@ -61,7 +61,7 @@ func (me *Layout) GetPluginsPath() global.Path {
 		os.PathSeparator,
 	)
 }
-func (me *Layout) GetMustUsePluginsDir() global.Path {
+func (me *Layout) GetMuPluginsDir() global.Path {
 	return fmt.Sprintf("%s%cmu-plugins",
 		me.GetContentPath(),
 		os.PathSeparator,

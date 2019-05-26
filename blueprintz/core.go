@@ -9,14 +9,15 @@ import (
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/only"
 	"os"
-	"regexp"
 )
 
 var NilCore = (*Core)(nil)
 var _ jsonfile.Coreer = NilCore
 
 type Core struct {
-	Version global.Version
+	Version     global.Version
+	CoreType    global.Version
+	DownloadUrl global.Url
 }
 
 func NewCore() *Core {
@@ -27,26 +28,46 @@ func NewCore() *Core {
 
 func ConvertJsonfileCore(jfc *jsonfile.Core) *Core {
 	return &Core{
-		Version: jfc.Version,
+		Version:     jfc.Version,
+		CoreType:    jfc.CoreType,
+		DownloadUrl: jfc.DownloadUrl,
 	}
 }
 
 func (me *Core) Research() {
-	noop()
+	//me.DownloadUrl = ""
+	//me.CoreType = ""
+	//for _, r := range bpz.GetRecognizerMap() {
+	//	if !recognize.IsValidComponentType(me, r) {
+	//		continue
+	//	}
+	//	if r.MatchesComponent(me) {
+	//		me.DownloadUrl = r.GetComponentDownloadUrl(me)
+	//		me.SourceType = global.OpenSourceCode
+	//		continue
+	//	}
+	//}
+	//if me.DownloadUrl == "" {
+	//	me.matchSourceType(bpz.Legend.Sources)
+	//}
 }
 
 func (me *Core) GetVersion() global.Version {
 	return me.Version
 }
+
+func (me *Core) GetType() global.CoreType {
+	return me.CoreType
+}
+
+func (me *Core) GetDownloadUrl() global.Url {
+	return me.DownloadUrl
+}
+
 func fileCloser(f *os.File) {
 	_ = f.Close()
 }
 
-var versionFinder *regexp.Regexp
-
-func init() {
-	versionFinder = regexp.MustCompile(`^\$wp_version\s*=\s*['"](.+)['"];\s*$`)
-}
 func (me *Core) Scandir(path global.Path) (sts Status) {
 	for range only.Once {
 		dp := util.ToAbsoluteDir(path)
@@ -65,20 +86,23 @@ func (me *Core) Scandir(path global.Path) (sts Status) {
 		scanner := bufio.NewScanner(f) // Splits on newlines by default.
 		for scanner.Scan() {
 			line := scanner.Text()
-			match := versionFinder.FindStringSubmatch(line)
 			if err := scanner.Err(); err != nil {
-				panic(err)
+				sts = status.Warn("unable to read file '%s'", vfp).
+					SetCause(err)
+				break
 			}
-			if len(match) == 0 {
-				continue
+			for _, vf := range coreVersionFinders {
+				match := vf.Regexp.FindStringSubmatch(line)
+				if len(match) == 0 {
+					continue
+				}
+				me.CoreType = vf.CoreType
+				me.Version = match[1]
+				break
 			}
-			me.Version = match[1]
-			break
-		}
-		if err := scanner.Err(); err != nil {
-			sts = status.Warn("unable to read file '%s'", vfp).
-				SetCause(err)
-			break
+			if me.Version != global.UnknownVersion {
+				break
+			}
 		}
 	}
 	return sts

@@ -13,7 +13,7 @@ type Themes []*Theme
 type Theme struct {
 	ThemeName string     `fileheader:"Theme Name"`
 	ThemeURI  global.Url `fileheader:"Theme URI"`
-	Tags      []string   `fileheader:"Tags"`
+	Tags      string     `fileheader:"Tags"`
 	*Component
 }
 

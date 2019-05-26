@@ -28,8 +28,9 @@ func NewTheme(fh *fileheaders.Theme) *Theme {
 		ThemeName: fh.ThemeName,
 		ThemeURI:  fh.ThemeURI,
 		Component: &Component{
-			Version: fh.Version,
-			Subdir:  fh.GetSubdir(),
+			Version:  fh.Version,
+			Subdir:   fh.GetSubdir(),
+			Basefile: fh.GetBasefile(),
 		},
 	}
 }
@@ -56,10 +57,12 @@ func (me *Themes) Scandir(path global.Path) (sts Status) {
 	for range only.Once {
 		var cs Componenters
 		// Scan dir returning only themes not in GetFileHeadersComponenterMap()
-		cs, sts = fileheaders.Scandir(
-			path,
-			me.GetFileHeadersComponenterMap(),
-		)
+		cs, sts = fileheaders.Scandir(&fileheaders.ScandirArgs{
+			ComponenterPath: path,
+			FileExtension:   ".css",
+			AllowHeaderless: false,
+			ComponenterMap:  me.GetFileHeadersComponenterMap(),
+		})
 		for _, c := range cs {
 			t, ok := c.(*fileheaders.Theme)
 			if !ok {

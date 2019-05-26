@@ -23,13 +23,14 @@ type Blueprintz struct {
 	Type          global.BlueprintType
 	Local         global.Domain
 	Theme         global.ComponentName
-	Sources       Sources
+	Legend        *Legend
 	Layout        *Layout
 	Core          *Core
 	Themes        Themes
 	Plugins       Plugins
+	MuPlugins     Plugins
 	Meta          *Meta
-	recognizermap recognize.Map
+	recognizermap recognize.ComponentRecognizerMap
 }
 
 type Args Blueprintz
@@ -74,9 +75,10 @@ func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
 		Theme:         jfbp.Theme,
 		Core:          ConvertJsonfileCore(jfbp.Core),
 		Layout:        ConvertJsonfileLayout(jfbp.Layout),
-		Sources:       ConvertJsonfileSources(jfbp.Sources),
+		Legend:        ConvertJsonfileLegend(jfbp.Legend),
 		Themes:        ConvertJsonfileThemes(jfbp.Themes),
 		Plugins:       ConvertJsonfilePlugins(jfbp.Plugins),
+		MuPlugins:     ConvertJsonfilePlugins(jfbp.MuPlugins),
 		Meta:          ConvertJsonfileMeta(),
 		recognizermap: me.GetRecognizerMap(),
 	})
@@ -137,14 +139,20 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	if blueprintz.Layout == nil {
 		blueprintz.Layout = NewLayout()
 	}
+	if blueprintz.Legend == nil {
+		blueprintz.Legend = NewLegend()
+	}
 	if blueprintz.Themes == nil {
 		blueprintz.Themes = make(Themes, 0)
 	}
 	if blueprintz.Plugins == nil {
 		blueprintz.Plugins = make(Plugins, 0)
 	}
+	if blueprintz.MuPlugins == nil {
+		blueprintz.MuPlugins = make(Plugins, 0)
+	}
 	if blueprintz.recognizermap == nil {
-		blueprintz.recognizermap = make(recognize.Map, 0)
+		blueprintz.recognizermap = make(recognize.ComponentRecognizerMap, 0)
 	}
 	*me = *blueprintz
 	return blueprintz
@@ -164,9 +172,16 @@ func (me *Blueprintz) Scandir() (sts Status) {
 		if is.Error(sts) {
 			break
 		}
-		sts = me.Plugins.Scandir(me.Layout.GetPluginsPath())
+		sts = me.Plugins.Scandir(me.Layout.GetPluginsPath(), false)
 		if is.Error(sts) {
 			break
+		}
+		sts = me.MuPlugins.Scandir(me.Layout.GetMuPluginsDir(), true)
+		if is.Error(sts) {
+			if !strings.HasPrefix(sts.Message(), "unable to read directory") {
+				break
+			}
+			sts = sts.SetSuccess(true)
 		}
 	}
 	return sts
@@ -196,12 +211,8 @@ func (me *Blueprintz) GetJsonTheme() global.ComponentName {
 	return me.Theme
 }
 
-func (me *Blueprintz) GetJsonSources() jsonfile.Sources {
-	jss := make(jsonfile.Sources, len(me.Sources))
-	for i, s := range me.Sources {
-		jss[i] = jsonfile.NewSource(s)
-	}
-	return jss
+func (me *Blueprintz) GetJsonLegend() *jsonfile.Legend {
+	return jsonfile.NewLegendFromLegender(me.Legend)
 }
 
 func (me *Blueprintz) GetJsonLayout() *jsonfile.Layout {
@@ -214,23 +225,31 @@ func (me *Blueprintz) GetJsonMeta() *jsonfile.Meta {
 
 func (me *Blueprintz) GetJsonThemes() jsonfile.Themes {
 	themes := make(jsonfile.Themes, len(me.Themes))
-	for i, p := range me.Themes {
-		themes[i] = jsonfile.NewTheme(p)
+	for i, t := range me.Themes {
+		themes[i] = jsonfile.NewTheme(t)
 	}
 	return themes
 }
 
-func (me *Blueprintz) GetJsonPlugins() jsonfile.Plugins {
-	plugins := make(jsonfile.Plugins, len(me.Plugins))
-	for i, p := range me.Plugins {
+func (me *Blueprintz) getJsonPlugins(ps Plugins) jsonfile.Plugins {
+	plugins := make(jsonfile.Plugins, len(ps))
+	for i, p := range ps {
 		plugins[i] = jsonfile.NewPlugin(p)
 	}
 	return plugins
 }
 
-func (me *Blueprintz) FindRecognizer(c recognize.Componenter) (recognizer recognize.Recognizer, sts Status) {
+func (me *Blueprintz) GetJsonPlugins() jsonfile.Plugins {
+	return me.getJsonPlugins(me.Plugins)
+}
+
+func (me *Blueprintz) GetJsonMuPlugins() jsonfile.Plugins {
+	return me.getJsonPlugins(me.MuPlugins)
+}
+
+func (me *Blueprintz) FindRecognizer(c recognize.Componenter) (recognizer recognize.ComponentRecognizer, sts Status) {
 	for n, r := range me.recognizermap {
-		if !r.Matches(c) {
+		if !r.MatchesComponent(c) {
 			continue
 		}
 		sts = status.Success("found recognizer '%s'", n)
@@ -244,15 +263,15 @@ func (me *Blueprintz) FindRecognizer(c recognize.Componenter) (recognizer recogn
 	return recognizer, sts
 }
 
-func (me *Blueprintz) GetRecognizer(name global.RecognizerName) recognize.Recognizer {
+func (me *Blueprintz) GetRecognizer(name global.RecognizerName) recognize.ComponentRecognizer {
 	c, _ := me.recognizermap[name]
 	return c
 }
 
-func (me *Blueprintz) GetRecognizerMap() recognize.Map {
+func (me *Blueprintz) GetRecognizerMap() recognize.ComponentRecognizerMap {
 	return me.recognizermap
 }
 
-func (me *Blueprintz) RegisterRecognizer(name global.RecognizerName, c recognize.Recognizer) {
+func (me *Blueprintz) RegisterRecognizer(name global.RecognizerName, c recognize.ComponentRecognizer) {
 	me.recognizermap[name] = c
 }
