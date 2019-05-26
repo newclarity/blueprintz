@@ -31,10 +31,10 @@ func Init() (sts Status) {
 
 	for range only.Once {
 
-		//sts = EnsureBlueprintJsonDoesNotExist()
-		//if is.Error(sts) {
-		//	break
-		//}
+		sts = EnsureBlueprintJsonDoesNotExist()
+		if is.Error(sts) {
+			break
+		}
 
 		sts = blueprintz.Instance.Scandir()
 		if is.Error(sts) {

@@ -14,6 +14,12 @@ type Source struct {
 	SourceType global.SourceType
 }
 
+func NewSource(ws global.Url) *Source {
+	return &Source{
+		Website: ws,
+	}
+}
+
 func (me *Source) GetWebsite() global.Url {
 	return me.Website
 }

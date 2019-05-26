@@ -7,6 +7,7 @@ type ComponentTypes = []ComponentType
 type ComponentType = string
 type CoreType = string
 
+type BoolUrlMap = map[Url]bool
 type Urls []Url
 type Url = string
 type Slug = string

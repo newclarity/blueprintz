@@ -18,7 +18,7 @@ type Component struct {
 	Basefile    global.Basefile
 	HeaderFile  global.Dir
 	SourceType  global.SourceType
-	Maintainer  global.Maintainer
+	External    bool
 	DownloadUrl global.Url
 }
 
@@ -60,6 +60,9 @@ func (me *Component) GetDownloadUrl() global.Url {
 	return me.DownloadUrl
 }
 
-func (me *Component) GetMaintainer() global.Maintainer {
-	return me.Maintainer
+func (me *Component) GetExternal() (ex bool) {
+	if me.DownloadUrl != "" {
+		ex = true
+	}
+	return ex
 }

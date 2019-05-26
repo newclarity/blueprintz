@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 type DirWalker func(fp, bf string, f os.FileInfo, level int) error
@@ -98,4 +99,23 @@ func GetExecutableFilepath() global.Filepath {
 		log.Fatal(err)
 	}
 	return global.Filepath(fp)
+}
+
+var domainExtractRegexp = regexp.MustCompile("^https?://([^/]+)")
+var wwwRemoveRegexp = regexp.MustCompile("^www\\.(.+)$")
+
+func ExtractDomain(url global.Url) (d global.Domain) {
+	for range only.Once {
+		match := domainExtractRegexp.FindStringSubmatch(url)
+		if len(match) < 2 {
+			break
+		}
+		d = match[1]
+		match = wwwRemoveRegexp.FindStringSubmatch(d)
+		if len(match) < 2 {
+			break
+		}
+		d = match[1]
+	}
+	return d
 }

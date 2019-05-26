@@ -69,16 +69,8 @@ func NewComponent(fp global.Filepath) *Component {
 
 var panicMsg = "Cannot %s() of fileheaders.Component; use fileheaders.Plugin or fileheaders.Theme instead."
 
-func (me *Component) GetName() global.ComponentName {
-	panic(fmt.Sprintf(panicMsg, "GetName"))
-}
-
 func (me *Component) GetVersion() global.Version {
 	return me.Version
-}
-
-func (me *Component) GetDownloadUrl() global.Url {
-	panic(fmt.Sprintf(panicMsg, "GetComponentDownloadUrl"))
 }
 
 func (me *Component) GetSubdir() global.Slug {
@@ -99,6 +91,18 @@ func (me *Component) GetWebsite() global.Url {
 
 func (me *Component) GetType() global.ComponentType {
 	panic(fmt.Sprintf(panicMsg, "GetType"))
+}
+
+func (me *Component) GetExternal() bool {
+	panic(fmt.Sprintf(panicMsg, "GetExternal"))
+}
+
+func (me *Component) GetName() global.ComponentName {
+	panic(fmt.Sprintf(panicMsg, "GetName"))
+}
+
+func (me *Component) GetDownloadUrl() global.Url {
+	panic(fmt.Sprintf(panicMsg, "GetComponentDownloadUrl"))
 }
 
 func (me *Component) AllowHeaderless() bool {

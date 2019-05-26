@@ -36,9 +36,9 @@ type Blueprintz struct {
 	Meta      *Meta                `json:"meta"`
 	Legend    *Legend              `json:"legend"`
 	Layout    *Layout              `json:"layout"`
-	MuPlugins Plugins              `json:"mu-plugins"`
-	Plugins   Plugins              `json:"plugins"`
 	Themes    Themes               `json:"themes"`
+	Plugins   Plugins              `json:"plugins"`
+	MuPlugins Plugins              `json:"mu-plugins"`
 }
 
 func LoadJsonFile() (jbp *Blueprintz, sts Status) {
@@ -125,6 +125,7 @@ func GetFilepath() global.Dir {
 		global.BlueprintzFile,
 	)
 }
+
 func GetBasefile() string {
 	return global.BlueprintzFile
 }

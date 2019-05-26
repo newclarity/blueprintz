@@ -4,6 +4,7 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
+	"blueprintz/util"
 	"fmt"
 	"github.com/Machiel/slugify"
 	"github.com/gearboxworks/go-status"
@@ -58,6 +59,9 @@ func (me *Blueprintz) Research() {
 	for _, t := range me.Themes {
 		t.Research(me)
 	}
+
+	me.CollectComponentSources()
+
 }
 
 func NewBlueprintzFromJsonfile(jfbp *jsonfile.Blueprintz) *Blueprintz {
@@ -185,6 +189,51 @@ func (me *Blueprintz) Scandir() (sts Status) {
 		}
 	}
 	return sts
+}
+
+func (me *Blueprintz) CollectComponentSources() {
+	ss := me.Legend.Sources
+	sm := make(global.BoolUrlMap, 0)
+	for _, s := range ss {
+		sm[s.Website] = true
+	}
+	for _, t := range me.Themes {
+		ss, sm = collectComponentSource(t.Component, ss, sm)
+	}
+	for _, ps := range []Plugins{me.Plugins, me.MuPlugins} {
+		for _, p := range ps {
+			ss, sm = collectComponentSource(p.Component, ss, sm)
+		}
+	}
+	me.Legend.Sources = ss
+	return
+}
+
+var ommittableDomainsRegexp = regexp.MustCompile("^(wordpress.org|github.com|bitbucket.org)$")
+
+func collectComponentSource(c *Component, ss Sources, sm global.BoolUrlMap) (Sources, global.BoolUrlMap) {
+	for range only.Once {
+		if c.DownloadUrl != "" {
+			break
+		}
+		ws := c.GetWebsite()
+		if ws == "" {
+			break
+		}
+		d := util.ExtractDomain(ws)
+		if d == "" {
+			break
+		}
+		if ommittableDomainsRegexp.MatchString(d) {
+			break
+		}
+		if _, ok := sm[d]; ok {
+			break
+		}
+		ss = append(ss, NewSource(d))
+		sm[d] = true
+	}
+	return ss, sm
 }
 
 func (me *Blueprintz) GetJsonName() string {

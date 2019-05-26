@@ -141,8 +141,10 @@ func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) *Plugin {
 		Component: &Component{
 			Version:     jfp.Version,
 			Subdir:      jfp.Subdir,
+			Basefile:    jfp.Basefile,
 			DownloadUrl: jfp.DownloadUrl,
 			Website:     jfp.Website,
+			External:    jfp.DownloadUrl != "" || jfp.External,
 		},
 	}
 }
