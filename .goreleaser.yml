@@ -24,14 +24,14 @@ builds:
 
     goarch:
       - amd64
-      - 386
-      - arm64
-      - arm
+#      - 386
+#      - arm64
+#      - arm
 
-    goarm:
-      - 5
-      - 6
-      - 7
+#    goarm:
+#      - 5
+#      - 6
+#      - 7
 
 archives:
 - replacements:
