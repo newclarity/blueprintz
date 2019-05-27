@@ -31,10 +31,23 @@ const (
 )
 
 const (
+	InitializeStep         StepType = "01. Initialize blueprintz.json"
+	ScanSourceStep         StepType = "02. Scan core, plugins & themes"
+	DeriveCompAttrsStep    StepType = "03. Derive component attributes"
+	DesignateAuthAttrsStep StepType = "04. Designate author attributes"
+)
+
+const (
 	WordPressCore    CoreType = "wordpress"
 	ClassicPressCore CoreType = "classicpress"
+	PantheonWPCore   CoreType = "pantheon-wordpress" //https://github.com/pantheon-systems/WordPress
 )
 
 const (
 	WordPressOrgRecognizer RecognizerName = "wordpress.org"
+)
+
+const (
+	YesState YesNo = "yes"
+	NoState  YesNo = "no"
 )

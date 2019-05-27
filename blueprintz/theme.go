@@ -93,6 +93,10 @@ func ConvertJsonfileThemes(jfts jsonfile.Themes) (ts Themes) {
 }
 
 func ConvertJsonfileTheme(jft *jsonfile.Theme) (ts *Theme) {
+	var ex global.YesNo
+	if jft.External == "" && jft.DownloadUrl != "" {
+		ex = global.YesState
+	}
 	return &Theme{
 		ThemeName: jft.Name,
 		ThemeURI:  jft.Website,
@@ -102,7 +106,7 @@ func ConvertJsonfileTheme(jft *jsonfile.Theme) (ts *Theme) {
 			Basefile:    jft.Basefile,
 			DownloadUrl: jft.DownloadUrl,
 			Website:     jft.Website,
-			External:    jft.DownloadUrl != "" || jft.External,
+			External:    ex,
 		},
 	}
 }

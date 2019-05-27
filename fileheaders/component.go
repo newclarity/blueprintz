@@ -93,7 +93,7 @@ func (me *Component) GetType() global.ComponentType {
 	panic(fmt.Sprintf(panicMsg, "GetType"))
 }
 
-func (me *Component) GetExternal() bool {
+func (me *Component) GetExternal() global.YesNo {
 	panic(fmt.Sprintf(panicMsg, "GetExternal"))
 }
 

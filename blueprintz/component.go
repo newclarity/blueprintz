@@ -17,9 +17,11 @@ type Component struct {
 	Subdir      global.Slug
 	Basefile    global.Basefile
 	HeaderFile  global.Dir
-	SourceType  global.SourceType
-	External    bool
 	DownloadUrl global.Url
+	KeepCopy    global.YesNo
+	External    global.YesNo
+	Purchased   global.YesNo
+	Develop     global.YesNo
 }
 
 var panicMsg = "Cannot call %s() of blueprintz.Component; use blueprintz.Plugin or blueprintz.Theme instead."
@@ -52,17 +54,14 @@ func (me *Component) GetBasefile() global.Basefile {
 	return me.Basefile
 }
 
-func (me *Component) GetSourceType() global.SourceType {
-	return me.SourceType
-}
-
 func (me *Component) GetDownloadUrl() global.Url {
 	return me.DownloadUrl
 }
 
-func (me *Component) GetExternal() (ex bool) {
-	if me.DownloadUrl != "" {
-		ex = true
+func (me *Component) GetExternal() (ex global.YesNo) {
+	ex = me.External
+	if ex == "" && me.DownloadUrl != "" {
+		ex = global.YesState
 	}
 	return ex
 }

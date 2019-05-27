@@ -21,6 +21,8 @@ type Filepath = string
 type Basefile = string
 type Entry = string
 
+type YesNo = string
+
 type FileHeader = string
 
 type RecognizerName = string

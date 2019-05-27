@@ -10,7 +10,7 @@ type Componenter interface {
 	GetSubdir() global.Slug
 	GetBasefile() global.Basefile
 	GetWebsite() global.Url
-	GetExternal() bool
+	GetExternal() global.YesNo
 	GetSourceType() global.SourceType
 	GetDownloadUrl() global.Url
 }
@@ -20,10 +20,12 @@ type Component struct {
 	Website     global.Url           `json:"website,omitempty"`
 	Version     global.Version       `json:"version,omitempty"`
 	Subdir      global.Slug          `json:"subdir,omitempty"`
-	Basefile    global.Basefile      `json:"file"`
+	Basefile    global.Basefile      `json:"mainfile"`
 	DownloadUrl global.Url           `json:"download,omitempty"`
-	External    bool                 `json:"external"`
-	SourceType  global.SourceType    `json:"type,omitempty"`
+	KeepCopy    global.YesNo         `json:"keepcopy,omitempty"`
+	External    global.YesNo         `json:"external,omitempty"`
+	Purchased   global.YesNo         `json:"purchased,omitempty"`
+	Develop     global.YesNo         `json:"develop,omitempty"`
 }
 
 func NewComponent(n global.ComponentName, c Componenter) *Component {

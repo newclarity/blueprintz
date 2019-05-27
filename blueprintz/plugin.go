@@ -46,7 +46,7 @@ func (me *Plugin) Research(bpz *Blueprintz) {
 		}
 		if r.MatchesComponent(me) {
 			me.DownloadUrl = r.GetComponentDownloadUrl(me)
-			me.SourceType = global.OpenSourceCode
+			me.External = global.YesState
 			continue
 		}
 	}
@@ -135,6 +135,10 @@ func ConvertJsonfilePlugins(jfps jsonfile.Plugins) (ps Plugins) {
 }
 
 func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) *Plugin {
+	var ex global.YesNo
+	if jfp.External == "" && jfp.DownloadUrl != "" {
+		ex = global.YesState
+	}
 	return &Plugin{
 		PluginName: jfp.Name,
 		PluginURI:  jfp.Website,
@@ -144,7 +148,7 @@ func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) *Plugin {
 			Basefile:    jfp.Basefile,
 			DownloadUrl: jfp.DownloadUrl,
 			Website:     jfp.Website,
-			External:    jfp.DownloadUrl != "" || jfp.External,
+			External:    ex,
 		},
 	}
 }
