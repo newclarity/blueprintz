@@ -27,8 +27,10 @@ type FileHeader = string
 
 type RecognizerName = string
 
-type Source string
-type SourceType string
-type Maintainer string
+type Author = string
 
-type Interfaces []interface{}
+type LockerType = string
+
+type StepType = string
+type StepStatus = string
+type StepStatusMap map[StepType]StepStatus

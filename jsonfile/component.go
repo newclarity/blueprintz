@@ -11,7 +11,6 @@ type Componenter interface {
 	GetBasefile() global.Basefile
 	GetWebsite() global.Url
 	GetExternal() global.YesNo
-	GetSourceType() global.SourceType
 	GetDownloadUrl() global.Url
 }
 
@@ -36,7 +35,6 @@ func NewComponent(n global.ComponentName, c Componenter) *Component {
 		Basefile:    c.GetBasefile(),
 		Website:     c.GetWebsite(),
 		External:    c.GetExternal(),
-		SourceType:  c.GetSourceType(),
 		DownloadUrl: c.GetDownloadUrl(),
 	}
 }

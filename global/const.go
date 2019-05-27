@@ -23,11 +23,11 @@ const (
 	ModuleBlueprint  BlueprintType = "module"
 	AddOnBlueprint   BlueprintType = "add-on"
 )
-
 const (
-	CustomCode     SourceType = "custom"
-	CommercialCode SourceType = "commercial"
-	OpenSourceCode SourceType = "opensource"
+	PendingStatus     StepStatus = "pending"
+	NeedsReviewStatus StepStatus = "needsreview"
+	NeedsInputStatus  StepStatus = "needsinput"
+	CompleteStatus    StepStatus = "complete"
 )
 
 const (

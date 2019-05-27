@@ -22,6 +22,7 @@ type Blueprintz struct {
 	Name          string
 	Desc          string
 	Type          global.BlueprintType
+	SaveTo        *CodeLocker
 	Local         global.Domain
 	Theme         global.ComponentName
 	Legend        *Legend
@@ -60,7 +61,7 @@ func (me *Blueprintz) Research() {
 		t.Research(me)
 	}
 
-	me.CollectComponentSources()
+	me.CollectComponentAuthors()
 
 }
 
@@ -191,27 +192,27 @@ func (me *Blueprintz) Scandir() (sts Status) {
 	return sts
 }
 
-func (me *Blueprintz) CollectComponentSources() {
-	ss := me.Legend.Sources
+func (me *Blueprintz) CollectComponentAuthors() {
+	ss := me.Legend.Authors
 	sm := make(global.BoolUrlMap, 0)
 	for _, s := range ss {
 		sm[s.Website] = true
 	}
 	for _, t := range me.Themes {
-		ss, sm = collectComponentSource(t.Component, ss, sm)
+		ss, sm = collectComponentAuthor(t.Component, ss, sm)
 	}
 	for _, ps := range []Plugins{me.Plugins, me.MuPlugins} {
 		for _, p := range ps {
-			ss, sm = collectComponentSource(p.Component, ss, sm)
+			ss, sm = collectComponentAuthor(p.Component, ss, sm)
 		}
 	}
-	me.Legend.Sources = ss
+	me.Legend.Authors = ss
 	return
 }
 
 var ommittableDomainsRegexp = regexp.MustCompile("^(wordpress.org|github.com|bitbucket.org)$")
 
-func collectComponentSource(c *Component, ss Sources, sm global.BoolUrlMap) (Sources, global.BoolUrlMap) {
+func collectComponentAuthor(c *Component, ss Authors, sm global.BoolUrlMap) (Authors, global.BoolUrlMap) {
 	for range only.Once {
 		if c.DownloadUrl != "" {
 			break
@@ -230,7 +231,7 @@ func collectComponentSource(c *Component, ss Sources, sm global.BoolUrlMap) (Sou
 		if _, ok := sm[d]; ok {
 			break
 		}
-		ss = append(ss, NewSource(d))
+		ss = append(ss, NewAuthor(d))
 		sm[d] = true
 	}
 	return ss, sm

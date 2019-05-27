@@ -119,10 +119,6 @@ func (me *Component) SetIsRootFile(isrootfile bool) {
 	me.isrootfile = isrootfile
 }
 
-func (me *Component) GetSourceType() global.SourceType {
-	panic(fmt.Sprintf(panicMsg, "GetSourceType"))
-}
-
 var headerFinder *regexp.Regexp
 
 func init() {

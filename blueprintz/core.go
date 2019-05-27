@@ -43,12 +43,12 @@ func (me *Core) Research() {
 	//	}
 	//	if r.MatchesComponent(me) {
 	//		me.DownloadUrl = r.GetComponentDownloadUrl(me)
-	//		me.SourceType = global.OpenSourceCode
+	//		me.AuthorType = global.OpenAuthorCode
 	//		continue
 	//	}
 	//}
 	//if me.DownloadUrl == "" {
-	//	me.matchSourceType(bpz.Legend.Sources)
+	//	me.matchAuthorType(bpz.Legend.Authors)
 	//}
 }
 

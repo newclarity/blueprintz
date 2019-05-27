@@ -4,25 +4,25 @@ var NilLegend = (*Legend)(nil)
 var _ Legender = NilLegend
 
 type Legender interface {
-	GetSources() Sources
+	//	GetAuthors() Authors
 }
 
 type Legend struct {
-	Sources Sources `json:"sources"`
+	//	Authors Authors `json:"Authors"`
 }
 
 func NewLegend() *Legend {
 	return &Legend{
-		Sources: make(Sources, 0),
+		//		Authors: make(Authors, 0),
 	}
 }
 
 func NewLegendFromLegender(l Legender) *Legend {
 	return &Legend{
-		Sources: l.GetSources(),
+		//		Authors: l.GetAuthors(),
 	}
 }
 
-func (me *Legend) GetSources() Sources {
-	return me.Sources
-}
+//func (me *Legend) GetAuthors() Authors {
+//	return me.Authors
+//}

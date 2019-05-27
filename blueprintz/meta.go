@@ -9,9 +9,10 @@ var NilMeta = (*Meta)(nil)
 var _ jsonfile.Metaer = NilMeta
 
 type Meta struct {
-	CreatedBy string
-	AboutUrl  global.Url
-	SchemaVer global.Version
+	CreatedBy     string
+	AboutUrl      global.Url
+	SchemaVer     global.Version
+	StepStatusMap global.StepStatusMap
 }
 
 func NewMeta() *Meta {

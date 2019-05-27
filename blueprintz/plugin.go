@@ -39,7 +39,6 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 
 func (me *Plugin) Research(bpz *Blueprintz) {
 	me.DownloadUrl = ""
-	me.SourceType = "custom"
 	for _, r := range bpz.GetRecognizerMap() {
 		if !recognize.IsValidComponentType(me, r) {
 			continue
@@ -51,7 +50,7 @@ func (me *Plugin) Research(bpz *Blueprintz) {
 		}
 	}
 	if me.DownloadUrl == "" {
-		me.matchSourceType(bpz.Legend.Sources)
+		//me.matchAuthorType(bpz.Legend.Authors)
 	}
 }
 
@@ -59,26 +58,26 @@ func normalizeUrl(url global.Url) global.Url {
 	return strings.ReplaceAll(url, "https:", "http:")
 }
 
-func (me *Plugin) matchSourceType(sources Sources) (matched bool) {
-	for range only.Once {
-		ws := normalizeUrl(me.GetWebsite())
-		if ws == "" {
-			break
-		}
-		for _, s := range sources {
-			if !strings.HasPrefix(ws, string(normalizeUrl(s.Website))) {
-				continue
-			}
-			me.SourceType = s.SourceType
-			matched = true
-			break
-		}
-		if matched {
-			break
-		}
-	}
-	return matched
-}
+//func (me *Plugin) matchAuthorType(Authors Authors) (matched bool) {
+//	for range only.Once {
+//		ws := normalizeUrl(me.GetWebsite())
+//		if ws == "" {
+//			break
+//		}
+//		for _, s := range Authors {
+//			if !strings.HasPrefix(ws, string(normalizeUrl(s.Website))) {
+//				continue
+//			}
+//			me.AuthorType = s.AuthorType
+//			matched = true
+//			break
+//		}
+//		if matched {
+//			break
+//		}
+//	}
+//	return matched
+//}
 
 func (me *Plugin) GetType() global.ComponentType {
 	return global.PluginComponent
