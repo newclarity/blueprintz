@@ -33,6 +33,9 @@ import (
 
 func Scan() (sts Status) {
 	for range only.Once {
+		fmt.Printf("Scanning project files to annotate '%s'...",
+			jsonfile.GetBasefile(),
+		)
 		if !util.FileExists(jsonfile.GetFilepath()) {
 			sts = status.YourBad("The file '%s' does not exist; run `bpz init` to create one.",
 				jsonfile.GetBasefile(),
@@ -59,7 +62,7 @@ func Scan() (sts Status) {
 		if is.Error(sts) {
 			break
 		}
-		fmt.Printf("The file '%s' was scanned.", jsonfile.GetBasefile())
+		fmt.Println("Done.")
 	}
 	return sts
 }

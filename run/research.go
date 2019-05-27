@@ -31,6 +31,10 @@ func Research() (sts Status) {
 
 	for range only.Once {
 
+		fmt.Printf("Researching WordPress core, themes and plugins found in '%s'...",
+			jsonfile.GetBasefile(),
+		)
+
 		sts = EnsureBlueprintJsonExists()
 		if is.Error(sts) {
 			break
@@ -51,9 +55,7 @@ func Research() (sts Status) {
 			break
 		}
 
-		fmt.Printf("Research complete for WordPress core, themes and plugins found in '%s'.",
-			jsonfile.GetBasefile(),
-		)
+		fmt.Println("Done.")
 	}
 	return sts
 }

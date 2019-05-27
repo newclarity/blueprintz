@@ -31,12 +31,11 @@ func Init() (sts Status) {
 
 	for range only.Once {
 
-		sts = EnsureBlueprintJsonDoesNotExist()
-		if is.Error(sts) {
-			break
-		}
+		fmt.Printf("Initializing '%s'...",
+			jsonfile.GetBasefile(),
+		)
 
-		sts = blueprintz.Instance.Scandir()
+		sts = EnsureBlueprintJsonDoesNotExist()
 		if is.Error(sts) {
 			break
 		}
@@ -46,9 +45,7 @@ func Init() (sts Status) {
 		if is.Error(sts) {
 			break
 		}
-		fmt.Printf("The file '%s' was initialized.",
-			jsonfile.GetBasefile(),
-		)
+		fmt.Println("Done.")
 	}
 	return sts
 }
