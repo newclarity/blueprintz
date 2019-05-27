@@ -4,8 +4,10 @@ import (
 	"blueprintz/blueprintz"
 	"blueprintz/cmd"
 	"blueprintz/global"
+	"blueprintz/log"
 	"blueprintz/recognize"
 	"blueprintz/util"
+	"github.com/gearboxworks/go-status"
 	"path/filepath"
 )
 
@@ -39,6 +41,8 @@ func main() {
 		global.WordPressOrgRecognizer,
 		recognize.NewWordPressOrg(),
 	)
+	status.Logger = log.NewLogger()
+
 	_ = cmd.RootCmd.Execute()
 	//sts,ok := err.(status.Status)
 	//if !ok {
