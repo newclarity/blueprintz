@@ -35,6 +35,7 @@ var ScanCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return run.Scan()
 	},
+	Hidden: true,
 }
 
 func init() {

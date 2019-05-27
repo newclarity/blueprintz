@@ -28,7 +28,8 @@ import (
 //
 
 var ComposeCmd = &cobra.Command{
-	Use: "compose",
+	Use:    "compose",
+	Hidden: true,
 	Short: fmt.Sprintf("Compose a WordPress project from a '%s' file",
 		filepath.Base(jsonfile.GetFilepath()),
 	),

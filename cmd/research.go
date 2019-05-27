@@ -28,7 +28,8 @@ import (
 //
 
 var ResearchCmd = &cobra.Command{
-	Use: "research",
+	Use:    "research",
+	Hidden: true,
 	Short: fmt.Sprintf("Research WordPress core, themes and plugins in '%s'",
 		filepath.Base(jsonfile.GetFilepath()),
 	),

@@ -28,7 +28,8 @@ import (
 //
 
 var InitCmd = &cobra.Command{
-	Use: "init",
+	Use:    "init",
+	Hidden: true,
 	Short: fmt.Sprintf("Initialize a '%s' file in the current directory",
 		filepath.Base(jsonfile.GetFilepath()),
 	),
