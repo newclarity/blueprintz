@@ -194,7 +194,7 @@ func (me *Blueprintz) Scandir() (sts Status) {
 
 func (me *Blueprintz) CollectComponentAuthors() {
 	ss := me.Legend.Authors
-	sm := make(global.BoolUrlMap, 0)
+	sm := make(global.UrlBoolMap, 0)
 	for _, s := range ss {
 		sm[s.Website] = true
 	}
@@ -212,7 +212,7 @@ func (me *Blueprintz) CollectComponentAuthors() {
 
 var ommittableDomainsRegexp = regexp.MustCompile("^(wordpress.org|github.com|bitbucket.org)$")
 
-func collectComponentAuthor(c *Component, ss Authors, sm global.BoolUrlMap) (Authors, global.BoolUrlMap) {
+func collectComponentAuthor(c *Component, ss Authors, sm global.UrlBoolMap) (Authors, global.UrlBoolMap) {
 	for range only.Once {
 		if c.DownloadUrl != "" {
 			break
