@@ -23,22 +23,22 @@ func VerifyUrl(url global.Url) (sts Status) {
 	for range only.Once {
 		res, err := http.Head(url)
 		if err != nil {
-			sts = status.Fail().SetLogTo(status.DebugLog).
+			sts = status.Fail().SetLogAs(status.DebugLog).
 				SetMessage("HTTP HEAD request failed on '%s': %s", url, err.Error())
 			break
 		}
 		if res == nil {
-			sts = status.Fail().SetLogTo(status.WarnLog).
+			sts = status.Fail().SetLogAs(status.WarnLog).
 				SetMessage("HTTP HEAD request returned nil result for '%s'", url)
 			break
 		}
 		if res.ContentLength == 0 {
-			sts = status.Fail().SetLogTo(status.DebugLog).
+			sts = status.Fail().SetLogAs(status.DebugLog).
 				SetMessage("HTTP HEAD request returned content length of 0 result for '%s'", url)
 			break
 		}
 		if res.StatusCode != http.StatusOK {
-			sts = status.Fail().SetLogTo(status.DebugLog).
+			sts = status.Fail().SetLogAs(status.DebugLog).
 				SetMessage("HTTP HEAD request returned status of '%s' for '%s'", res.Status, url)
 			break
 		}

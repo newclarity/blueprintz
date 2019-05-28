@@ -3,7 +3,7 @@ module blueprintz
 require (
 	github.com/Machiel/slugify v1.0.1
 	github.com/fatih/color v1.7.0
-	github.com/gearboxworks/go-status v0.0.0-20190527221625-f28ff3f7ae17
+	github.com/gearboxworks/go-status v0.0.0-20190528175348-42860fb9e78f
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/karrick/godirwalk v1.9.1
 	github.com/mattn/go-colorable v0.1.1 // indirect
