@@ -8,6 +8,7 @@ before:
   hooks:
     - go mod download
     - go generate ./...
+    - echo {{ .Version }} > VERSION
 
 builds:
   -
@@ -46,6 +47,14 @@ checksum:
 
 snapshot:
   name_template: "{{ .Tag }}"
+
+release:
+  name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  draft: true
+  prerelease: auto
+  github:
+      owner: newclarity
+      name: blueprintz
 
 changelog:
   sort: asc
