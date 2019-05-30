@@ -4,6 +4,6 @@ var FirstLevelNodeLabels = NodeLabels{
 	CoreNode,
 	LayoutNode,
 	ThemesNode,
-	PluginsNode,
 	MuPluginsNode,
+	PluginsNode,
 }

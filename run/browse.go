@@ -49,7 +49,7 @@ func Browse() (sts Status) {
 		println(bpz.Name)
 
 		root := tview.NewTreeNode(global.ProjectNode).
-			SetColor(tcell.ColorRed)
+			SetColor(tcell.ColorAqua)
 
 		tree := tview.NewTreeView().
 			SetRoot(root).
