@@ -5,6 +5,8 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
+	"blueprintz/tui"
+	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
@@ -15,9 +17,40 @@ import (
 var NilPlugin = (*Plugin)(nil)
 var _ jsonfile.Componenter = NilPlugin
 var _ recognize.Componenter = NilPlugin
+var _ tui.TreeNoder = NilPlugin
+
+var NilPlugins = (*Plugins)(nil)
+var _ tui.TreeNoder = NilPlugins
 
 type PluginMap map[global.Slug]*Plugin
 type Plugins []*Plugin
+
+func (me Plugins) GetLabel() global.NodeLabel {
+	return global.PluginsNode
+}
+
+func (me Plugins) GetReference() interface{} {
+	return me
+}
+
+func (me Plugins) IsSelectable() bool {
+	return true
+}
+
+func (me Plugins) GetColor() tcell.Color {
+	return tcell.ColorLime
+}
+
+func (me Plugins) GetChildren() tui.TreeNoders {
+	tns := make(tui.TreeNoders, len(me))
+	for i, tn := range me {
+		tns[i] = tn
+	}
+	sort.Slice(tns, func(i, j int) bool {
+		return tns[i].GetLabel() < tns[j].GetLabel()
+	})
+	return tns
+}
 
 type Plugin struct {
 	PluginName global.ComponentName
@@ -35,6 +68,22 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 			Basefile: fh.GetBasefile(),
 		},
 	}
+}
+
+func (me *Plugin) GetLabel() global.NodeLabel {
+	var label global.NodeLabel
+	for range only.Once {
+		if me.PluginName != "" {
+			label = me.AddVersion(me.PluginName)
+			break
+		}
+		label = me.Component.GetLabel()
+	}
+	return label
+}
+
+func (me *Plugin) GetReference() interface{} {
+	return me
 }
 
 func (me *Plugin) Research(bpz *Blueprintz) {
@@ -131,6 +180,14 @@ func ConvertJsonfilePlugins(jfps jsonfile.Plugins) (ps Plugins) {
 		ps[i] = ConvertJsonfilePlugin(p)
 	}
 	return ps
+}
+
+func ConvertJsonfileMuPlugins(jfps jsonfile.Plugins) (mups MuPlugins) {
+	mups = make(MuPlugins, len(jfps))
+	for i, mup := range jfps {
+		mups[i] = ConvertJsonfilePlugin(mup)
+	}
+	return mups
 }
 
 func ConvertJsonfilePlugin(jfp *jsonfile.Plugin) *Plugin {

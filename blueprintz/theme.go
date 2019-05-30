@@ -5,6 +5,8 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
+	"blueprintz/tui"
+	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/only"
 	"sort"
@@ -13,14 +15,61 @@ import (
 var NilTheme = (*Theme)(nil)
 var _ jsonfile.Componenter = NilTheme
 var _ recognize.Componenter = NilTheme
+var _ tui.TreeNoder = NilTheme
+
+var NilThemes = (*Themes)(nil)
+var _ tui.TreeNoder = NilThemes
 
 type ThemeMap map[global.Slug]*Theme
 type Themes []*Theme
+
+func (me Themes) GetLabel() global.NodeLabel {
+	return global.ThemesNode
+}
+
+func (me Themes) IsSelectable() bool {
+	return true
+}
+
+func (me Themes) GetColor() tcell.Color {
+	return tcell.ColorLime
+}
 
 type Theme struct {
 	ThemeName global.ComponentName
 	ThemeURI  global.Url
 	*Component
+}
+
+func (me Themes) GetReference() interface{} {
+	return me
+}
+
+func (me Themes) GetChildren() tui.TreeNoders {
+	pns := make(tui.TreeNoders, len(me))
+	for i, pn := range me {
+		pns[i] = pn
+	}
+	sort.Slice(pns, func(i, j int) bool {
+		return pns[i].GetLabel() < pns[j].GetLabel()
+	})
+	return pns
+}
+
+func (me *Theme) GetLabel() global.NodeLabel {
+	var label global.NodeLabel
+	for range only.Once {
+		if me.ThemeName != "" {
+			label = me.AddVersion(me.ThemeName)
+			break
+		}
+		label = me.Component.GetLabel()
+	}
+	return label
+}
+
+func (me *Theme) GetReference() interface{} {
+	return me
 }
 
 func NewTheme(fh *fileheaders.Theme) *Theme {

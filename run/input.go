@@ -1,15 +1,8 @@
 package run
 
 import (
-	"blueprintz/blueprintz"
-	"blueprintz/global"
-	"blueprintz/jsonfile"
-	"blueprintz/recognize"
-	"blueprintz/util"
-	"fmt"
-	"github.com/gearboxworks/go-status"
-	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
+	"github.com/rivo/tview"
 )
 
 //
@@ -31,35 +24,24 @@ import (
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-func Scan() (sts Status) {
-	for range only.Once {
-		fmt.Printf("Scanning project files to annotate '%s'...",
-			jsonfile.GetBasefile(),
-		)
-		if !util.FileExists(jsonfile.GetFilepath()) {
-			sts = status.YourBad("The file '%s' does not exist; run `bpz init` to create one.",
-				jsonfile.GetBasefile(),
-			)
-			break
-		}
-		bpz, sts := blueprintz.Load()
-		if is.Error(sts) {
-			break
-		}
-		bpz.RegisterRecognizer(
-			global.WordPressOrgRecognizer,
-			recognize.NewWordPressOrg(),
-		)
-		sts = bpz.Scandir()
-		if is.Error(sts) {
-			break
-		}
+func Input() (sts Status) {
 
-		sts = bpz.Write()
-		if is.Error(sts) {
-			break
+	for range only.Once {
+		app := tview.NewApplication()
+		form := tview.NewForm().
+			AddDropDown("Title", []string{"Mr.", "Ms.", "Mrs.", "Dr.", "Prof."}, 0, nil).
+			AddInputField("First name", "", 20, nil, nil).
+			AddInputField("Last name", "", 20, nil, nil).
+			AddCheckbox("Age 18+", false, nil).
+			AddPasswordField("Password", "", 10, '*', nil).
+			AddButton("Save", nil).
+			AddButton("Quit", func() {
+				app.Stop()
+			})
+		form.SetBorder(true).SetTitle("Enter some data").SetTitleAlign(tview.AlignLeft)
+		if err := app.SetRoot(form, true).Run(); err != nil {
+			panic(err)
 		}
-		fmt.Println("Done.")
 	}
 	return sts
 }

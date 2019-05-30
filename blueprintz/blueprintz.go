@@ -4,6 +4,7 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
+	"blueprintz/tui"
 	"blueprintz/util"
 	"fmt"
 	"github.com/Machiel/slugify"
@@ -30,7 +31,7 @@ type Blueprintz struct {
 	Core          *Core
 	Themes        Themes
 	Plugins       Plugins
-	MuPlugins     Plugins
+	MuPlugins     MuPlugins
 	Meta          *Meta
 	recognizermap recognize.ComponentRecognizerMap
 }
@@ -49,6 +50,27 @@ func NewBlueprintz(args ...*Args) *Blueprintz {
 	return blueprintz
 }
 
+func (me *Blueprintz) GetTreeNoder(nl global.NodeLabel) tui.TreeNoder {
+	var tn tui.TreeNoder
+	for range only.Once {
+		switch nl {
+		case global.CoreNode:
+			tn = me.Core
+		case global.LayoutNode:
+			tn = me.Layout
+		case global.ThemesNode:
+			tn = me.Themes
+		case global.PluginsNode:
+			tn = me.Plugins
+		case global.MuPluginsNode:
+			tn = me.MuPlugins
+		default:
+			tn = nil
+		}
+	}
+	return tn
+}
+
 func (me *Blueprintz) Research() {
 
 	me.Core.Research()
@@ -65,10 +87,33 @@ func (me *Blueprintz) Research() {
 
 }
 
+func Load() (bpz *Blueprintz, sts Status) {
+	for range only.Once {
+		jbp := jsonfile.NewBlueprintz()
+		sts := jbp.LoadFile()
+		if is.Error(sts) {
+			break
+		}
+		bpz = NewBlueprintzFromJsonfile(jbp)
+	}
+	return bpz, sts
+}
+
 func NewBlueprintzFromJsonfile(jfbp *jsonfile.Blueprintz) *Blueprintz {
 	bpz := Blueprintz{}
 	bpz.RenewFromJsonfile(jfbp)
 	return &bpz
+}
+
+func (me *Blueprintz) Write() (sts Status) {
+	for range only.Once {
+		jbp := jsonfile.NewBlueprintzFromBlueprintz(me)
+		sts = jbp.WriteFile()
+		if is.Error(sts) {
+			break
+		}
+	}
+	return sts
 }
 
 func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
@@ -83,7 +128,7 @@ func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
 		Legend:        ConvertJsonfileLegend(jfbp.Legend),
 		Themes:        ConvertJsonfileThemes(jfbp.Themes),
 		Plugins:       ConvertJsonfilePlugins(jfbp.Plugins),
-		MuPlugins:     ConvertJsonfilePlugins(jfbp.MuPlugins),
+		MuPlugins:     ConvertJsonfileMuPlugins(jfbp.MuPlugins),
 		Meta:          ConvertJsonfileMeta(),
 		recognizermap: me.GetRecognizerMap(),
 	})
@@ -154,7 +199,7 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 		blueprintz.Plugins = make(Plugins, 0)
 	}
 	if blueprintz.MuPlugins == nil {
-		blueprintz.MuPlugins = make(Plugins, 0)
+		blueprintz.MuPlugins = make(MuPlugins, 0)
 	}
 	if blueprintz.recognizermap == nil {
 		blueprintz.recognizermap = make(recognize.ComponentRecognizerMap, 0)
@@ -201,10 +246,11 @@ func (me *Blueprintz) CollectComponentAuthors() {
 	for _, t := range me.Themes {
 		ss, sm = collectComponentAuthor(t.Component, ss, sm)
 	}
-	for _, ps := range []Plugins{me.Plugins, me.MuPlugins} {
-		for _, p := range ps {
-			ss, sm = collectComponentAuthor(p.Component, ss, sm)
-		}
+	for _, p := range me.Plugins {
+		ss, sm = collectComponentAuthor(p.Component, ss, sm)
+	}
+	for _, mp := range me.MuPlugins {
+		ss, sm = collectComponentAuthor(mp.Component, ss, sm)
 	}
 	me.Legend.Authors = ss
 	return
@@ -289,12 +335,20 @@ func (me *Blueprintz) getJsonPlugins(ps Plugins) jsonfile.Plugins {
 	return plugins
 }
 
+func (me *Blueprintz) getJsonMuPlugins(ps MuPlugins) jsonfile.Plugins {
+	plugins := make(jsonfile.Plugins, len(ps))
+	for i, p := range ps {
+		plugins[i] = jsonfile.NewPlugin(p)
+	}
+	return plugins
+}
+
 func (me *Blueprintz) GetJsonPlugins() jsonfile.Plugins {
 	return me.getJsonPlugins(me.Plugins)
 }
 
 func (me *Blueprintz) GetJsonMuPlugins() jsonfile.Plugins {
-	return me.getJsonPlugins(me.MuPlugins)
+	return me.getJsonMuPlugins(me.MuPlugins)
 }
 
 func (me *Blueprintz) FindRecognizer(c recognize.Componenter) (recognizer recognize.ComponentRecognizer, sts Status) {
