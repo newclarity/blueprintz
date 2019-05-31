@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"blueprintz/jsonfile"
+	"blueprintz/global"
 	"blueprintz/run"
 	"fmt"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 //
@@ -31,7 +30,7 @@ var InitCmd = &cobra.Command{
 	Use:    "init",
 	Hidden: true,
 	Short: fmt.Sprintf("Initialize a '%s' file in the current directory",
-		filepath.Base(jsonfile.GetFilepath()),
+		global.BlueprintzFile,
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return run.Init()

@@ -1,6 +1,7 @@
 package run
 
 import (
+	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
 )
 
@@ -23,24 +24,30 @@ import (
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-func Input() (sts Status) {
+// Survey and existing project and prepare a working blueprintz.json file
+// - Initialize blueprintz.json
+// - Survey files
+// - Research classifications
+// - Solicit input for details
+// - Other?
+
+func Survey() (sts Status) {
 
 	for range only.Once {
-		//app := tview.NewApplication()
-		//form := tview.NewForm().
-		//	AddDropDown("Title", []string{"Mr.", "Ms.", "Mrs.", "Dr.", "Prof."}, 0, nil).
-		//	AddInputField("First name", "", 20, nil, nil).
-		//	AddInputField("Last name", "", 20, nil, nil).
-		//	AddCheckbox("Age 18+", false, nil).
-		//	AddPasswordField("Password", "", 10, '*', nil).
-		//	AddButton("Save", nil).
-		//	AddButton("Quit", func() {
-		//		app.Stop()
-		//	})
-		//form.SetBorder(true).SetTitle("Enter some data").SetTitleAlign(tview.AlignLeft)
-		//if err := app.SetRoot(form, true).Run(); err != nil {
-		//	panic(err)
-		//}
+		sts = Init()
+		if is.Error(sts) {
+			break
+		}
+		sts = Scan()
+		if is.Error(sts) {
+			break
+		}
+		sts = Research()
+		if is.Error(sts) {
+			break
+		}
 	}
+
 	return sts
+
 }

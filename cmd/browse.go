@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"blueprintz/jsonfile"
+	"blueprintz/global"
 	"blueprintz/run"
 	"fmt"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 //
@@ -30,7 +29,7 @@ import (
 var BrowseCmd = &cobra.Command{
 	Use: "browse",
 	Short: fmt.Sprintf("Browse and edit a '%s' file in a tree view",
-		filepath.Base(jsonfile.GetFilepath()),
+		global.BlueprintzFile,
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return run.Browse()

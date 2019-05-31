@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"blueprintz/run"
-	"github.com/gearboxworks/go-status/is"
-	"github.com/gearboxworks/go-status/only"
 	"github.com/spf13/cobra"
 )
 
@@ -26,33 +24,11 @@ import (
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-// Survey and existing project and prepare a working blueprintz.json file
-// - Initialize blueprintz.json
-// - Survey files
-// - Research classifications
-// - Solicit input for details
-// - Other?
-
 var SurveyCmd = &cobra.Command{
 	Use:   "survey",
 	Short: "Survey a project for core, plugins, themes, etc.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var sts Status
-		for range only.Once {
-			sts = run.Init()
-			if is.Error(sts) {
-				break
-			}
-			sts = run.Scan()
-			if is.Error(sts) {
-				break
-			}
-			sts = run.Research()
-			if is.Error(sts) {
-				break
-			}
-		}
-		return sts
+		return run.Survey()
 	},
 }
 

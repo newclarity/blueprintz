@@ -1,14 +1,7 @@
 package main
 
 import (
-	"blueprintz/blueprintz"
 	"blueprintz/cmd"
-	"blueprintz/global"
-	"blueprintz/log"
-	"blueprintz/recognize"
-	"blueprintz/util"
-	"github.com/gearboxworks/go-status"
-	"path/filepath"
 )
 
 //
@@ -34,15 +27,6 @@ import (
 //
 
 func main() {
-	blueprintz.Instance = blueprintz.NewBlueprintz(&blueprintz.Args{
-		Name: filepath.Base(util.GetCurrentDir()),
-	})
-	blueprintz.Instance.RegisterRecognizer(
-		global.WordPressOrgRecognizer,
-		recognize.NewWordPressOrg(),
-	)
-	status.Logger = log.NewLogger()
-
 	_ = cmd.RootCmd.Execute()
 	//sts,ok := err.(status.Status)
 	//if !ok {

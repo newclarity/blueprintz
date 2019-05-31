@@ -120,7 +120,7 @@ func (me *Blueprintz) LoadFile() (sts Status) {
 
 func GetFilepath() global.Dir {
 	return fmt.Sprintf("%s%c%s",
-		util.GetCurrentDir(),
+		util.GetProjectDir(),
 		os.PathSeparator,
 		global.BlueprintzFile,
 	)

@@ -10,7 +10,7 @@ type TreeNoder interface {
 	GetLabel() global.NodeLabel
 	GetReference() interface{}
 	IsSelectable() bool
-	GetColor() tcell.Color
+	GetColor() Color
 	GetChildren() TreeNoders
 }
 
@@ -30,7 +30,7 @@ func (me NilTreeNoder) IsSelectable() bool {
 	return false
 }
 
-func (me NilTreeNoder) GetColor() tcell.Color {
+func (me NilTreeNoder) GetColor() Color {
 	return tcell.ColorOrangeRed
 }
 

@@ -49,7 +49,7 @@ func (me *Core) IsSelectable() bool {
 	return true
 }
 
-func (me *Core) GetColor() tcell.Color {
+func (me *Core) GetColor() tui.Color {
 	return tcell.ColorLime
 }
 

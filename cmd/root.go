@@ -1,7 +1,14 @@
 package cmd
 
 import (
+	"blueprintz/blueprintz"
+	"blueprintz/global"
+	"blueprintz/log"
+	"blueprintz/recognize"
+	"blueprintz/util"
+	"github.com/gearboxworks/go-status"
 	"github.com/spf13/cobra"
+	"path/filepath"
 )
 
 //
@@ -23,16 +30,25 @@ import (
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-var NoCache bool
-
 var RootCmd = &cobra.Command{
 	Use:   "blueprintz",
 	Short: "Manage and use blueprints for your WordPress websites, plugins and themes.",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		blueprintz.Instance = blueprintz.NewBlueprintz(&blueprintz.Args{
+			Name: filepath.Base(util.GetProjectDir()),
+		})
+		blueprintz.Instance.RegisterRecognizer(
+			global.WordPressOrgRecognizer,
+			recognize.NewWordPressOrg(),
+		)
+		status.Logger = log.NewLogger()
+	},
 }
 
 func init() {
 	pf := RootCmd.PersistentFlags()
-	pf.BoolVarP(&NoCache, "no-cache", "", false, "Disable caching")
+	pf.BoolVarP(&global.NoCache, "no-cache", "", false, "Disable caching")
+	pf.StringVarP(&global.ProjectDir, "project-dir", "", util.GetCurrentDir(), "Project directory")
 }
 
 /*

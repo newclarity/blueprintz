@@ -32,13 +32,13 @@ func Init() (sts Status) {
 	for range only.Once {
 
 		fmt.Printf("Initializing '%s'...",
-			jsonfile.GetBasefile(),
+			jsonfile.GetFilepath(),
 		)
 
-		sts = EnsureBlueprintJsonDoesNotExist()
-		if is.Error(sts) {
-			break
-		}
+		//sts = EnsureBlueprintJsonDoesNotExist()
+		//if is.Error(sts) {
+		//	break
+		//}
 
 		jbp := jsonfile.NewBlueprintzFromBlueprintz(blueprintz.Instance)
 		sts = jbp.WriteFile()

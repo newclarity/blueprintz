@@ -1,17 +1,6 @@
 package run
 
-import (
-	"blueprintz/blueprintz"
-	"blueprintz/global"
-	"blueprintz/jsonfile"
-	"blueprintz/tui"
-	"github.com/gdamore/tcell"
-	"github.com/gearboxworks/go-status"
-	"github.com/gearboxworks/go-status/is"
-	"github.com/gearboxworks/go-status/only"
-	"github.com/rivo/tview"
-	"path/filepath"
-)
+import "blueprintz/bpzui"
 
 //
 // Name: Blueprintz for WordPress
@@ -33,73 +22,5 @@ import (
 //
 
 func Browse() (sts Status) {
-
-	for range only.Once {
-		var bpz *blueprintz.Blueprintz
-		bpz, sts = blueprintz.Load()
-		if is.Error(sts) {
-			break
-		}
-		if bpz == nil {
-			sts = status.Fail().SetMessage("no '%s' file found in current directory",
-				filepath.Base(jsonfile.GetFilepath()),
-			)
-			break
-		}
-		println(bpz.Name)
-
-		root := tview.NewTreeNode(global.ProjectNode).
-			SetColor(tcell.ColorAqua)
-
-		tree := tview.NewTreeView().
-			SetRoot(root).
-			SetCurrentNode(root)
-
-		m := make(global.TreeNodeMap, len(global.FirstLevelNodeLabels))
-		for _, nl := range global.FirstLevelNodeLabels {
-			ref := bpz.GetTreeNoder(nl)
-			node := tui.MakeNode(ref)
-			root.AddChild(node)
-			m[nl] = node
-		}
-
-		// If a directory was selected, open it.
-		tree.SetSelectedFunc(func(node *tview.TreeNode) {
-			for range only.Once {
-				ref := node.GetReference()
-				if ref == nil {
-					break // Selecting the root node does nothing.
-				}
-				children := node.GetChildren()
-				if len(children) > 0 {
-					// Collapse if visible, expand if collapsed.
-					node.SetExpanded(!node.IsExpanded())
-					break
-				}
-				// Load and show files in this directory.
-				tn, ok := ref.(tui.TreeNoder)
-				if !ok {
-					break
-				}
-				c := tn.GetChildren()
-				if c == nil {
-					break
-				}
-				for _, cn := range c {
-					tui.MakeNode(cn)
-					node.AddChild(tui.MakeNode(cn))
-				}
-			}
-		})
-
-		//form.SetBorder(true).SetTitle("Enter some data").SetTitleAlign(tview.AlignLeft)
-		ui := tview.NewApplication()
-		err := ui.SetRoot(tree, true).Run()
-
-		if err != nil {
-			sts = status.Wrap(err)
-			break
-		}
-	}
-	return sts
+	return bpzui.New().Run()
 }

@@ -37,7 +37,7 @@ func (me Plugins) IsSelectable() bool {
 	return true
 }
 
-func (me Plugins) GetColor() tcell.Color {
+func (me Plugins) GetColor() tui.Color {
 	return tcell.ColorLime
 }
 

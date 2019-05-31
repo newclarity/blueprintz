@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"blueprintz/jsonfile"
+	"blueprintz/global"
 	"blueprintz/run"
 	"fmt"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 //
@@ -30,7 +29,7 @@ import (
 var ScanCmd = &cobra.Command{
 	Use: "scan",
 	Short: fmt.Sprintf("Scan a %s file for core, plugins, themes, etc.",
-		filepath.Base(jsonfile.GetFilepath()),
+		global.BlueprintzFile,
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return run.Scan()

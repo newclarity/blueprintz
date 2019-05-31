@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"blueprintz/jsonfile"
+	"blueprintz/global"
 	"blueprintz/run"
 	"fmt"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 //
@@ -31,7 +30,7 @@ var ComposeCmd = &cobra.Command{
 	Use:    "compose",
 	Hidden: true,
 	Short: fmt.Sprintf("Compose a WordPress project from a '%s' file",
-		filepath.Base(jsonfile.GetFilepath()),
+		global.BlueprintzFile,
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return run.Compose()

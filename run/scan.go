@@ -33,7 +33,7 @@ import (
 
 func Scan() (sts Status) {
 	for range only.Once {
-		fmt.Printf("Scanning project files to annotate '%s'...",
+		fmt.Printf("Scanning files to annotate '%s'...",
 			jsonfile.GetBasefile(),
 		)
 		if !util.FileExists(jsonfile.GetFilepath()) {
@@ -59,7 +59,7 @@ func Scan() (sts Status) {
 		if is.Error(sts) {
 			break
 		}
-		fmt.Println("Done.")
+		fmt.Print("Done.\n")
 	}
 	return sts
 }

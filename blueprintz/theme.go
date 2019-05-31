@@ -31,7 +31,7 @@ func (me Themes) IsSelectable() bool {
 	return true
 }
 
-func (me Themes) GetColor() tcell.Color {
+func (me Themes) GetColor() tui.Color {
 	return tcell.ColorLime
 }
 

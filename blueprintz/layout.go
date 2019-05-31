@@ -42,7 +42,7 @@ func (me *Layout) IsSelectable() bool {
 	return true
 }
 
-func (me *Layout) GetColor() tcell.Color {
+func (me *Layout) GetColor() tui.Color {
 	return tcell.ColorLime
 }
 
@@ -147,14 +147,15 @@ func (me *Layout) isWebRoot(fp string) (is bool) {
 
 func (me *Layout) ScanDir() (sts Status) {
 	var err error
-	wd := util.GetCurrentDir()
+	wd := util.GetProjectDir()
 	for range only.Once {
 		me.workingDir = wd
 		me.ProjectPath = me.getRelativeDir(wd)
 		content := 0
 		err = util.WalkDirFilesFirst(wd,
-			func(fp, bf string, f os.FileInfo, lvl int) (result error) {
+			func(fp string) (result error) {
 				for range only.Once {
+					bf := filepath.Base(fp)
 					if bf[0] == '.' {
 						break
 					}
@@ -174,29 +175,24 @@ func (me *Layout) ScanDir() (sts Status) {
 				}
 				return result
 			},
-			func(fp, bf string, f os.FileInfo, lvl int) (result error) {
+			func(dp string) (result error) {
 				for range only.Once {
-					if skipDirs.MatchString(bf) {
+					bd := filepath.Base(dp)
+					if skipDirs.MatchString(bd) {
 						result = filepath.SkipDir
 						break
 					}
-					if bf[0] == '.' {
+					if bd[0] == '.' {
 						break
 					}
 					if me.ContentPath == "" {
-						switch bf {
-						case "mu-plugins":
-							content++
-							result = filepath.SkipDir
-						case "plugins":
-							content++
-							result = filepath.SkipDir
-						case "themes":
+						switch bd {
+						case "mu-plugins", "plugins", "themes":
 							content++
 							result = filepath.SkipDir
 						}
 						if content == 2 {
-							me.ContentPath = me.getRelativeDir(fp)
+							me.ContentPath = me.getRelativeDir(dp)
 						}
 					}
 					if me.IsComplete() {

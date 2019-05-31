@@ -99,7 +99,7 @@ func (me *Component) IsSelectable() bool {
 	return true
 }
 
-func (me *Component) GetColor() tcell.Color {
+func (me *Component) GetColor() tui.Color {
 	return tcell.ColorWhite
 }
 
