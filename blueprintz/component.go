@@ -7,13 +7,11 @@ import (
 	"blueprintz/tui"
 	"fmt"
 	"github.com/gdamore/tcell"
-	"github.com/gearboxworks/go-status/only"
 )
 
 var NilComponent = (*Component)(nil)
 var _ jsonfile.Componenter = NilComponent
 var _ recognize.Componenter = NilComponent
-var _ tui.TreeNoder = NilComponent
 
 type Component struct {
 	Version     global.Version
@@ -68,31 +66,6 @@ func (me *Component) GetExternal() (ex global.YesNo) {
 		ex = global.YesState
 	}
 	return ex
-}
-
-func (me *Component) GetLabel() global.NodeLabel {
-	var label global.NodeLabel
-	for range only.Once {
-		if me.Subdir != "" {
-			label = me.Subdir
-			break
-		}
-		if me.Basefile != "" {
-			label = me.Basefile
-			break
-		}
-	}
-	return me.AddVersion(label)
-}
-
-func (me *Component) AddVersion(label global.NodeLabel) global.NodeLabel {
-	for range only.Once {
-		if me.Version == "" {
-			break
-		}
-		label = fmt.Sprintf("%s — %s", label, me.Version)
-	}
-	return label
 }
 
 func (me *Component) IsSelectable() bool {

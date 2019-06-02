@@ -3,42 +3,46 @@ package bpzui
 import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
-	"blueprintz/jsonfile"
-	"blueprintz/tui"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
-	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
-	"path/filepath"
 )
 
 type BpzUi struct {
+	Blueprintz    *blueprintz.Blueprintz
 	App           *tview.Application
-	ProjectView   *tview.TreeView
-	RightHandView *tview.Flex
-	NodeView      *tview.Box
-	HelpView      *tview.Box
 	FullView      *tview.Flex
+	ProjectNode   *tview.TreeView
+	RightHandView *tview.Flex
+	NodeView      *tview.Form
+	HelpView      *tview.TextView
 }
 
-func New() *BpzUi {
+func New(bpz *blueprintz.Blueprintz) *BpzUi {
 	bpzui := BpzUi{
-		App:      tview.NewApplication(),
-		NodeView: tview.NewBox().SetBorder(true).SetTitle("Node"),
-		HelpView: tview.NewBox().SetBorder(true).SetTitle("Help"),
+		Blueprintz: bpz,
+		App:        tview.NewApplication(),
+		HelpView:   tview.NewTextView(),
 	}
-	pv, sts := bpzui.MakeProjectView()
+
+	sts := bpz.LoadJsonfile()
 	if is.Error(sts) {
 		sts.SetLogAs(status.FatalLog).Log()
 	}
-	bpzui.ProjectView = pv
+
+	pn := NewProjectNode(&bpzui)
+
+	bpzui.ProjectNode = pn.Tree
+	bpzui.HelpView.SetBorder(true).SetTitle("Help")
+	bpzui.NodeView = pn.Form
+
 	bpzui.RightHandView = tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(bpzui.NodeView, 0, 618, false).
 		AddItem(bpzui.HelpView, 0, 382, false)
 
 	bpzui.FullView = tview.NewFlex().
-		AddItem(bpzui.ProjectView, 0, 382, true).
+		AddItem(bpzui.ProjectNode, 0, 382, true).
 		AddItem(bpzui.RightHandView, 0, 618, false)
 
 	bpzui.App.SetRoot(bpzui.FullView, true)
@@ -46,7 +50,7 @@ func New() *BpzUi {
 	// Shortcuts to navigate the slides.
 	bpzui.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEsc {
-			bpzui.App.SetFocus(bpzui.ProjectView)
+			bpzui.App.SetFocus(bpzui.ProjectNode)
 		}
 		return event
 	})
@@ -62,87 +66,16 @@ func (me *BpzUi) Run() (sts Status) {
 	return sts
 }
 
-func (me *BpzUi) MakeProjectView() (tree *tview.TreeView, sts Status) {
+var coreBlueprintTypes = blueprintDropdownTypes()
 
-	for range only.Once {
-		var bpz *blueprintz.Blueprintz
-		bpz, sts = blueprintz.Load()
-		if is.Error(sts) {
-			break
-		}
-		if bpz == nil {
-			sts = status.Fail().SetMessage("no '%s' file found in current directory",
-				filepath.Base(jsonfile.GetFilepath()),
-			)
-			break
-		}
+func blueprintDropdownTypes() global.BlueprintTypes {
+	ts := global.AllBlueprintTypes
+	ts = append(ts, "")
+	copy(ts[1:], ts[0:])
+	ts[0] = "Select a Blueprint Type"
+	return ts
+}
 
-		root := tview.NewTreeNode(global.ProjectNode).
-			SetColor(tcell.ColorAqua)
-
-		tree = tview.NewTreeView().
-			SetRoot(root).
-			SetCurrentNode(root)
-
-		me.ProjectView = tree
-
-		m := make(global.TreeNodeMap, len(global.FirstLevelNodeLabels))
-		for _, nl := range global.FirstLevelNodeLabels {
-			ref := bpz.GetTreeNoder(nl)
-			node := tui.MakeNode(ref)
-			root.AddChild(node)
-			m[nl] = node
-		}
-
-		color := tcell.ColorWhite
-		me.ProjectView.SetChangedFunc(func(node *tview.TreeNode) {
-			if color == tcell.ColorAqua {
-				color = tcell.ColorLime
-			} else {
-				color = tcell.ColorAqua
-			}
-			me.NodeView.SetTitleColor(color)
-		})
-
-		// If a directory was selected, open it.
-		me.ProjectView.SetSelectedFunc(func(node *tview.TreeNode) {
-			changefocus := false
-			children := node.GetChildren()
-			for range only.Once {
-				ref := node.GetReference()
-				if ref == nil {
-					break // Selecting the root node does nothing.
-				}
-				if len(children) != 0 {
-					node.SetExpanded(!node.IsExpanded())
-					break
-				}
-				// Load and show files in this directory.
-				tn, ok := ref.(tui.TreeNoder)
-				if !ok {
-					changefocus = true
-					break
-				}
-				c := tn.GetChildren()
-				if c == nil {
-					changefocus = true
-					break
-				}
-				for _, cn := range c {
-					tui.MakeNode(cn)
-					node.AddChild(tui.MakeNode(cn))
-				}
-			}
-			if changefocus {
-				me.App.SetFocus(me.NodeView)
-			}
-		})
-
-		me.ProjectView.SetBorder(true).
-			SetBorderPadding(1, 1, 2, 2).
-			SetTitle(global.JsonSchemaCreatedBy).
-			SetTitleAlign(tview.AlignCenter)
-
-	}
-	return tree, sts
+func (me *BpzUi) MakeNodeView() (form *tview.Box, sts Status) {
+	return tview.NewBox().SetBorder(true).SetTitle("Node"), nil
 }

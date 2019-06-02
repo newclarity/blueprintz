@@ -3,10 +3,8 @@ package blueprintz
 import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
-	"blueprintz/tui"
 	"blueprintz/util"
 	"fmt"
-	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/only"
 	"io"
@@ -19,7 +17,6 @@ import (
 
 var NilLayout = (*Layout)(nil)
 var _ jsonfile.Layouter = NilLayout
-var _ tui.TreeNoder = NilLayout
 
 type Layout struct {
 	workingDir  global.Dir
@@ -28,26 +25,6 @@ type Layout struct {
 	WebrootPath global.Path
 	ContentPath global.Path
 	VendorPath  global.Path
-}
-
-func (me *Layout) GetLabel() global.NodeLabel {
-	return global.LayoutNode
-}
-
-func (me *Layout) GetReference() interface{} {
-	return me
-}
-
-func (me *Layout) IsSelectable() bool {
-	return true
-}
-
-func (me *Layout) GetColor() tui.Color {
-	return tcell.ColorLime
-}
-
-func (me *Layout) GetChildren() tui.TreeNoders {
-	return nil
 }
 
 func NewLayout() *Layout {

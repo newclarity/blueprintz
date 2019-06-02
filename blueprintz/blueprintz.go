@@ -4,7 +4,6 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
-	"blueprintz/tui"
 	"blueprintz/util"
 	"fmt"
 	"github.com/Machiel/slugify"
@@ -48,27 +47,6 @@ func NewBlueprintz(args ...*Args) *Blueprintz {
 	blueprintz := &Blueprintz{}
 	blueprintz.Renew(&_args)
 	return blueprintz
-}
-
-func (me *Blueprintz) GetTreeNoder(nl global.NodeLabel) tui.TreeNoder {
-	var tn tui.TreeNoder
-	for range only.Once {
-		switch nl {
-		case global.CoreNode:
-			tn = me.Core
-		case global.LayoutNode:
-			tn = me.Layout
-		case global.ThemesNode:
-			tn = me.Themes
-		case global.PluginsNode:
-			tn = me.Plugins
-		case global.MuPluginsNode:
-			tn = me.MuPlugins
-		default:
-			tn = nil
-		}
-	}
-	return tn
 }
 
 func (me *Blueprintz) Research() {

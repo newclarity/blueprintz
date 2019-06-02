@@ -5,8 +5,6 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
-	"blueprintz/tui"
-	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
@@ -17,40 +15,9 @@ import (
 var NilPlugin = (*Plugin)(nil)
 var _ jsonfile.Componenter = NilPlugin
 var _ recognize.Componenter = NilPlugin
-var _ tui.TreeNoder = NilPlugin
-
-var NilPlugins = (*Plugins)(nil)
-var _ tui.TreeNoder = NilPlugins
 
 type PluginMap map[global.Slug]*Plugin
 type Plugins []*Plugin
-
-func (me Plugins) GetLabel() global.NodeLabel {
-	return global.PluginsNode
-}
-
-func (me Plugins) GetReference() interface{} {
-	return me
-}
-
-func (me Plugins) IsSelectable() bool {
-	return true
-}
-
-func (me Plugins) GetColor() tui.Color {
-	return tcell.ColorLime
-}
-
-func (me Plugins) GetChildren() tui.TreeNoders {
-	tns := make(tui.TreeNoders, len(me))
-	for i, tn := range me {
-		tns[i] = tn
-	}
-	sort.Slice(tns, func(i, j int) bool {
-		return tns[i].GetLabel() < tns[j].GetLabel()
-	})
-	return tns
-}
 
 type Plugin struct {
 	PluginName global.ComponentName
@@ -68,22 +35,6 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 			Basefile: fh.GetBasefile(),
 		},
 	}
-}
-
-func (me *Plugin) GetLabel() global.NodeLabel {
-	var label global.NodeLabel
-	for range only.Once {
-		if me.PluginName != "" {
-			label = me.AddVersion(me.PluginName)
-			break
-		}
-		label = me.Component.GetLabel()
-	}
-	return label
-}
-
-func (me *Plugin) GetReference() interface{} {
-	return me
 }
 
 func (me *Plugin) Research(bpz *Blueprintz) {
@@ -106,27 +57,6 @@ func (me *Plugin) Research(bpz *Blueprintz) {
 func normalizeUrl(url global.Url) global.Url {
 	return strings.ReplaceAll(url, "https:", "http:")
 }
-
-//func (me *Plugin) matchAuthorType(Authors Authors) (matched bool) {
-//	for range only.Once {
-//		ws := normalizeUrl(me.GetWebsite())
-//		if ws == "" {
-//			break
-//		}
-//		for _, s := range Authors {
-//			if !strings.HasPrefix(ws, string(normalizeUrl(s.Website))) {
-//				continue
-//			}
-//			me.AuthorType = s.AuthorType
-//			matched = true
-//			break
-//		}
-//		if matched {
-//			break
-//		}
-//	}
-//	return matched
-//}
 
 func (me *Plugin) GetType() global.ComponentType {
 	return global.PluginComponent

@@ -1,9 +1,6 @@
 package global
 
-import "github.com/rivo/tview"
-
-//import "github.com/rivo/tview"
-
+type BlueprintTypes []BlueprintType
 type BlueprintType = string
 type ComponentName = string
 type ComponentTypeBoolMap = map[ComponentType]bool
@@ -39,14 +36,13 @@ type StepType = string
 type StepStatus = string
 type StepStatusMap map[StepType]StepStatus
 
-type TreeNodeMap = map[NodeLabel]*tview.TreeNode
-type NodeLabels = []NodeLabel
-type NodeLabel = string
+type NodeLabels = []Label
+type Label = string
 
-const ProjectNode NodeLabel = "Project"
-const CoreNode NodeLabel = "Core"
-const LayoutNode NodeLabel = "Layout"
-const ThemesNode NodeLabel = "Themes"
-const PluginsNode NodeLabel = "Plugins"
-const MuPluginsNode NodeLabel = "MU-Plugins"
-const UnknownNode NodeLabel = "Unknown"
+const ProjectNode Label = "Project"
+const CoreNode Label = "Core"
+const LayoutNode Label = "Layout"
+const ThemesNode Label = "Themes"
+const PluginsNode Label = "Plugins"
+const MuPluginsNode Label = "MU-Plugins"
+const UnknownNode Label = "Unknown"

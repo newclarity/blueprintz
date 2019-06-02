@@ -4,11 +4,11 @@ package global
 var NoCache bool
 var ProjectDir Dir
 
-// T
-var FirstLevelNodeLabels = NodeLabels{
-	CoreNode,
-	LayoutNode,
-	ThemesNode,
-	MuPluginsNode,
-	PluginsNode,
+var AllBlueprintTypes = BlueprintTypes{
+	AddOnBlueprint,
+	LibraryBlueprint,
+	ModuleBlueprint,
+	PluginBlueprint,
+	ThemeBlueprint,
+	WebsiteBlueprint,
 }

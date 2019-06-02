@@ -3,11 +3,9 @@ package blueprintz
 import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
-	"blueprintz/tui"
 	"blueprintz/util"
 	"bufio"
 	"fmt"
-	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/only"
 	"os"
@@ -15,7 +13,6 @@ import (
 
 var NilCore = (*Core)(nil)
 var _ jsonfile.Coreer = NilCore
-var _ tui.TreeNoder = NilCore
 
 type Core struct {
 	Version     global.Version
@@ -35,26 +32,6 @@ func ConvertJsonfileCore(jfc *jsonfile.Core) *Core {
 		CoreType:    jfc.CoreType,
 		DownloadUrl: jfc.DownloadUrl,
 	}
-}
-
-func (me *Core) GetLabel() global.NodeLabel {
-	return global.CoreNode
-}
-
-func (me *Core) GetReference() interface{} {
-	return me
-}
-
-func (me *Core) IsSelectable() bool {
-	return true
-}
-
-func (me *Core) GetColor() tui.Color {
-	return tcell.ColorLime
-}
-
-func (me *Core) GetChildren() tui.TreeNoders {
-	return nil
 }
 
 func (me *Core) Research() {

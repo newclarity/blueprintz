@@ -1,6 +1,9 @@
 package run
 
-import "blueprintz/bpzui"
+import (
+	"blueprintz/blueprintz"
+	"blueprintz/bpzui"
+)
 
 //
 // Name: Blueprintz for WordPress
@@ -22,5 +25,5 @@ import "blueprintz/bpzui"
 //
 
 func Browse() (sts Status) {
-	return bpzui.New().Run()
+	return bpzui.New(blueprintz.Instance).Run()
 }
