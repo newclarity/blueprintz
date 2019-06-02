@@ -9,7 +9,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-var NilThemeNode = (*ProjectNode)(nil)
+var NilThemeNode = (*ThemeNode)(nil)
 var _ tui.TreeNoder = NilThemeNode
 
 type ThemeNode struct {
@@ -62,4 +62,7 @@ func (me *ThemeNode) GetColor() tui.Color {
 
 func (me *ThemeNode) GetChildren() tui.TreeNoders {
 	return nil
+}
+func (me *ThemeNode) GetHelp() *tview.TextView {
+	return tview.NewTextView()
 }

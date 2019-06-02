@@ -38,9 +38,9 @@ const (
 )
 
 const (
-	WordPressCore    CoreType = "wordpress"
-	ClassicPressCore CoreType = "classicpress"
-	PantheonWPCore   CoreType = "pantheon-wordpress" //https://github.com/pantheon-systems/WordPress
+	WordPressCore    Dialect = "wordpress"
+	ClassicPressCore Dialect = "classicpress"
+	PantheonWPCore   Dialect = "pantheon-wordpress" //https://github.com/pantheon-systems/WordPress
 )
 
 const (

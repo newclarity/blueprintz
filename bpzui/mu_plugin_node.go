@@ -63,3 +63,7 @@ func (me *MuPluginNode) GetColor() tui.Color {
 func (me *MuPluginNode) GetChildren() tui.TreeNoders {
 	return nil
 }
+
+func (me *MuPluginNode) GetHelp() *tview.TextView {
+	return tview.NewTextView()
+}

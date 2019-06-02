@@ -9,7 +9,7 @@ import (
 	"sort"
 )
 
-var NilThemesNode = (*ProjectNode)(nil)
+var NilThemesNode = (*ThemesNode)(nil)
 var _ tui.TreeNoder = NilThemesNode
 
 type ThemesNode struct {
@@ -17,12 +17,15 @@ type ThemesNode struct {
 	Themes blueprintz.Themes
 }
 
+func (me *ThemesNode) GetHelp() *tview.TextView {
+	return tview.NewTextView()
+}
+
 func NewThemesNode(parent *BpzUi) *ThemesNode {
-	cn := ThemesNode{
+	return &ThemesNode{
 		Parent: parent,
 		Themes: parent.Blueprintz.Themes,
 	}
-	return &cn
 }
 
 func (me *ThemesNode) GetForm() *tview.Form {

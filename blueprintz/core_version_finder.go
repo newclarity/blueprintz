@@ -7,7 +7,7 @@ import (
 
 type CoreVersionFinders []*CoreVersionFinder
 type CoreVersionFinder struct {
-	CoreType global.CoreType
+	CoreType global.Dialect
 	Regexp   *regexp.Regexp
 }
 type (

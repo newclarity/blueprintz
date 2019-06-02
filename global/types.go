@@ -6,7 +6,7 @@ type ComponentName = string
 type ComponentTypeBoolMap = map[ComponentType]bool
 type ComponentTypes = []ComponentType
 type ComponentType = string
-type CoreType = string
+type Dialect = string
 
 type UrlBoolMap = map[Url]bool
 type Urls []Url

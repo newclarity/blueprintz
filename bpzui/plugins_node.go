@@ -54,3 +54,6 @@ func (me *PluginsNode) GetChildren() tui.TreeNoders {
 	})
 	return tns
 }
+func (me *PluginsNode) GetHelp() *tview.TextView {
+	return tview.NewTextView()
+}

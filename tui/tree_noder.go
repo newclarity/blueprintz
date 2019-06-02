@@ -14,6 +14,7 @@ type TreeNoder interface {
 	GetColor() Color
 	GetChildren() TreeNoders
 	GetForm() *tview.Form
+	GetHelp() *tview.TextView
 }
 
 var _ TreeNoder = (*NilTreeNoder)(nil)
@@ -41,5 +42,9 @@ func (me NilTreeNoder) GetChildren() TreeNoders {
 }
 
 func (me NilTreeNoder) GetForm() *tview.Form {
+	return nil
+}
+
+func (me NilTreeNoder) GetHelp() *tview.TextView {
 	return nil
 }

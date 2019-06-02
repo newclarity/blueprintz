@@ -34,16 +34,14 @@ func New(bpz *blueprintz.Blueprintz) *BpzUi {
 	pn := NewProjectNode(&bpzui)
 
 	bpzui.ProjectNode = pn.Tree
-	bpzui.HelpView.SetBorder(true).SetTitle("Help")
-	bpzui.NodeView = pn.Form
+	bpzui.NodeView = pn.GetForm()
+	bpzui.HelpView = pn.Help
 
-	bpzui.RightHandView = tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(bpzui.NodeView, 0, 618, false).
-		AddItem(bpzui.HelpView, 0, 382, false)
+	bpzui.RightHandView = bpzui.NewRightHandView()
 
 	bpzui.FullView = tview.NewFlex().
-		AddItem(bpzui.ProjectNode, 0, 382, true).
-		AddItem(bpzui.RightHandView, 0, 618, false)
+		AddItem(bpzui.ProjectNode, 0, GoldenNarrow, true).
+		AddItem(bpzui.RightHandView, 0, GoldenWide, false)
 
 	bpzui.App.SetRoot(bpzui.FullView, true)
 
@@ -56,6 +54,13 @@ func New(bpz *blueprintz.Blueprintz) *BpzUi {
 	})
 
 	return &bpzui
+}
+
+func (me *BpzUi) NewRightHandView() *tview.Flex {
+	return tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(me.NodeView, 0, GoldenWide, false).
+		AddItem(me.HelpView, 0, GoldenNarrow, false)
 }
 
 func (me *BpzUi) Run() (sts Status) {

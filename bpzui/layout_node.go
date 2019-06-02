@@ -52,3 +52,7 @@ func (me *LayoutNode) GetChildren() tui.TreeNoders {
 	return nil
 
 }
+
+func (me *LayoutNode) GetHelp() *tview.TextView {
+	return tview.NewTextView()
+}

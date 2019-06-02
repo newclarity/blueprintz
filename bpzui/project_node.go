@@ -17,32 +17,26 @@ var NilProjectNode = (*ProjectNode)(nil)
 var _ tui.TreeNoder = NilProjectNode
 
 type ProjectNode struct {
-	Parent   *BpzUi
+	Ui       *BpzUi
 	Tree     *tview.TreeView
 	Form     *tview.Form
+	Help     *tview.TextView
 	children tui.TreeNoders
 }
 
 func NewProjectNode(parent *BpzUi) *ProjectNode {
-	form := tview.NewForm().
-		AddInputField("Project name", "", 20, nil, nil).
-		AddInputField("Description", "", 40, nil, nil).
-		AddDropDown("Blueprint type", coreBlueprintTypes, 0, func(option string, optionIndex int) {}).
-		AddInputField("Local domain", "", 30, nil, nil).
-		AddButton("Save", func() {
-			parent.App.SetFocus(parent.ProjectNode)
-		}).
-		AddButton("Cancel", func() {
-			parent.App.SetFocus(parent.ProjectNode)
-		})
+
+	form := tview.NewForm()
 	form.SetBorder(true).
 		SetBorderPadding(1, 1, 3, 3).
 		SetTitle(global.ProjectNode)
 
 	pn := ProjectNode{
-		Parent: parent,
-		Form:   form,
+		Ui:   parent,
+		Form: form,
+		Help: tview.NewTextView(),
 	}
+	pn.Help.SetBorder(true).SetTitle("Help")
 	pn.AddChild(NewCoreNode(parent))
 	pn.AddChild(NewLayoutNode(parent))
 	pn.AddChild(NewThemesNode(parent))
@@ -77,13 +71,30 @@ func (me *ProjectNode) GetChildren() tui.TreeNoders {
 }
 
 func (me *ProjectNode) GetForm() *tview.Form {
+	parent := me.Ui
+	me.Form.Clear(true)
+	me.Form.
+		AddInputField("Project name:", "", 20, nil, nil).
+		AddInputField("Description:", "", 40, nil, nil).
+		AddDropDown("Blueprint type:", coreBlueprintTypes, 0, nil).
+		AddInputField("Local domain:", "", 30, nil, nil).
+		AddButton("Cancel", func() {
+			parent.App.SetFocus(parent.ProjectNode)
+		}).
+		AddButton("Save", func() {
+			parent.App.SetFocus(parent.ProjectNode)
+		})
 	return me.Form
+}
+
+func (me *ProjectNode) GetHelp() *tview.TextView {
+	return tview.NewTextView()
 }
 
 func (me *ProjectNode) makeTreeView() (tree *tview.TreeView, sts Status) {
 
 	for range only.Once {
-		bpz := me.Parent.Blueprintz
+		bpz := me.Ui.Blueprintz
 		sts = bpz.LoadJsonfile()
 		bpz, sts = blueprintz.Load()
 		if is.Error(sts) {
@@ -103,31 +114,28 @@ func (me *ProjectNode) makeTreeView() (tree *tview.TreeView, sts Status) {
 			SetRoot(root).
 			SetCurrentNode(root)
 
-		color := tcell.ColorWhite
+		//color := tcell.ColorWhite
 
 		tree.SetChangedFunc(func(node *tview.TreeNode) {
-			if color == tcell.ColorAqua {
-				color = tcell.ColorLime
-			} else {
-				color = tcell.ColorAqua
-			}
-			//			me.NodeView.SetTitleColor(color)
-		})
-
-		// If a directory was selected, open it.
-		tree.SetSelectedFunc(func(node *tview.TreeNode) {
-			//changefocus := false
+			//if color == tcell.ColorAqua {
+			//	color = tcell.ColorLime
+			//} else {
+			//	color = tcell.ColorAqua
+			//}
+			//	me.NodeView.SetTitleColor(color)
 			for range only.Once {
-				if node == root {
-					ref := node.GetReference().(tui.TreeNoder)
-					me.Parent.NodeView = ref.GetForm()
-					if me.Parent.NodeView != nil {
-						me.Parent.App.SetFocus(me.Parent.NodeView)
+				if node == root || node.GetChildren() == nil {
+					ref, ok := node.GetReference().(tui.TreeNoder)
+					if !ok {
+						break
 					}
-					break
-				}
-				if len(node.GetChildren()) > 0 {
-					node.SetExpanded(!node.IsExpanded())
+					me.Ui.NodeView = ref.GetForm()
+					if me.Ui.NodeView != nil {
+						me.Ui.FullView.RemoveItem(me.Ui.RightHandView)
+						me.Ui.RightHandView = me.Ui.NewRightHandView()
+						me.Ui.FullView.AddItem(me.Ui.RightHandView, 0, GoldenWide, false)
+						//						parent.App.Draw()
+					}
 					break
 				}
 				//// Load and show files in this directory.
@@ -145,9 +153,24 @@ func (me *ProjectNode) makeTreeView() (tree *tview.TreeView, sts Status) {
 				//	node.AddChild(tui.MakeTreeNode(cn))
 				//}
 			}
-			//if changefocus {
-			//	//me.App.SetFocus(me.NodeView)
-			//}
+		})
+
+		// If a directory was selected, open it.
+		tree.SetSelectedFunc(func(node *tview.TreeNode) {
+			for range only.Once {
+				if node == root {
+					me.Ui.App.SetFocus(me.Ui.NodeView)
+					break
+				}
+				if len(node.GetChildren()) > 0 {
+					node.SetExpanded(!node.IsExpanded())
+					break
+				}
+				if me.Ui.NodeView == nil {
+					break
+				}
+				me.Ui.App.SetFocus(me.Ui.NodeView)
+			}
 		})
 
 		tree.SetBorder(true).

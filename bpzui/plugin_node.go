@@ -35,6 +35,10 @@ func (me *PluginNode) GetForm() *tview.Form {
 	return nil
 }
 
+func (me *PluginNode) GetHelp() *tview.TextView {
+	return tview.NewTextView()
+}
+
 func (me *PluginNode) GetLabel() global.Label {
 	var label global.Label
 	for range only.Once {
