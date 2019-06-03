@@ -51,4 +51,16 @@ func AddComponentVersion(c *blueprintz.Component, label global.Label) global.Lab
 	return label
 }
 
+func addComponentFormFields(form *tview.Form, ct global.ComponentType) *tview.Form {
+	return form.Clear(true).
+		AddInputField(ct+" Name:", "", 40, nil, nil).
+		AddInputField("Version:", "", 10, nil, nil).
+		AddInputField("Subdir/Slug:", "", 30, nil, nil).
+		AddInputField("Main file:", "", 25, nil, nil).
+		AddInputField("Website:", "", 40, nil, nil).
+		AddInputField("Download URL:", "", 50, nil, nil).
+		AddCheckbox("Externally versioned?", false, nil)
+
+}
+
 func noop(i ...interface{}) interface{} { return nil }

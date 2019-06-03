@@ -27,7 +27,8 @@ func NewThemeNode(ui *BpzUi, t *blueprintz.Theme) *ThemeNode {
 }
 
 func (me *ThemeNode) GetForm() *tview.Form {
-	return nil
+	return addComponentFormFields(me.Form, "Theme")
+
 }
 func (me *ThemeNode) SetForm(form *tview.Form) {
 	me.Form = form

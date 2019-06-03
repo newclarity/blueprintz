@@ -21,6 +21,7 @@ func NewBaseNode(ui *BpzUi, data NodeData) *BaseNode {
 	return &BaseNode{
 		Ui:   ui,
 		Data: data,
+		Form: tview.NewForm(),
 	}
 }
 func (me *BaseNode) GetForm() *tview.Form {
