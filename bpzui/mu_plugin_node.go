@@ -9,26 +9,22 @@ import (
 	"github.com/rivo/tview"
 )
 
-var NilMuPluginNode = (*ProjectNode)(nil)
+var NilMuPluginNode = (*MuPluginNode)(nil)
 var _ tui.TreeNoder = NilMuPluginNode
 
 type MuPluginNode struct {
-	Parent *BpzUi
+	*BaseNode
 	Plugin *blueprintz.Plugin
-	Form   *tview.Form
 }
 
-func NewMuPluginNode(parent *BpzUi, p *blueprintz.Plugin) *MuPluginNode {
-	form := tview.NewForm()
-	form.SetBorder(true).
-		SetBorderPadding(1, 1, 3, 3).
-		SetTitle(global.ProjectNode)
-
-	return &MuPluginNode{
-		Parent: parent,
-		Plugin: p,
-		Form:   form,
+func NewMuPluginNode(ui *BpzUi, p *blueprintz.Plugin) *MuPluginNode {
+	mpn := &MuPluginNode{
+		BaseNode: NewBaseNode(ui, p),
+		Plugin:   p,
 	}
+	mpn.Embedder = mpn
+	return mpn
+
 }
 
 func (me *MuPluginNode) GetForm() *tview.Form {
@@ -48,20 +44,8 @@ func (me *MuPluginNode) GetLabel() global.Label {
 	return label
 }
 
-func (me *MuPluginNode) GetReference() interface{} {
-	return me
-}
-
-func (me *MuPluginNode) IsSelectable() bool {
-	return true
-}
-
 func (me *MuPluginNode) GetColor() tui.Color {
 	return tcell.ColorWhite
-}
-
-func (me *MuPluginNode) GetChildren() tui.TreeNoders {
-	return nil
 }
 
 func (me *MuPluginNode) GetHelp() *tview.TextView {

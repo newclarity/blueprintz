@@ -13,30 +13,22 @@ var NilPluginNode = (*ProjectNode)(nil)
 var _ tui.TreeNoder = NilPluginNode
 
 type PluginNode struct {
-	Parent *BpzUi
+	*BaseNode
 	Plugin *blueprintz.Plugin
-	Form   *tview.Form
 }
 
-func NewPluginNode(parent *BpzUi, p *blueprintz.Plugin) *PluginNode {
-	form := tview.NewForm()
-	form.SetBorder(true).
-		SetBorderPadding(1, 1, 3, 3).
-		SetTitle(global.ProjectNode)
-
-	return &PluginNode{
-		Parent: parent,
-		Plugin: p,
-		Form:   form,
+func NewPluginNode(ui *BpzUi, p *blueprintz.Plugin) *PluginNode {
+	pn := &PluginNode{
+		BaseNode: NewBaseNode(ui, p),
+		Plugin:   p,
 	}
+	pn.Embedder = pn
+	return pn
+
 }
 
 func (me *PluginNode) GetForm() *tview.Form {
 	return nil
-}
-
-func (me *PluginNode) GetHelp() *tview.TextView {
-	return tview.NewTextView()
 }
 
 func (me *PluginNode) GetLabel() global.Label {
@@ -52,22 +44,10 @@ func (me *PluginNode) GetLabel() global.Label {
 	return label
 }
 
-//func (me *PluginNode) GetLabel() global.Label {
-//	return me.Plugin.GetLabel()
-//}
-
-func (me *PluginNode) GetReference() interface{} {
-	return me
-}
-
-func (me *PluginNode) IsSelectable() bool {
-	return true
-}
-
 func (me *PluginNode) GetColor() tui.Color {
 	return tcell.ColorWhite
 }
 
-func (me *PluginNode) GetChildren() tui.TreeNoders {
-	return nil
+func (me *PluginNode) GetHelp() *tview.TextView {
+	return tview.NewTextView()
 }

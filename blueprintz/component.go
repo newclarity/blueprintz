@@ -4,9 +4,7 @@ import (
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
-	"blueprintz/tui"
 	"fmt"
-	"github.com/gdamore/tcell"
 )
 
 var NilComponent = (*Component)(nil)
@@ -66,20 +64,4 @@ func (me *Component) GetExternal() (ex global.YesNo) {
 		ex = global.YesState
 	}
 	return ex
-}
-
-func (me *Component) IsSelectable() bool {
-	return true
-}
-
-func (me *Component) GetColor() tui.Color {
-	return tcell.ColorWhite
-}
-
-func (me *Component) GetChildren() tui.TreeNoders {
-	return nil
-}
-
-func (me *Component) GetReference() interface{} {
-	panic(fmt.Sprintf(panicMsg, "GetReference"))
 }

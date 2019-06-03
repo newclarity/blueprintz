@@ -2,10 +2,10 @@ package bpzui
 
 import (
 	"blueprintz/blueprintz"
-	"blueprintz/global"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
+	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
 )
 
@@ -13,17 +13,18 @@ type BpzUi struct {
 	Blueprintz    *blueprintz.Blueprintz
 	App           *tview.Application
 	FullView      *tview.Flex
-	ProjectNode   *tview.TreeView
+	ProjectBox    *tview.TreeView
 	RightHandView *tview.Flex
-	NodeView      *tview.Form
-	HelpView      *tview.TextView
+	FormBox       *tview.Form
+	HelpBox       *tview.TextView
 }
 
 func New(bpz *blueprintz.Blueprintz) *BpzUi {
+	app := tview.NewApplication()
 	bpzui := BpzUi{
 		Blueprintz: bpz,
-		App:        tview.NewApplication(),
-		HelpView:   tview.NewTextView(),
+		App:        app,
+		HelpBox:    tview.NewTextView(),
 	}
 
 	sts := bpz.LoadJsonfile()
@@ -33,22 +34,52 @@ func New(bpz *blueprintz.Blueprintz) *BpzUi {
 
 	pn := NewProjectNode(&bpzui)
 
-	bpzui.ProjectNode = pn.Tree
-	bpzui.NodeView = pn.GetForm()
-	bpzui.HelpView = pn.Help
+	bpzui.ProjectBox = pn.Tree
+	bpzui.FormBox = pn.GetForm()
+	bpzui.HelpBox = pn.Help
 
 	bpzui.RightHandView = bpzui.NewRightHandView()
 
 	bpzui.FullView = tview.NewFlex().
-		AddItem(bpzui.ProjectNode, 0, GoldenNarrow, true).
+		AddItem(bpzui.ProjectBox, 0, GoldenNarrow, true).
 		AddItem(bpzui.RightHandView, 0, GoldenWide, false)
 
-	bpzui.App.SetRoot(bpzui.FullView, true)
+	app.SetRoot(bpzui.FullView, true)
 
+	var exitingForm bool
 	// Shortcuts to navigate the slides.
-	bpzui.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyEsc {
-			bpzui.App.SetFocus(bpzui.ProjectNode)
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		for range only.Once {
+			if event == nil {
+				break
+			}
+
+			if event.Key() != tcell.KeyEsc {
+				break
+			}
+
+			_, ok := app.GetFocus().(tview.FormItem)
+			if ok {
+				exitingForm = true
+				event = nil
+				app.SetFocus(bpzui.ProjectBox)
+				break
+			}
+
+			switch app.GetFocus() {
+			case bpzui.FormBox:
+				app.SetFocus(bpzui.ProjectBox)
+				break
+
+			case bpzui.ProjectBox:
+				if exitingForm {
+					exitingForm = false
+					break
+				}
+				app.Stop()
+				break
+
+			}
 		}
 		return event
 	})
@@ -59,8 +90,8 @@ func New(bpz *blueprintz.Blueprintz) *BpzUi {
 func (me *BpzUi) NewRightHandView() *tview.Flex {
 	return tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(me.NodeView, 0, GoldenWide, false).
-		AddItem(me.HelpView, 0, GoldenNarrow, false)
+		AddItem(me.FormBox, 0, GoldenWide, false).
+		AddItem(me.HelpBox, 0, GoldenNarrow, false)
 }
 
 func (me *BpzUi) Run() (sts Status) {
@@ -69,16 +100,6 @@ func (me *BpzUi) Run() (sts Status) {
 		sts = status.Wrap(err)
 	}
 	return sts
-}
-
-var coreBlueprintTypes = blueprintDropdownTypes()
-
-func blueprintDropdownTypes() global.BlueprintTypes {
-	ts := global.AllBlueprintTypes
-	ts = append(ts, "")
-	copy(ts[1:], ts[0:])
-	ts[0] = "Select a Blueprint Type"
-	return ts
 }
 
 func (me *BpzUi) MakeNodeView() (form *tview.Box, sts Status) {

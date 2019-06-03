@@ -4,7 +4,6 @@ import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
 	"blueprintz/tui"
-	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"sort"
 )
@@ -13,42 +12,27 @@ var NilMuPluginsNode = (*ProjectNode)(nil)
 var _ tui.TreeNoder = NilMuPluginsNode
 
 type MuPluginsNode struct {
-	Parent    *BpzUi
+	*BaseNode
 	MuPlugins blueprintz.MuPlugins
 }
 
-func NewMuPluginsNode(parent *BpzUi) *MuPluginsNode {
-	return &MuPluginsNode{
-		Parent:    parent,
-		MuPlugins: parent.Blueprintz.MuPlugins,
+func NewMuPluginsNode(ui *BpzUi) *MuPluginsNode {
+	mpns := &MuPluginsNode{
+		BaseNode:  NewBaseNode(ui, ui.Blueprintz.MuPlugins),
+		MuPlugins: ui.Blueprintz.MuPlugins,
 	}
-
-}
-
-func (me *MuPluginsNode) GetForm() *tview.Form {
-	return nil
+	mpns.Embedder = mpns
+	return mpns
 }
 
 func (me *MuPluginsNode) GetLabel() global.Label {
 	return global.MuPluginsNode
 }
 
-func (me *MuPluginsNode) GetReference() interface{} {
-	return me
-}
-
-func (me *MuPluginsNode) IsSelectable() bool {
-	return true
-}
-
-func (me *MuPluginsNode) GetColor() tui.Color {
-	return tcell.ColorLime
-}
-
 func (me *MuPluginsNode) GetChildren() tui.TreeNoders {
 	tns := make(tui.TreeNoders, len(me.MuPlugins))
 	for i, tn := range me.MuPlugins {
-		tns[i] = NewMuPluginNode(me.Parent, tn)
+		tns[i] = NewMuPluginNode(me.Ui, tn)
 	}
 	sort.Slice(tns, func(i, j int) bool {
 		return tns[i].GetLabel() < tns[j].GetLabel()

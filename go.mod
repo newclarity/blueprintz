@@ -10,10 +10,12 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mitchellh/go-homedir v1.0.0
-	github.com/rivo/tview v0.0.0-20190515161233-bd836ef13b4b
+	github.com/rivo/tview v0.0.0
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
 	golang.org/x/sys v0.0.0-20190422165155-953cdadca894
 	gopkg.in/src-d/go-git.v4 v4.11.0
 
 )
+
+replace github.com/rivo/tview => github.com/mikeschinkel/tview v0.0.0-20190603022335-9a394560285e

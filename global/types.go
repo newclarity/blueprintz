@@ -1,6 +1,16 @@
 package global
 
+import "strings"
+
 type BlueprintTypes []BlueprintType
+
+func (me BlueprintTypes) Pad(n int) BlueprintTypes {
+	for i, t := range me {
+		me[i] = strings.Repeat(" ", n) + t + strings.Repeat(" ", n)
+	}
+	return me
+}
+
 type BlueprintType = string
 type ComponentName = string
 type ComponentTypeBoolMap = map[ComponentType]bool
@@ -36,7 +46,7 @@ type StepType = string
 type StepStatus = string
 type StepStatusMap map[StepType]StepStatus
 
-type NodeLabels = []Label
+type Labels = []Label
 type Label = string
 
 const ProjectNode Label = "Project"

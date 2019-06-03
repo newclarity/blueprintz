@@ -13,26 +13,24 @@ var NilThemeNode = (*ThemeNode)(nil)
 var _ tui.TreeNoder = NilThemeNode
 
 type ThemeNode struct {
-	Parent *BpzUi
-	Theme  *blueprintz.Theme
-	Form   *tview.Form
+	*BaseNode
+	Theme *blueprintz.Theme
 }
 
-func NewThemeNode(parent *BpzUi, t *blueprintz.Theme) *ThemeNode {
-	form := tview.NewForm()
-	form.SetBorder(true).
-		SetBorderPadding(1, 1, 3, 3).
-		SetTitle(global.ProjectNode)
-
-	return &ThemeNode{
-		Parent: parent,
-		Theme:  t,
-		Form:   form,
+func NewThemeNode(ui *BpzUi, t *blueprintz.Theme) *ThemeNode {
+	tn := &ThemeNode{
+		BaseNode: NewBaseNode(ui, t),
+		Theme:    t,
 	}
+	tn.Embedder = tn
+	return tn
 }
 
 func (me *ThemeNode) GetForm() *tview.Form {
 	return nil
+}
+func (me *ThemeNode) SetForm(form *tview.Form) {
+	me.Form = form
 }
 
 func (me *ThemeNode) GetLabel() global.Label {
@@ -46,10 +44,6 @@ func (me *ThemeNode) GetLabel() global.Label {
 		label = GetComponentLabel(theme.Component)
 	}
 	return label
-}
-
-func (me *ThemeNode) GetReference() interface{} {
-	return me
 }
 
 func (me *ThemeNode) IsSelectable() bool {

@@ -17,49 +17,42 @@ var NilProjectNode = (*ProjectNode)(nil)
 var _ tui.TreeNoder = NilProjectNode
 
 type ProjectNode struct {
+	*BaseNode
 	Ui       *BpzUi
 	Tree     *tview.TreeView
-	Form     *tview.Form
 	Help     *tview.TextView
 	children tui.TreeNoders
 }
 
-func NewProjectNode(parent *BpzUi) *ProjectNode {
+func (me *ProjectNode) SetForm(*tview.Form) {
+	panic("implement me")
+}
 
-	form := tview.NewForm()
-	form.SetBorder(true).
-		SetBorderPadding(1, 1, 3, 3).
-		SetTitle(global.ProjectNode)
-
-	pn := ProjectNode{
-		Ui:   parent,
-		Form: form,
-		Help: tview.NewTextView(),
+func NewProjectNode(ui *BpzUi) *ProjectNode {
+	pn := &ProjectNode{
+		BaseNode: NewBaseNode(ui, ui.Blueprintz),
+		Ui:       ui,
+		Help:     tview.NewTextView(),
 	}
+	pn.Embedder = pn
 	pn.Help.SetBorder(true).SetTitle("Help")
-	pn.AddChild(NewCoreNode(parent))
-	pn.AddChild(NewLayoutNode(parent))
-	pn.AddChild(NewThemesNode(parent))
-	pn.AddChild(NewMuPluginsNode(parent))
-	pn.AddChild(NewPluginsNode(parent))
-	pn.Tree, _ = pn.makeTreeView()
-	return &pn
+	pn.AddChild(NewCoreNode(ui))
+	pn.AddChild(NewLayoutNode(ui))
+	pn.AddChild(NewThemesNode(ui))
+	pn.AddChild(NewMuPluginsNode(ui))
+	pn.AddChild(NewPluginsNode(ui))
+	pn.Tree = pn.makeProjectTree()
+	pn.Form = makeNewForm(pn.GetLabel())
+	return pn
 }
 
 func (me *ProjectNode) AddChild(tn tui.TreeNoder) {
+	tn.SetForm(makeNewForm(tn.GetLabel()))
 	me.children = append(me.children, tn)
 }
 
 func (me *ProjectNode) GetLabel() global.Label {
 	return global.ProjectNode
-}
-
-func (me *ProjectNode) GetReference() interface{} {
-	return me
-}
-
-func (me *ProjectNode) IsSelectable() bool {
-	return true
 }
 
 func (me *ProjectNode) GetColor() tui.Color {
@@ -71,28 +64,22 @@ func (me *ProjectNode) GetChildren() tui.TreeNoders {
 }
 
 func (me *ProjectNode) GetForm() *tview.Form {
-	parent := me.Ui
-	me.Form.Clear(true)
-	me.Form.
+	bpt := "Blueprint type:"
+	form := me.Form.Clear(true).
 		AddInputField("Project name:", "", 20, nil, nil).
 		AddInputField("Description:", "", 40, nil, nil).
-		AddDropDown("Blueprint type:", coreBlueprintTypes, 0, nil).
-		AddInputField("Local domain:", "", 30, nil, nil).
-		AddButton("Cancel", func() {
-			parent.App.SetFocus(parent.ProjectNode)
-		}).
-		AddButton("Save", func() {
-			parent.App.SetFocus(parent.ProjectNode)
-		})
-	return me.Form
+		AddDropDown(bpt, global.AllBlueprintTypes.Pad(1), 0, nil).
+		AddInputField("Local domain:", "", 30, nil, nil)
+	form.GetFormItemByLabel(bpt).(*tview.DropDown).SetFieldWidth(10)
+	return form
 }
 
 func (me *ProjectNode) GetHelp() *tview.TextView {
 	return tview.NewTextView()
 }
 
-func (me *ProjectNode) makeTreeView() (tree *tview.TreeView, sts Status) {
-
+func (me *ProjectNode) makeProjectTree() (tree *tview.TreeView) {
+	var sts Status
 	for range only.Once {
 		bpz := me.Ui.Blueprintz
 		sts = bpz.LoadJsonfile()
@@ -122,15 +109,15 @@ func (me *ProjectNode) makeTreeView() (tree *tview.TreeView, sts Status) {
 			//} else {
 			//	color = tcell.ColorAqua
 			//}
-			//	me.NodeView.SetTitleColor(color)
 			for range only.Once {
 				if node == root || node.GetChildren() == nil {
 					ref, ok := node.GetReference().(tui.TreeNoder)
 					if !ok {
 						break
 					}
-					me.Ui.NodeView = ref.GetForm()
-					if me.Ui.NodeView != nil {
+					me.Ui.FormBox = ref.GetForm()
+					if me.Ui.FormBox != nil {
+						me.Ui.FormBox.SetTitle(ref.GetLabel())
 						me.Ui.FullView.RemoveItem(me.Ui.RightHandView)
 						me.Ui.RightHandView = me.Ui.NewRightHandView()
 						me.Ui.FullView.AddItem(me.Ui.RightHandView, 0, GoldenWide, false)
@@ -159,17 +146,17 @@ func (me *ProjectNode) makeTreeView() (tree *tview.TreeView, sts Status) {
 		tree.SetSelectedFunc(func(node *tview.TreeNode) {
 			for range only.Once {
 				if node == root {
-					me.Ui.App.SetFocus(me.Ui.NodeView)
+					me.Ui.App.SetFocus(me.Ui.FormBox)
 					break
 				}
 				if len(node.GetChildren()) > 0 {
 					node.SetExpanded(!node.IsExpanded())
 					break
 				}
-				if me.Ui.NodeView == nil {
+				if me.Ui.FormBox == nil {
 					break
 				}
-				me.Ui.App.SetFocus(me.Ui.NodeView)
+				me.Ui.App.SetFocus(me.Ui.FormBox)
 			}
 		})
 
@@ -182,5 +169,12 @@ func (me *ProjectNode) makeTreeView() (tree *tview.TreeView, sts Status) {
 	if is.Error(sts) {
 		sts.SetLogAs(status.FatalLog).Log()
 	}
-	return tree, sts
+	return tree
+}
+func makeNewForm(label global.Label) *tview.Form {
+	form := tview.NewForm()
+	form.SetBorder(true).
+		SetTitle(label).
+		SetBorderPadding(1, 1, 3, 3)
+	return form
 }
