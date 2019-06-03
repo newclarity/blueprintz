@@ -1,4 +1,4 @@
-package bpzui
+package browseui
 
 import (
 	"blueprintz/global"

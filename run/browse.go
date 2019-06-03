@@ -2,7 +2,7 @@ package run
 
 import (
 	"blueprintz/blueprintz"
-	"blueprintz/bpzui"
+	"blueprintz/browseui"
 )
 
 //
@@ -25,5 +25,5 @@ import (
 //
 
 func Browse() (sts Status) {
-	return bpzui.New(blueprintz.Instance).Run()
+	return browseui.New(blueprintz.Instance).Run()
 }

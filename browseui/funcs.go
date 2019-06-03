@@ -1,4 +1,4 @@
-package bpzui
+package browseui
 
 import (
 	"blueprintz/blueprintz"
@@ -59,8 +59,20 @@ func addComponentFormFields(form *tview.Form, ct global.ComponentType) *tview.Fo
 		AddInputField("Main file:", "", 25, nil, nil).
 		AddInputField("Website:", "", 40, nil, nil).
 		AddInputField("Download URL:", "", 50, nil, nil).
-		AddCheckbox("Externally versioned?", false, nil)
+		AddCheckbox("External?", false, nil)
 
+}
+
+func formatForm(form *tview.Form, label global.Label) *tview.Form {
+	form.SetBorder(true).
+		SetTitle(label).
+		SetBorderPadding(1, 1, 3, 3)
+	return form
+}
+
+func makeNewForm(label global.Label) *tview.Form {
+	form := tview.NewForm()
+	return formatForm(form, label)
 }
 
 func noop(i ...interface{}) interface{} { return nil }

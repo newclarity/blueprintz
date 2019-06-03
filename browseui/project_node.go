@@ -1,4 +1,4 @@
-package bpzui
+package browseui
 
 import (
 	"blueprintz/blueprintz"
@@ -68,7 +68,7 @@ func (me *ProjectNode) GetForm() *tview.Form {
 	form := me.Form.Clear(true).
 		AddInputField("Project name:", "", 20, nil, nil).
 		AddInputField("Description:", "", 40, nil, nil).
-		AddDropDown(bpt, global.AllBlueprintTypes.Pad(1), 0, nil).
+		AddDropDown(bpt, global.AllBlueprintTypes, 0, nil).
 		AddInputField("Local domain:", "", 30, nil, nil)
 	form.GetFormItemByLabel(bpt).(*tview.DropDown).SetFieldWidth(10)
 	return form
@@ -117,7 +117,8 @@ func (me *ProjectNode) makeProjectTree() (tree *tview.TreeView) {
 					}
 					me.Ui.FormBox = ref.GetForm()
 					if me.Ui.FormBox != nil {
-						me.Ui.FormBox.SetTitle(ref.GetLabel())
+						formatForm(ref.GetForm(), ref.GetLabel())
+						//						me.Ui.FormBox.SetTitle(ref.GetLabel())
 						me.Ui.FullView.RemoveItem(me.Ui.RightHandView)
 						me.Ui.RightHandView = me.Ui.NewRightHandView()
 						me.Ui.FullView.AddItem(me.Ui.RightHandView, 0, GoldenWide, false)
@@ -170,11 +171,4 @@ func (me *ProjectNode) makeProjectTree() (tree *tview.TreeView) {
 		sts.SetLogAs(status.FatalLog).Log()
 	}
 	return tree
-}
-func makeNewForm(label global.Label) *tview.Form {
-	form := tview.NewForm()
-	form.SetBorder(true).
-		SetTitle(label).
-		SetBorderPadding(1, 1, 3, 3)
-	return form
 }

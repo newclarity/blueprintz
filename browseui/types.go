@@ -1,4 +1,4 @@
-package bpzui
+package browseui
 
 import (
 	"github.com/gearboxworks/go-status"
