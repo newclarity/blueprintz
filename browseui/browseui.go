@@ -9,7 +9,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-type BpzUi struct {
+type BrowseUi struct {
 	Blueprintz    *blueprintz.Blueprintz
 	App           *tview.Application
 	FullView      *tview.Flex
@@ -19,9 +19,9 @@ type BpzUi struct {
 	HelpBox       *tview.TextView
 }
 
-func New(bpz *blueprintz.Blueprintz) *BpzUi {
+func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 	app := tview.NewApplication()
-	bpzui := BpzUi{
+	browseui := BrowseUi{
 		Blueprintz: bpz,
 		App:        app,
 		HelpBox:    tview.NewTextView(),
@@ -32,19 +32,19 @@ func New(bpz *blueprintz.Blueprintz) *BpzUi {
 		sts.SetLogAs(status.FatalLog).Log()
 	}
 
-	pn := NewProjectNode(&bpzui)
+	pn := NewProjectNode(&browseui)
 
-	bpzui.ProjectBox = pn.Tree
-	bpzui.FormBox = pn.GetForm()
-	bpzui.HelpBox = pn.Help
+	browseui.ProjectBox = pn.Tree
+	browseui.FormBox = pn.GetForm()
+	browseui.HelpBox = pn.Help
 
-	bpzui.RightHandView = bpzui.NewRightHandView()
+	browseui.RightHandView = browseui.NewRightHandView()
 
-	bpzui.FullView = tview.NewFlex().
-		AddItem(bpzui.ProjectBox, 0, GoldenNarrow, true).
-		AddItem(bpzui.RightHandView, 0, GoldenWide, false)
+	browseui.FullView = tview.NewFlex().
+		AddItem(browseui.ProjectBox, 0, GoldenNarrow, true).
+		AddItem(browseui.RightHandView, 0, GoldenWide, false)
 
-	app.SetRoot(bpzui.FullView, true)
+	app.SetRoot(browseui.FullView, true)
 
 	var exitingForm bool
 	// Shortcuts to navigate the slides.
@@ -62,16 +62,16 @@ func New(bpz *blueprintz.Blueprintz) *BpzUi {
 			if ok {
 				exitingForm = true
 				event = nil
-				app.SetFocus(bpzui.ProjectBox)
+				app.SetFocus(browseui.ProjectBox)
 				break
 			}
 
 			switch app.GetFocus() {
-			case bpzui.FormBox:
-				app.SetFocus(bpzui.ProjectBox)
+			case browseui.FormBox:
+				app.SetFocus(browseui.ProjectBox)
 				break
 
-			case bpzui.ProjectBox:
+			case browseui.ProjectBox:
 				if exitingForm {
 					exitingForm = false
 					break
@@ -84,17 +84,17 @@ func New(bpz *blueprintz.Blueprintz) *BpzUi {
 		return event
 	})
 
-	return &bpzui
+	return &browseui
 }
 
-func (me *BpzUi) NewRightHandView() *tview.Flex {
+func (me *BrowseUi) NewRightHandView() *tview.Flex {
 	return tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(me.FormBox, 0, GoldenWide, false).
 		AddItem(me.HelpBox, 0, GoldenNarrow, false)
 }
 
-func (me *BpzUi) Run() (sts Status) {
+func (me *BrowseUi) Run() (sts Status) {
 	err := me.App.Run()
 	if err != nil {
 		sts = status.Wrap(err)
@@ -102,6 +102,6 @@ func (me *BpzUi) Run() (sts Status) {
 	return sts
 }
 
-func (me *BpzUi) MakeNodeView() (form *tview.Box, sts Status) {
+func (me *BrowseUi) MakeNodeView() (form *tview.Box, sts Status) {
 	return tview.NewBox().SetBorder(true).SetTitle("Node"), nil
 }

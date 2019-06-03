@@ -16,7 +16,7 @@ type PluginsNode struct {
 	Plugins blueprintz.Plugins
 }
 
-func NewPluginsNode(ui *BpzUi) *PluginsNode {
+func NewPluginsNode(ui *BrowseUi) *PluginsNode {
 	pns := &PluginsNode{
 		BaseNode: NewBaseNode(ui, ui.Blueprintz.Plugins),
 		Plugins:  ui.Blueprintz.Plugins,

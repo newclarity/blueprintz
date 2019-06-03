@@ -28,7 +28,7 @@ import (
 
 var PrintCmd = &cobra.Command{
 	Use: "print",
-	Short: fmt.Sprintf("Print the %s file to stdout",
+	Short: fmt.Sprintf("Print a '%s' file in current directory to stdout",
 		global.BlueprintzFile,
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {

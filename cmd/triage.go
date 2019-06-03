@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"blueprintz/global"
 	"blueprintz/run"
+	"fmt"
 	"github.com/spf13/cobra"
 )
 
@@ -24,17 +26,18 @@ import (
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-var InputCmd = &cobra.Command{
-	Use:    "input",
-	Hidden: true,
-	Short:  "Input information the only the user can provide",
+var TriageCmd = &cobra.Command{
+	Use: "triage",
+	Short: fmt.Sprintf("Run Triage UI to fill in missing info in '%s'",
+		global.BlueprintzFile,
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return run.Input()
+		return run.Triage()
 	},
 }
 
 func init() {
 	//	fs := BuildCmd.Flags()
 	//	fs.StringVarP(&global.ListDomain, global.SvnListFlag, "", global.SvnListDomain, "SVN domain to Build from?")
-	RootCmd.AddCommand(InputCmd)
+	RootCmd.AddCommand(TriageCmd)
 }

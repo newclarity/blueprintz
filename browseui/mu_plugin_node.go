@@ -17,7 +17,7 @@ type MuPluginNode struct {
 	Plugin *blueprintz.Plugin
 }
 
-func NewMuPluginNode(ui *BpzUi, p *blueprintz.Plugin) *MuPluginNode {
+func NewMuPluginNode(ui *BrowseUi, p *blueprintz.Plugin) *MuPluginNode {
 	mpn := &MuPluginNode{
 		BaseNode: NewBaseNode(ui, p),
 		Plugin:   p,

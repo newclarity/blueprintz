@@ -18,7 +18,7 @@ var _ tui.TreeNoder = NilProjectNode
 
 type ProjectNode struct {
 	*BaseNode
-	Ui       *BpzUi
+	Ui       *BrowseUi
 	Tree     *tview.TreeView
 	Help     *tview.TextView
 	children tui.TreeNoders
@@ -28,7 +28,7 @@ func (me *ProjectNode) SetForm(*tview.Form) {
 	panic("implement me")
 }
 
-func NewProjectNode(ui *BpzUi) *ProjectNode {
+func NewProjectNode(ui *BrowseUi) *ProjectNode {
 	pn := &ProjectNode{
 		BaseNode: NewBaseNode(ui, ui.Blueprintz),
 		Ui:       ui,

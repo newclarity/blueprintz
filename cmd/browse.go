@@ -28,7 +28,7 @@ import (
 
 var BrowseCmd = &cobra.Command{
 	Use: "browse",
-	Short: fmt.Sprintf("Browse and edit a '%s' file in a tree view",
+	Short: fmt.Sprintf("Run Browse UI to edit '%s' in a tree view",
 		global.BlueprintzFile,
 	),
 	RunE: func(cmd *cobra.Command, args []string) error {

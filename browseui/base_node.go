@@ -11,13 +11,13 @@ var NilBaseNode = (*BaseNode)(nil)
 var _ tui.TreeNoder = NilBaseNode
 
 type BaseNode struct {
-	Ui       *BpzUi
+	Ui       *BrowseUi
 	Embedder tui.TreeNoder
 	Data     NodeData
 	Form     *tview.Form
 }
 
-func NewBaseNode(ui *BpzUi, data NodeData) *BaseNode {
+func NewBaseNode(ui *BrowseUi, data NodeData) *BaseNode {
 	return &BaseNode{
 		Ui:   ui,
 		Data: data,

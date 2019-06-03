@@ -16,7 +16,7 @@ type ThemesNode struct {
 	Themes blueprintz.Themes
 }
 
-func NewThemesNode(ui *BpzUi) *ThemesNode {
+func NewThemesNode(ui *BrowseUi) *ThemesNode {
 	tns := &ThemesNode{
 		BaseNode: NewBaseNode(ui, ui.Blueprintz.Themes),
 		Themes:   ui.Blueprintz.Themes,

@@ -13,7 +13,7 @@ type LayoutNode struct {
 	*BaseNode
 }
 
-func NewLayoutNode(ui *BpzUi) *LayoutNode {
+func NewLayoutNode(ui *BrowseUi) *LayoutNode {
 	ln := &LayoutNode{
 		BaseNode: NewBaseNode(ui, ui.Blueprintz.Core),
 	}

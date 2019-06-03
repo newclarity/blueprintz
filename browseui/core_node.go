@@ -14,7 +14,7 @@ type CoreNode struct {
 	*BaseNode
 }
 
-func NewCoreNode(ui *BpzUi) *CoreNode {
+func NewCoreNode(ui *BrowseUi) *CoreNode {
 	cn := &CoreNode{
 		BaseNode: NewBaseNode(ui, ui.Blueprintz.Core),
 	}

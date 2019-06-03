@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"blueprintz/global"
 	"blueprintz/run"
+	"fmt"
 	"github.com/spf13/cobra"
 )
 
@@ -25,8 +27,10 @@ import (
 //
 
 var SurveyCmd = &cobra.Command{
-	Use:   "survey",
-	Short: "Survey a project for core, plugins, themes, etc.",
+	Use: "survey",
+	Short: fmt.Sprintf("Survey project directories to create a '%s' file",
+		global.BlueprintzFile,
+	),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return run.Survey()
 	},

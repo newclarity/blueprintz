@@ -17,7 +17,7 @@ type PluginNode struct {
 	Plugin *blueprintz.Plugin
 }
 
-func NewPluginNode(ui *BpzUi, p *blueprintz.Plugin) *PluginNode {
+func NewPluginNode(ui *BrowseUi, p *blueprintz.Plugin) *PluginNode {
 	pn := &PluginNode{
 		BaseNode: NewBaseNode(ui, p),
 		Plugin:   p,

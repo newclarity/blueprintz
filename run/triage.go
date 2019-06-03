@@ -1,8 +1,8 @@
-package cmd
+package run
 
 import (
-	"blueprintz/run"
-	"github.com/spf13/cobra"
+	"blueprintz/blueprintz"
+	"blueprintz/triageui"
 )
 
 //
@@ -24,17 +24,6 @@ import (
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-var InputCmd = &cobra.Command{
-	Use:    "input",
-	Hidden: true,
-	Short:  "Input information the only the user can provide",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return run.Input()
-	},
-}
-
-func init() {
-	//	fs := BuildCmd.Flags()
-	//	fs.StringVarP(&global.ListDomain, global.SvnListFlag, "", global.SvnListDomain, "SVN domain to Build from?")
-	RootCmd.AddCommand(InputCmd)
+func Triage() (sts Status) {
+	return triageui.New(blueprintz.Instance).Run()
 }
