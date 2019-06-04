@@ -26,7 +26,7 @@ func NewThemesNode(ui *BrowseUi) *ThemesNode {
 }
 
 func (me *ThemesNode) GetLabel() global.Label {
-	return global.ThemesNode
+	return global.ThemesLabel
 }
 
 func (me *ThemesNode) GetChildren() tui.TreeNoders {

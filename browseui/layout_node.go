@@ -23,15 +23,16 @@ func NewLayoutNode(ui *BrowseUi) *LayoutNode {
 }
 
 func (me *LayoutNode) GetForm() *tview.Form {
+	layout := me.Ui.Blueprintz.Layout
 	return me.Form.Clear(true).
-		AddInputField("Project Path:", "", 15, nil, nil).
-		AddInputField("Webroot Path:", "", 25, nil, nil).
-		AddInputField("Core Path:", "", 35, nil, nil).
-		AddInputField("Content Path:", "", 45, nil, nil)
+		AddInputField("Project Path:", layout.ProjectPath, 15, nil, nil).
+		AddInputField("Webroot Path:", layout.WebrootPath, 25, nil, nil).
+		AddInputField("Core Path:", layout.CorePath, 35, nil, nil).
+		AddInputField("Content Path:", layout.ContentPath, 45, nil, nil)
 }
 
 func (me *LayoutNode) GetLabel() global.Label {
-	return global.LayoutNode
+	return global.LayoutLabel
 }
 
 func (me *LayoutNode) GetHelp() *tview.TextView {

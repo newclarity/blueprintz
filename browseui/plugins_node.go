@@ -26,7 +26,7 @@ func NewPluginsNode(ui *BrowseUi) *PluginsNode {
 }
 
 func (me *PluginsNode) GetLabel() global.Label {
-	return global.PluginsNode
+	return global.PluginsLabel
 }
 
 func (me *PluginsNode) GetChildren() tui.TreeNoders {

@@ -37,6 +37,17 @@ func NewPlugin(fh *fileheaders.Plugin) *Plugin {
 	}
 }
 
+func (me Plugins) FindPlugin(pn global.ComponentName) *Plugin {
+	var plugin *Plugin
+	for _, p := range me {
+		if p.PluginName != pn {
+			continue
+		}
+		plugin = p
+	}
+	return plugin
+}
+
 func (me *Plugin) Research(bpz *Blueprintz) {
 	me.DownloadUrl = ""
 	for _, r := range bpz.GetRecognizerMap() {

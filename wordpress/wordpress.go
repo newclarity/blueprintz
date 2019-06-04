@@ -2,7 +2,7 @@ package wordpress
 
 import "blueprintz/global"
 
-var Versions = []global.Version{
+var Versions = global.Versions{
 	"5.3",
 	"5.2.1",
 	"5.2",

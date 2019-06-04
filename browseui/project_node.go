@@ -52,7 +52,7 @@ func (me *ProjectNode) AddChild(tn tui.TreeNoder) {
 }
 
 func (me *ProjectNode) GetLabel() global.Label {
-	return global.ProjectNode
+	return global.ProjectLabel
 }
 
 func (me *ProjectNode) GetColor() tui.Color {
@@ -65,13 +65,19 @@ func (me *ProjectNode) GetChildren() tui.TreeNoders {
 
 func (me *ProjectNode) GetForm() *tview.Form {
 	bpt := "Blueprint type:"
+
+	bpz := me.Ui.Blueprintz
+
 	form := me.Form.Clear(true).
-		AddInputField("Project name:", "", 20, nil, nil).
-		AddInputField("Description:", "", 40, nil, nil).
-		AddDropDown(bpt, global.AllBlueprintTypes, 0, nil).
-		AddInputField("Local domain:", "", 30, nil, nil)
+		AddInputField("Project name:", bpz.Name, 20, nil, nil).
+		AddInputField("Description:", bpz.Desc, 40, nil, nil).
+		AddDropDown(bpt, global.AllBlueprintTypes, global.AllBlueprintTypes.Index(bpz.Type), nil).
+		AddInputField("Local domain:", bpz.Local, 30, nil, nil)
+
 	form.GetFormItemByLabel(bpt).(*tview.DropDown).SetFieldWidth(10)
+
 	return form
+
 }
 
 func (me *ProjectNode) GetHelp() *tview.TextView {

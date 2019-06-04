@@ -28,7 +28,7 @@ func NewPluginNode(ui *BrowseUi, p *blueprintz.Plugin) *PluginNode {
 }
 
 func (me *PluginNode) GetForm() *tview.Form {
-	return addComponentFormFields(me.Form, "Plugin")
+	return me.Ui.AddComponentFormFields(me.Form, me.Plugin)
 }
 
 func (me *PluginNode) GetLabel() global.Label {

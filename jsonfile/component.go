@@ -6,6 +6,7 @@ import (
 
 type Componenter interface {
 	GetName() global.ComponentName
+	GetType() global.ComponentType
 	GetVersion() global.Version
 	GetSubdir() global.Slug
 	GetBasefile() global.Basefile

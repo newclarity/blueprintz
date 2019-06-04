@@ -11,7 +11,7 @@ var _ tui.Labeler = NilMuPlugins
 type MuPlugins Plugins
 
 func (me MuPlugins) GetLabel() global.Label {
-	return global.MuPluginsNode
+	return global.MuPluginsLabel
 }
 
 func (me *MuPlugins) Scandir(path global.Path, allowHeaderless bool) (sts Status) {
@@ -19,4 +19,15 @@ func (me *MuPlugins) Scandir(path global.Path, allowHeaderless bool) (sts Status
 	sts = (&mp).Scandir(path, allowHeaderless)
 	*me = MuPlugins(mp)
 	return sts
+}
+
+func (me MuPlugins) FindPlugin(pn global.ComponentName) *Plugin {
+	var plugin *Plugin
+	for _, p := range me {
+		if p.PluginName != pn {
+			continue
+		}
+		plugin = p
+	}
+	return plugin
 }

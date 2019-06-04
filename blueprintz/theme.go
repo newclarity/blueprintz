@@ -53,6 +53,17 @@ func (me *Theme) GetWebsite() global.Url {
 	return me.ThemeURI
 }
 
+func (me Themes) FindTheme(tn global.ComponentName) *Theme {
+	var theme *Theme
+	for _, t := range me {
+		if t.ThemeName != tn {
+			continue
+		}
+		theme = t
+	}
+	return theme
+}
+
 func (me *Themes) Scandir(path global.Path) (sts Status) {
 	for range only.Once {
 		var cs Componenters

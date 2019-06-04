@@ -2,11 +2,15 @@ package browseui
 
 import (
 	"blueprintz/blueprintz"
+	"blueprintz/global"
+	"blueprintz/jsonfile"
+	"fmt"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
+	"strings"
 )
 
 type BrowseUi struct {
@@ -104,4 +108,23 @@ func (me *BrowseUi) Run() (sts Status) {
 
 func (me *BrowseUi) MakeNodeView() (form *tview.Box, sts Status) {
 	return tview.NewBox().SetBorder(true).SetTitle("Node"), nil
+}
+
+var externalOptions = global.YesNos{
+	global.UnsetState,
+	global.YesState,
+	global.NoState,
+}
+
+func (me *BrowseUi) AddComponentFormFields(form *tview.Form, c jsonfile.Componenter) *tview.Form {
+	name := fmt.Sprintf("%s Name", strings.Title(c.GetType()))
+	return form.Clear(true).
+		AddInputField(name, c.GetName(), 50, nil, nil).
+		AddInputField("Version:", c.GetVersion(), 16, nil, nil).
+		AddInputField("Subdir/Slug:", c.GetSubdir(), 30, nil, nil).
+		AddInputField("Main file:", c.GetBasefile(), 30, nil, nil).
+		AddInputField("Website:", c.GetWebsite(), 60, nil, nil).
+		AddInputField("Download URL:", c.GetDownloadUrl(), 80, nil, nil).
+		AddDropDown("External?", externalOptions, externalOptions.Index(c.GetExternal()), nil)
+
 }

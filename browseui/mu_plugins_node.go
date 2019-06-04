@@ -26,7 +26,7 @@ func NewMuPluginsNode(ui *BrowseUi) *MuPluginsNode {
 }
 
 func (me *MuPluginsNode) GetLabel() global.Label {
-	return global.MuPluginsNode
+	return global.MuPluginsLabel
 }
 
 func (me *MuPluginsNode) GetChildren() tui.TreeNoders {

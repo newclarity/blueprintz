@@ -38,9 +38,9 @@ const (
 )
 
 const (
-	WordPressCore    Dialect = "wordpress"
-	ClassicPressCore Dialect = "classicpress"
-	PantheonWPCore   Dialect = "pantheon-wordpress" //https://github.com/pantheon-systems/WordPress
+	WordPressDialect    Dialect = "wordpress"
+	ClassicPressDialect Dialect = "classicpress"
+	PantheonWPDialect   Dialect = "pantheon-wordpress" //https://github.com/pantheon-systems/WordPress
 )
 
 const (
@@ -48,6 +48,7 @@ const (
 )
 
 const (
-	YesState YesNo = "yes"
-	NoState  YesNo = "no"
+	YesState   YesNo = "yes"
+	NoState    YesNo = "no"
+	UnsetState YesNo = "   "
 )

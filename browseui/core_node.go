@@ -22,14 +22,23 @@ func NewCoreNode(ui *BrowseUi) *CoreNode {
 	return cn
 }
 
+var dialects = global.Dialects{
+	global.WordPressDialect,
+	global.ClassicPressDialect,
+	global.PantheonWPDialect,
+}
+
 func (me *CoreNode) GetForm() *tview.Form {
+
+	core := me.Ui.Blueprintz.Core
+
 	return me.Form.Clear(true).
-		AddDropDown("WordPress Dialect:", []string{"wordpress", "classicpress"}, 0, nil).
-		AddDropDown("Dialect Version:", wordpress.Versions, 0, nil)
+		AddDropDown("Dialect:", dialects, dialects.Index(core.Dialect), nil).
+		AddDropDown("Version:", wordpress.Versions, wordpress.Versions.Index(core.Version), nil)
 }
 
 func (me *CoreNode) GetLabel() global.Label {
-	return global.CoreNode
+	return global.CoreLabel
 }
 
 func (me *CoreNode) GetHelp() *tview.TextView {

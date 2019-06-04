@@ -1,14 +1,13 @@
 package global
 
-import "strings"
-
 type BlueprintTypes []BlueprintType
 
+func (me BlueprintTypes) Index(t BlueprintType) int {
+	return StringSliceIndex(me, t)
+}
+
 func (me BlueprintTypes) Pad(n int) BlueprintTypes {
-	for i, t := range me {
-		me[i] = strings.Repeat(" ", n) + t + strings.Repeat(" ", n)
-	}
-	return me
+	return StringSlicePad(me, n)
 }
 
 type BlueprintType = string
@@ -16,13 +15,32 @@ type ComponentName = string
 type ComponentTypeBoolMap = map[ComponentType]bool
 type ComponentTypes = []ComponentType
 type ComponentType = string
+
+type Dialects []Dialect
 type Dialect = string
+
+func (me Dialects) Index(d Dialect) int {
+	return StringSliceIndex(me, d)
+}
+func (me Dialects) Pad(n int) Dialects {
+	return StringSlicePad(me, n)
+}
 
 type UrlBoolMap = map[Url]bool
 type Urls []Url
 type Url = string
 type Slug = string
+
+type Versions []Version
 type Version = string
+
+func (me Versions) Index(v Version) int {
+	return StringSliceIndex(me, v)
+}
+func (me Versions) Pad(n int) Versions {
+	return StringSlicePad(me, n)
+}
+
 type Path = string
 type Domain = string
 
@@ -32,7 +50,12 @@ type Filepath = string
 type Basefile = string
 type Entry = string
 
+type YesNos []YesNo
 type YesNo = string
+
+func (me YesNos) Index(yn YesNo) int {
+	return StringSliceIndex(me, yn)
+}
 
 type FileHeader = string
 
@@ -49,10 +72,13 @@ type StepStatusMap map[StepType]StepStatus
 type Labels = []Label
 type Label = string
 
-const ProjectNode Label = "Project"
-const CoreNode Label = "Core"
-const LayoutNode Label = "Layout"
-const ThemesNode Label = "Themes"
-const PluginsNode Label = "Plugins"
-const MuPluginsNode Label = "MU-Plugins"
+const ProjectLabel Label = "Project"
+const CoreLabel Label = "Core"
+const LayoutLabel Label = "Layout"
+const ThemesLabel Label = "Themes"
+const PluginsLabel Label = "Plugins"
+const MuPluginsLabel Label = "Mu-Plugins"
+const ThemeLabel Label = "Theme"
+const PluginLabel Label = "Plugin"
+const MuPluginLabel Label = "Mu-Plugin"
 const UnknownNode Label = "Unknown"

@@ -57,6 +57,9 @@ func (me *Core) GetVersion() global.Version {
 }
 
 func (me *Core) GetDialect() global.Dialect {
+	if me.Dialect == "" {
+		me.Dialect = global.WordPressDialect
+	}
 	return me.Dialect
 }
 
@@ -97,6 +100,9 @@ func (me *Core) Scandir(path global.Path) (sts Status) {
 					continue
 				}
 				me.Dialect = vf.CoreType
+				if me.Dialect == "" {
+					me.Dialect = global.WordPressDialect
+				}
 				me.Version = match[1]
 				break
 			}

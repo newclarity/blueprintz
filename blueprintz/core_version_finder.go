@@ -17,11 +17,11 @@ type (
 
 var coreVersionFinders = vfs{
 	&vf{
-		CoreType: global.ClassicPressCore,
+		CoreType: global.ClassicPressDialect,
 		Regexp:   regexp.MustCompile(`^\$cp_version\s*=\s*['"](.+)['"];\s*$`),
 	},
 	&vf{
-		CoreType: global.WordPressCore,
+		CoreType: global.WordPressDialect,
 		Regexp:   regexp.MustCompile(`^\$wp_version\s*=\s*['"](.+)['"];\s*$`),
 	},
 }
