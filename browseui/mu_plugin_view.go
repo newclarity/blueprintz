@@ -9,17 +9,17 @@ import (
 	"github.com/rivo/tview"
 )
 
-var NilMuPluginNode = (*MuPluginNode)(nil)
-var _ tui.TreeNoder = NilMuPluginNode
+var NilMuPluginView = (*MuPluginView)(nil)
+var _ tui.Viewer = NilMuPluginView
 
-type MuPluginNode struct {
-	*BaseNode
+type MuPluginView struct {
+	*BaseView
 	Plugin *blueprintz.Plugin
 }
 
-func NewMuPluginNode(ui *BrowseUi, p *blueprintz.Plugin) *MuPluginNode {
-	mpn := &MuPluginNode{
-		BaseNode: NewBaseNode(ui, p),
+func NewMuPluginView(ui *BrowseUi, p *blueprintz.Plugin) *MuPluginView {
+	mpn := &MuPluginView{
+		BaseView: NewBaseView(ui),
 		Plugin:   p,
 	}
 	mpn.Embedder = mpn
@@ -27,11 +27,11 @@ func NewMuPluginNode(ui *BrowseUi, p *blueprintz.Plugin) *MuPluginNode {
 
 }
 
-func (me *MuPluginNode) GetForm() *tview.Form {
+func (me *MuPluginView) GetForm() *tview.Form {
 	return me.Ui.AddComponentFormFields(me.Form, me.Plugin)
 }
 
-func (me *MuPluginNode) GetLabel() global.Label {
+func (me *MuPluginView) GetLabel() global.Label {
 	var label global.Label
 	for range only.Once {
 		plugin := me.Plugin
@@ -44,10 +44,10 @@ func (me *MuPluginNode) GetLabel() global.Label {
 	return label
 }
 
-func (me *MuPluginNode) GetColor() tui.Color {
+func (me *MuPluginView) GetColor() tui.Color {
 	return tcell.ColorWhite
 }
 
-func (me *MuPluginNode) GetHelp() *tview.TextView {
+func (me *MuPluginView) GetHelp() *tview.TextView {
 	return tview.NewTextView()
 }

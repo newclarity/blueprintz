@@ -7,6 +7,3 @@ import (
 type (
 	Status = status.Status
 )
-
-type NodeData interface {
-}

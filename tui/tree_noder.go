@@ -4,13 +4,13 @@ import (
 	"github.com/rivo/tview"
 )
 
-type TreeNoders []TreeNoder
-type TreeNoder interface {
+type Viewers []Viewer
+type Viewer interface {
 	Labeler
 	GetReference() interface{}
 	IsSelectable() bool
 	GetColor() Color
-	GetChildren() TreeNoders
+	GetChildren() Viewers
 	GetForm() *tview.Form
 	SetForm(*tview.Form)
 	GetHelp() *tview.TextView

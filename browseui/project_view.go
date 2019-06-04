@@ -13,57 +13,57 @@ import (
 	"path/filepath"
 )
 
-var NilProjectNode = (*ProjectNode)(nil)
-var _ tui.TreeNoder = NilProjectNode
+var NilProjectTreeView = (*ProjectTreeView)(nil)
+var _ tui.Viewer = NilProjectTreeView
 
-type ProjectNode struct {
-	*BaseNode
+type ProjectTreeView struct {
+	*BaseView
 	Ui       *BrowseUi
 	Tree     *tview.TreeView
 	Help     *tview.TextView
-	children tui.TreeNoders
+	children tui.Viewers
 }
 
-func (me *ProjectNode) SetForm(*tview.Form) {
+func (me *ProjectTreeView) SetForm(*tview.Form) {
 	panic("implement me")
 }
 
-func NewProjectNode(ui *BrowseUi) *ProjectNode {
-	pn := &ProjectNode{
-		BaseNode: NewBaseNode(ui, ui.Blueprintz),
+func NewProjectTreeView(ui *BrowseUi) *ProjectTreeView {
+	ptv := &ProjectTreeView{
+		BaseView: NewBaseView(ui),
 		Ui:       ui,
 		Help:     tview.NewTextView(),
 	}
-	pn.Embedder = pn
-	pn.Help.SetBorder(true).SetTitle("Help")
-	pn.AddChild(NewCoreNode(ui))
-	pn.AddChild(NewLayoutNode(ui))
-	pn.AddChild(NewThemesNode(ui))
-	pn.AddChild(NewMuPluginsNode(ui))
-	pn.AddChild(NewPluginsNode(ui))
-	pn.Tree = pn.makeProjectTree()
-	pn.Form = makeNewForm(pn.GetLabel())
-	return pn
+	ptv.Embedder = ptv
+	ptv.Help.SetBorder(true).SetTitle("Help")
+	ptv.AddChild(NewCoreView(ui))
+	ptv.AddChild(NewLayoutView(ui))
+	ptv.AddChild(NewThemesView(ui))
+	ptv.AddChild(NewMuPluginsView(ui))
+	ptv.AddChild(NewPluginsView(ui))
+	ptv.Tree = ptv.makeProjectTreeView()
+	ptv.Form = makeNewForm(ptv.GetLabel())
+	return ptv
 }
 
-func (me *ProjectNode) AddChild(tn tui.TreeNoder) {
+func (me *ProjectTreeView) AddChild(tn tui.Viewer) {
 	tn.SetForm(makeNewForm(tn.GetLabel()))
 	me.children = append(me.children, tn)
 }
 
-func (me *ProjectNode) GetLabel() global.Label {
+func (me *ProjectTreeView) GetLabel() global.Label {
 	return global.ProjectLabel
 }
 
-func (me *ProjectNode) GetColor() tui.Color {
+func (me *ProjectTreeView) GetColor() tui.Color {
 	return tcell.ColorAqua
 }
 
-func (me *ProjectNode) GetChildren() tui.TreeNoders {
+func (me *ProjectTreeView) GetChildren() tui.Viewers {
 	return me.children
 }
 
-func (me *ProjectNode) GetForm() *tview.Form {
+func (me *ProjectTreeView) GetForm() *tview.Form {
 	bpt := "Blueprint type:"
 
 	bpz := me.Ui.Blueprintz
@@ -71,8 +71,8 @@ func (me *ProjectNode) GetForm() *tview.Form {
 	form := me.Form.Clear(true).
 		AddInputField("Project name:", bpz.Name, 20, nil, nil).
 		AddInputField("Description:", bpz.Desc, 40, nil, nil).
-		AddDropDown(bpt, global.AllBlueprintTypes, global.AllBlueprintTypes.Index(bpz.Type), nil).
-		AddInputField("Local domain:", bpz.Local, 30, nil, nil)
+		AddInputField("Local domain:", bpz.Local, 30, nil, nil).
+		AddDropDown(bpt, global.AllBlueprintTypes, global.AllBlueprintTypes.Index(bpz.Type), nil)
 
 	form.GetFormItemByLabel(bpt).(*tview.DropDown).SetFieldWidth(10)
 
@@ -80,11 +80,11 @@ func (me *ProjectNode) GetForm() *tview.Form {
 
 }
 
-func (me *ProjectNode) GetHelp() *tview.TextView {
+func (me *ProjectTreeView) GetHelp() *tview.TextView {
 	return tview.NewTextView()
 }
 
-func (me *ProjectNode) makeProjectTree() (tree *tview.TreeView) {
+func (me *ProjectTreeView) makeProjectTreeView() (tree *tview.TreeView) {
 	var sts Status
 	for range only.Once {
 		bpz := me.Ui.Blueprintz
@@ -116,24 +116,24 @@ func (me *ProjectNode) makeProjectTree() (tree *tview.TreeView) {
 			//	color = tcell.ColorAqua
 			//}
 			for range only.Once {
-				if node == root || node.GetChildren() == nil {
-					ref, ok := node.GetReference().(tui.TreeNoder)
-					if !ok {
-						break
-					}
-					me.Ui.FormBox = ref.GetForm()
-					if me.Ui.FormBox != nil {
-						formatForm(ref.GetForm(), ref.GetLabel())
-						//						me.Ui.FormBox.SetTitle(ref.GetLabel())
-						me.Ui.FullView.RemoveItem(me.Ui.RightHandView)
-						me.Ui.RightHandView = me.Ui.NewRightHandView()
-						me.Ui.FullView.AddItem(me.Ui.RightHandView, 0, GoldenWide, false)
-						//						parent.App.Draw()
-					}
+				ui := me.Ui
+				ref, ok := node.GetReference().(tui.Viewer)
+				if !ok {
 					break
 				}
+
+				ui.FormBox = ref.GetForm()
+				if ui.FormBox == nil {
+					break
+				}
+				formatBox(ui.FormBox.Box, ref.GetLabel())
+				ui.FullView.RemoveItem(ui.RightHandView)
+				ui.RightHandView = ui.NewRightHandView()
+				ui.FullView.AddItem(ui.RightHandView, 0, GoldenWide, false)
+
+				break
 				//// Load and show files in this directory.
-				//tn, ok := ref.(tui.TreeNoder)
+				//tn, ok := ref.(tui.Viewer)
 				//if !ok {
 				//	changefocus = true
 				//	break

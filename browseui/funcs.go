@@ -9,7 +9,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-func MakeTreeNode(tn tui.TreeNoder) (tvn *tview.TreeNode) {
+func MakeTreeNode(tn tui.Viewer) (tvn *tview.TreeNode) {
 	for range only.Once {
 		tvn = tview.NewTreeNode(tn.GetLabel()).
 			SetReference(tn.GetReference()).
@@ -52,16 +52,17 @@ func AddComponentVersion(c *blueprintz.Component, label global.Label) global.Lab
 	return label
 }
 
-func formatForm(form *tview.Form, label global.Label) *tview.Form {
-	form.SetBorder(true).
+func formatBox(box *tview.Box, label global.Label) *tview.Box {
+	box.SetBorder(true).
 		SetTitle(label).
 		SetBorderPadding(1, 1, 3, 3)
-	return form
+	return box
 }
 
 func makeNewForm(label global.Label) *tview.Form {
 	form := tview.NewForm()
-	return formatForm(form, label)
+	formatBox(form.Box, label)
+	return form
 }
 
 func noop(i ...interface{}) interface{} { return nil }

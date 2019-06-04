@@ -11,6 +11,7 @@ import (
 	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
 	"strings"
+	"time"
 )
 
 type BrowseUi struct {
@@ -36,7 +37,7 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 		sts.SetLogAs(status.FatalLog).Log()
 	}
 
-	pn := NewProjectNode(&browseui)
+	pn := NewProjectTreeView(&browseui)
 
 	browseui.ProjectBox = pn.Tree
 	browseui.FormBox = pn.GetForm()
@@ -54,35 +55,60 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 	// Shortcuts to navigate the slides.
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		for range only.Once {
+
 			if event == nil {
 				break
 			}
+			switch event.Key() {
+			case tcell.KeyEsc:
 
-			if event.Key() != tcell.KeyEsc {
-				break
-			}
-
-			_, ok := app.GetFocus().(tview.FormItem)
-			if ok {
-				exitingForm = true
-				event = nil
-				app.SetFocus(browseui.ProjectBox)
-				break
-			}
-
-			switch app.GetFocus() {
-			case browseui.FormBox:
-				app.SetFocus(browseui.ProjectBox)
-				break
-
-			case browseui.ProjectBox:
-				if exitingForm {
-					exitingForm = false
+				_, ok := app.GetFocus().(tview.FormItem)
+				if ok {
+					exitingForm = true
+					event = nil
+					app.SetFocus(browseui.ProjectBox)
 					break
 				}
-				app.Stop()
-				break
 
+				switch app.GetFocus() {
+				case browseui.FormBox:
+					app.SetFocus(browseui.ProjectBox)
+					break
+
+				case browseui.ProjectBox:
+					if exitingForm {
+						exitingForm = false
+						break
+					}
+					app.Stop()
+					break
+
+				}
+			case tcell.KeyEnter:
+				// Enter selects a tree node and either
+				// selects its form or expands its children
+
+			default:
+				// Clear the form; It will be redrawn the
+				// next node selected in the tree has a form
+				if browseui.FormBox == nil {
+					browseui.FormBox = tview.NewForm()
+				}
+				formatBox(browseui.FormBox.Box, "Form")
+				browseui.FormBox.Clear(true)
+				app.Draw()
+				//formatBox(browseui.FormBox.Box, "Form")
+				//form := ref.GetForm()
+				//if form == nil {
+				//	break
+				//}
+
+				//browseui.FullView.RemoveItem(browseui.RightHandView)
+				//browseui.RightHandView = browseui.NewRightHandView()
+				//browseui.FullView.AddItem(browseui.RightHandView, 0, GoldenWide, false)
+
+				formatBox(browseui.HelpBox.Box, "Help")
+				browseui.HelpBox.SetText(time.Now().String())
 			}
 		}
 		return event
@@ -106,8 +132,8 @@ func (me *BrowseUi) Run() (sts Status) {
 	return sts
 }
 
-func (me *BrowseUi) MakeNodeView() (form *tview.Box, sts Status) {
-	return tview.NewBox().SetBorder(true).SetTitle("Node"), nil
+func (me *BrowseUi) MakeFormView() (form *tview.Box, sts Status) {
+	return tview.NewBox().SetBorder(true).SetTitle("Form"), nil
 }
 
 var externalOptions = global.YesNos{
@@ -119,7 +145,7 @@ var externalOptions = global.YesNos{
 func (me *BrowseUi) AddComponentFormFields(form *tview.Form, c jsonfile.Componenter) *tview.Form {
 	name := fmt.Sprintf("%s Name", strings.Title(c.GetType()))
 	return form.Clear(true).
-		AddInputField(name, c.GetName(), 50, nil, nil).
+		AddInputField(name, c.GetName(), 65, nil, nil).
 		AddInputField("Version:", c.GetVersion(), 16, nil, nil).
 		AddInputField("Subdir/Slug:", c.GetSubdir(), 30, nil, nil).
 		AddInputField("Main file:", c.GetBasefile(), 30, nil, nil).

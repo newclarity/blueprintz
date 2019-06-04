@@ -9,17 +9,17 @@ import (
 	"github.com/rivo/tview"
 )
 
-var NilPluginNode = (*ProjectNode)(nil)
-var _ tui.TreeNoder = NilPluginNode
+var NilPluginView = (*ProjectTreeView)(nil)
+var _ tui.Viewer = NilPluginView
 
-type PluginNode struct {
-	*BaseNode
+type PluginView struct {
+	*BaseView
 	Plugin *blueprintz.Plugin
 }
 
-func NewPluginNode(ui *BrowseUi, p *blueprintz.Plugin) *PluginNode {
-	pn := &PluginNode{
-		BaseNode: NewBaseNode(ui, p),
+func NewPluginView(ui *BrowseUi, p *blueprintz.Plugin) *PluginView {
+	pn := &PluginView{
+		BaseView: NewBaseView(ui),
 		Plugin:   p,
 	}
 	pn.Embedder = pn
@@ -27,11 +27,11 @@ func NewPluginNode(ui *BrowseUi, p *blueprintz.Plugin) *PluginNode {
 
 }
 
-func (me *PluginNode) GetForm() *tview.Form {
+func (me *PluginView) GetForm() *tview.Form {
 	return me.Ui.AddComponentFormFields(me.Form, me.Plugin)
 }
 
-func (me *PluginNode) GetLabel() global.Label {
+func (me *PluginView) GetLabel() global.Label {
 	var label global.Label
 	for range only.Once {
 		plugin := me.Plugin
@@ -44,10 +44,10 @@ func (me *PluginNode) GetLabel() global.Label {
 	return label
 }
 
-func (me *PluginNode) GetColor() tui.Color {
+func (me *PluginView) GetColor() tui.Color {
 	return tcell.ColorWhite
 }
 
-func (me *PluginNode) GetHelp() *tview.TextView {
+func (me *PluginView) GetHelp() *tview.TextView {
 	return tview.NewTextView()
 }

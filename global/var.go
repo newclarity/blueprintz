@@ -12,3 +12,9 @@ var AllBlueprintTypes = BlueprintTypes{
 	ThemeBlueprint,
 	WebsiteBlueprint,
 }
+
+var AllDialects = Dialects{
+	WordPressDialect,
+	ClassicPressDialect,
+	PantheonWPDialect,
+}

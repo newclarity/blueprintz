@@ -6,23 +6,23 @@ import (
 	"github.com/rivo/tview"
 )
 
-var NilLayoutNode = (*LayoutNode)(nil)
-var _ tui.TreeNoder = NilLayoutNode
+var NilLayoutView = (*LayoutView)(nil)
+var _ tui.Viewer = NilLayoutView
 
-type LayoutNode struct {
-	*BaseNode
+type LayoutView struct {
+	*BaseView
 }
 
-func NewLayoutNode(ui *BrowseUi) *LayoutNode {
-	ln := &LayoutNode{
-		BaseNode: NewBaseNode(ui, ui.Blueprintz.Core),
+func NewLayoutView(ui *BrowseUi) *LayoutView {
+	ln := &LayoutView{
+		BaseView: NewBaseView(ui),
 	}
 	ln.Embedder = ln
 	return ln
 
 }
 
-func (me *LayoutNode) GetForm() *tview.Form {
+func (me *LayoutView) GetForm() *tview.Form {
 	layout := me.Ui.Blueprintz.Layout
 	return me.Form.Clear(true).
 		AddInputField("Project Path:", layout.ProjectPath, 15, nil, nil).
@@ -31,10 +31,10 @@ func (me *LayoutNode) GetForm() *tview.Form {
 		AddInputField("Content Path:", layout.ContentPath, 45, nil, nil)
 }
 
-func (me *LayoutNode) GetLabel() global.Label {
+func (me *LayoutView) GetLabel() global.Label {
 	return global.LayoutLabel
 }
 
-func (me *LayoutNode) GetHelp() *tview.TextView {
+func (me *LayoutView) GetHelp() *tview.TextView {
 	return tview.NewTextView()
 }

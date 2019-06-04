@@ -9,32 +9,32 @@ import (
 	"github.com/rivo/tview"
 )
 
-var NilThemeNode = (*ThemeNode)(nil)
-var _ tui.TreeNoder = NilThemeNode
+var NilThemeView = (*ThemeView)(nil)
+var _ tui.Viewer = NilThemeView
 
-type ThemeNode struct {
-	*BaseNode
+type ThemeView struct {
+	*BaseView
 	Theme *blueprintz.Theme
 }
 
-func NewThemeNode(ui *BrowseUi, t *blueprintz.Theme) *ThemeNode {
-	tn := &ThemeNode{
-		BaseNode: NewBaseNode(ui, t),
+func NewThemeView(ui *BrowseUi, t *blueprintz.Theme) *ThemeView {
+	tn := &ThemeView{
+		BaseView: NewBaseView(ui),
 		Theme:    t,
 	}
 	tn.Embedder = tn
 	return tn
 }
 
-func (me *ThemeNode) GetForm() *tview.Form {
+func (me *ThemeView) GetForm() *tview.Form {
 	return me.Ui.AddComponentFormFields(me.Form, me.Theme)
 }
 
-func (me *ThemeNode) SetForm(form *tview.Form) {
+func (me *ThemeView) SetForm(form *tview.Form) {
 	me.Form = form
 }
 
-func (me *ThemeNode) GetLabel() global.Label {
+func (me *ThemeView) GetLabel() global.Label {
 	var label global.Label
 	for range only.Once {
 		theme := me.Theme
@@ -47,17 +47,17 @@ func (me *ThemeNode) GetLabel() global.Label {
 	return label
 }
 
-func (me *ThemeNode) IsSelectable() bool {
+func (me *ThemeView) IsSelectable() bool {
 	return true
 }
 
-func (me *ThemeNode) GetColor() tui.Color {
+func (me *ThemeView) GetColor() tui.Color {
 	return tcell.ColorWhite
 }
 
-func (me *ThemeNode) GetChildren() tui.TreeNoders {
+func (me *ThemeView) GetChildren() tui.Viewers {
 	return nil
 }
-func (me *ThemeNode) GetHelp() *tview.TextView {
+func (me *ThemeView) GetHelp() *tview.TextView {
 	return tview.NewTextView()
 }
