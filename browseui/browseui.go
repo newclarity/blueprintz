@@ -11,17 +11,26 @@ import (
 	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
 	"strings"
-	"time"
+)
+
+type BrowseMode = string
+
+const (
+	TreeMode BrowseMode = "tree"
+	FormMode BrowseMode = "form"
+	ExitMode BrowseMode = "exit"
 )
 
 type BrowseUi struct {
 	Blueprintz    *blueprintz.Blueprintz
 	App           *tview.Application
 	FullView      *tview.Flex
+	FrameBox      *tview.Frame
 	ProjectBox    *tview.TreeView
 	RightHandView *tview.Flex
 	FormBox       *tview.Form
 	HelpBox       *tview.TextView
+	Mode          BrowseMode
 }
 
 func New(bpz *blueprintz.Blueprintz) *BrowseUi {
@@ -30,6 +39,7 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 		Blueprintz: bpz,
 		App:        app,
 		HelpBox:    tview.NewTextView(),
+		Mode:       TreeMode,
 	}
 
 	sts := bpz.LoadJsonfile()
@@ -49,7 +59,12 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 		AddItem(browseui.ProjectBox, 0, GoldenNarrow, true).
 		AddItem(browseui.RightHandView, 0, GoldenWide, false)
 
-	app.SetRoot(browseui.FullView, true)
+	browseui.FrameBox = tview.NewFrame(browseui.FullView).
+		SetBorders(0, 0, 0, 0, 0, 0).
+		AddText(global.AppName, true, tview.AlignCenter, tcell.ColorWhite).
+		AddText(global.BrowseUiNavMenu, false, tview.AlignCenter, tcell.ColorLightSteelBlue)
+
+	app.SetRoot(browseui.FrameBox, true)
 
 	var exitingForm bool
 	// Shortcuts to navigate the slides.
@@ -73,6 +88,7 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 				switch app.GetFocus() {
 				case browseui.FormBox:
 					app.SetFocus(browseui.ProjectBox)
+					browseui.Mode = TreeMode
 					break
 
 				case browseui.ProjectBox:
@@ -80,21 +96,26 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 						exitingForm = false
 						break
 					}
+					browseui.Mode = ExitMode
 					app.Stop()
 					break
 
 				}
 			case tcell.KeyEnter:
-				// Enter selects a tree node and either
-				// selects its form or expands its children
+				browseui.Mode = FormMode
+				break
 
 			default:
+				if browseui.Mode == FormMode {
+					break
+				}
+
 				// Clear the form; It will be redrawn the
 				// next node selected in the tree has a form
 				if browseui.FormBox == nil {
 					browseui.FormBox = tview.NewForm()
 				}
-				formatBox(browseui.FormBox.Box, "Form")
+				formatBox(browseui.FormBox.Box, "Form View")
 				browseui.FormBox.Clear(true)
 				app.Draw()
 				//formatBox(browseui.FormBox.Box, "Form")
@@ -108,7 +129,7 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 				//browseui.FullView.AddItem(browseui.RightHandView, 0, GoldenWide, false)
 
 				formatBox(browseui.HelpBox.Box, "Help")
-				browseui.HelpBox.SetText(time.Now().String())
+				browseui.HelpBox.SetText(fmt.Sprintf("%+v", app.GetFocus()))
 			}
 		}
 		return event

@@ -1,8 +1,15 @@
 package global
 
-const JsonSchemaCreatedBy = "Blueprintz Composer for WordPress"
+const AppName = "Blueprintz Composer for WordPress"
+const JsonSchemaCreatedBy = AppName
 const AboutBlueprintzUrl = "https://blueprintz.dev"
 const JsonSchemaVersion = "0.1.0"
+
+const NavMenuSpacer = "  "
+const BrowseUiNavMenu = "[lightgrey]Move: [yellow]<Tab>" +
+	NavMenuSpacer + "[lightgrey]Select: [yellow]<Enter>" +
+	NavMenuSpacer + "[lightgrey]Return: [yellow]<Escape>" +
+	NavMenuSpacer + "[lightgrey]Exit: [yellow]<Ctrl-C>"
 
 const BlueprintzFile = "blueprintz.json"
 

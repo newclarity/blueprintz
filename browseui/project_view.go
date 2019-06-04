@@ -154,6 +154,7 @@ func (me *ProjectTreeView) makeProjectTreeView() (tree *tview.TreeView) {
 			for range only.Once {
 				if node == root {
 					me.Ui.App.SetFocus(me.Ui.FormBox)
+					me.Ui.Mode = FormMode
 					break
 				}
 				if len(node.GetChildren()) > 0 {
@@ -163,13 +164,14 @@ func (me *ProjectTreeView) makeProjectTreeView() (tree *tview.TreeView) {
 				if me.Ui.FormBox == nil {
 					break
 				}
+				me.Ui.Mode = FormMode
 				me.Ui.App.SetFocus(me.Ui.FormBox)
 			}
 		})
 
 		tree.SetBorder(true).
 			SetBorderPadding(1, 1, 2, 2).
-			SetTitle(global.JsonSchemaCreatedBy).
+			SetTitle("Project View").
 			SetTitleAlign(tview.AlignCenter)
 
 	}
