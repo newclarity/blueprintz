@@ -15,7 +15,6 @@ type Blueprinter interface {
 	GetJsonName() string
 	GetJsonDesc() string
 	GetJsonType() global.BlueprintType
-	GetJsonLocal() global.Domain
 	GetJsonCore() *Core
 	GetJsonTheme() global.ComponentName
 	GetJsonLegend() *Legend
@@ -30,7 +29,6 @@ type Blueprintz struct {
 	Name      string               `json:"name"`
 	Desc      string               `json:"desc"`
 	Type      global.BlueprintType `json:"type"`
-	Local     global.Domain        `json:"local"`
 	Theme     global.ComponentName `json:"theme"`
 	Core      *Core                `json:"core"`
 	Meta      *Meta                `json:"meta"`
@@ -82,7 +80,6 @@ func NewBlueprintzFromBlueprintz(blueprintz Blueprinter) *Blueprintz {
 		Name:      blueprintz.GetJsonName(),
 		Desc:      blueprintz.GetJsonDesc(),
 		Type:      blueprintz.GetJsonType(),
-		Local:     blueprintz.GetJsonLocal(),
 		Core:      blueprintz.GetJsonCore(),
 		Theme:     blueprintz.GetJsonTheme(),
 		Legend:    blueprintz.GetJsonLegend(),

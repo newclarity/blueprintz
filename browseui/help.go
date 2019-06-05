@@ -1,50 +1,69 @@
 package browseui
 
 import (
-	"blueprintz/config"
 	"blueprintz/global"
+	"blueprintz/helptext"
 	"fmt"
+	"github.com/gearboxworks/go-status/only"
+	"strings"
 )
 
-func j(a, b string) string {
-	return fmt.Sprintf("%s:%s", a, b)
+func GetHelp(helpid global.HelpId) (help string) {
+	for range only.Once {
+		helpmap := helptext.TextMap
+		helpid = strings.ToLower(helpid)
+		parts := strings.Split(helpid+":", ":")
+
+		var fh global.HelpId
+		if helpid != parts[0] {
+			fh, _ = helpmap[helpid]
+		}
+		nh, _ := helpmap[parts[0]]
+		var chid global.HelpId
+		switch parts[0] {
+		case global.ThemesHelpId, global.PluginsHelpId, global.MuPluginsHelpId:
+			chid = global.ComponentsHelpId
+		case global.ThemeHelpId, global.PluginHelpId, global.MuPluginHelpId:
+			chid = global.ComponentHelpId
+		}
+		ch, _ := helpmap[chid]
+		fh = joinhelp(fh, ch)
+		if fh != "" {
+			help = fh
+			break
+		}
+		if nh != "" {
+			help = nh
+			break
+		}
+		//help = joinhelp(fh, nh)
+		//if help != "" {
+		//	break
+		//}
+		help = fmt.Sprintf(
+			"No helptext specified yet for this Help ID: '%s'",
+			helpid,
+		)
+	}
+	return help
 }
 
-var help = map[global.HelpIdType]string{
+func joinhelp(specific global.HelpId, general global.HelpId) (help string) {
+	switch {
+	case specific != "" && general != "":
+		help = fmt.Sprintf("%s\n\n%s", specific, general)
 
-	global.ProjectHelpId:                      "",
-	j(global.ProjectHelpId, "project_name"):   "",
-	j(global.ProjectHelpId, "description"):    "",
-	j(global.ProjectHelpId, "local_domain"):   "",
-	j(global.ProjectHelpId, "blueprint_type"): "",
+	case general == "":
+		help = specific
 
-	global.CoreHelpId:               "",
-	j(global.CoreHelpId, "dialect"): "",
-	j(global.CoreHelpId, "version"): "",
+	default:
+		help = general
 
-	global.LayoutHelpId:                    "",
-	j(global.LayoutHelpId, "core_path"):    "",
-	j(global.LayoutHelpId, "project_path"): "",
-	j(global.LayoutHelpId, "webroot_path"): "",
-	j(global.LayoutHelpId, "content_path"): "",
-
-	global.ThemesHelpId:    "",
-	global.ThemeHelpId:     "",
-	global.PluginsHelpId:   "",
-	global.PluginHelpId:    "",
-	global.MuPluginsHelpId: "",
-	global.MuPluginHelpId:  "",
-
-	j(global.ComponentHelpId, "name"):     "",
-	j(global.ComponentHelpId, "website"):  "",
-	j(global.ComponentHelpId, "version"):  "",
-	j(global.ComponentHelpId, "subdir"):   "",
-	j(global.ComponentHelpId, "mainfile"): "",
-	j(global.ComponentHelpId, "download"): "",
-	j(global.ComponentHelpId, "external"): "",
+	}
+	return help
 }
 
-func LoadHelp(c *config.Config) {
-	//cdir := c.OsBridge.GetUserConfigDir()
-
-}
+//func LoadHelp(c *config.Config) {
+//	//cdir := c.OsBridge.GetUserConfigDir()
+//
+//}

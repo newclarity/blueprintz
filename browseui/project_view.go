@@ -32,7 +32,14 @@ func NewProjectTreeView(ui *BrowseUi) *ProjectTreeView {
 		Help:     tview.NewTextView(),
 	}
 	ptv.Embedder = ptv
-	ptv.Help.SetBorder(true).SetTitle("Help")
+
+	ptv.Help.
+		SetWordWrap(true).
+		SetWrap(true).
+		SetDynamicColors(true).
+		SetBorder(true).
+		SetTitle("Help")
+
 	ptv.AddChild(NewCoreView(ui))
 	ptv.AddChild(NewLayoutView(ui))
 	ptv.AddChild(NewThemesView(ui))
@@ -68,7 +75,6 @@ func (me *ProjectTreeView) GetForm() *tview.Form {
 	form := me.Form.Clear(true).
 		AddInputField("Project name:", bpz.Name, 20, nil, nil).
 		AddInputField("Description:", bpz.Desc, 40, nil, nil).
-		AddInputField("Local domain:", bpz.Local, 30, nil, nil).
 		AddDropDown(bpt, global.AllBlueprintTypes, global.AllBlueprintTypes.Index(bpz.Type), nil)
 
 	form.GetFormItemByLabel(bpt).(*tview.DropDown).SetFieldWidth(10)

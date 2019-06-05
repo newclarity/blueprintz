@@ -61,18 +61,19 @@ const (
 	UnsetState YesNo = "   "
 )
 
-type HelpIdType = string
+type HelpId = string
 
 const (
-	CoreHelpId      HelpIdType = "core"
-	LayoutHelpId    HelpIdType = "layout"
-	MuPluginHelpId  HelpIdType = "mu-plugin"
-	MuPluginsHelpId HelpIdType = "mu-plugins"
-	PluginHelpId    HelpIdType = "plugin"
-	PluginsHelpId   HelpIdType = "plugins"
-	ProjectHelpId   HelpIdType = "project"
-	ThemeHelpId     HelpIdType = "theme"
-	ThemesHelpId    HelpIdType = "themes"
-	ComponentHelpId HelpIdType = "component"
-	UnknownHelpId   HelpIdType = "unknown"
+	CoreHelpId       HelpId = "core"
+	LayoutHelpId     HelpId = "layout"
+	MuPluginHelpId   HelpId = "mu-plugin"
+	MuPluginsHelpId  HelpId = "mu-plugins"
+	PluginHelpId     HelpId = "plugin"
+	PluginsHelpId    HelpId = "plugins"
+	ProjectHelpId    HelpId = "project"
+	ThemeHelpId      HelpId = "theme"
+	ThemesHelpId     HelpId = "themes"
+	ComponentHelpId  HelpId = "component"
+	ComponentsHelpId HelpId = "components"
+	UnknownHelpId    HelpId = "unknown"
 )

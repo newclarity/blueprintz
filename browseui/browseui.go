@@ -3,8 +3,10 @@ package browseui
 import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
+	"blueprintz/helptext"
 	"blueprintz/jsonfile"
 	"blueprintz/tui"
+	"blueprintz/util"
 	"fmt"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
@@ -154,27 +156,40 @@ var punctRegexp = regexp.MustCompile(`([:?])`)
 
 func (me *BrowseUi) ShowHelp(field global.Label) {
 
-	var helptext string
+	var helptxt string
+	title := "Help"
+	for range only.Once {
+		formatBox(me.HelpBox.Box, "Help")
 
-	node := me.ProjectBox.GetCurrentNode()
+		var helpid global.HelpId
 
-	ref, ok := node.GetReference().(tui.Viewer)
-	if ok {
-		helptext = ref.GetHelpId()
-	} else {
-		helptext = node.GetText()
+		node := me.ProjectBox.GetCurrentNode()
+
+		ref, ok := node.GetReference().(tui.Viewer)
+		if !ok {
+			msg := "current node when ShowHelp is called does not implement tui.Viewer"
+			status.Fail().SetMessage(msg).Log()
+			helptxt = fmt.Sprintf("ERROR: %s", msg)
+			break
+		}
+
+		helpid = ref.GetHelpId()
+		if field == "" {
+			title = ref.GetLabel()
+		} else {
+			title = strings.TrimRight(field, ":")
+			// Remove spaces, colons and question marks
+			field = spaceRegexp.ReplaceAllString(field, "_")
+			field = punctRegexp.ReplaceAllString(field, "")
+			helpid = fmt.Sprintf("%s:%s", helpid, field)
+		}
+
+		title = util.Titleize(title)
+		helptxt = helptext.HelpColor + GetHelp(helpid) + helptext.HelpColor
+
 	}
-
-	if field != "" {
-		// Remove spaces, colons and question marks
-		field = spaceRegexp.ReplaceAllString(field, "_")
-		field = punctRegexp.ReplaceAllString(field, "")
-		helptext = fmt.Sprintf("%s:%s", helptext, field)
-	}
-
-	formatBox(me.HelpBox.Box, "Help")
-
-	me.HelpBox.SetText(strings.ToLower(helptext))
+	me.HelpBox.SetTitle(title)
+	me.HelpBox.SetText(helptxt)
 }
 
 func (me *BrowseUi) NewRightHandView() *tview.Flex {

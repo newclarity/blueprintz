@@ -7,7 +7,6 @@ import (
 	"blueprintz/recognize"
 	"blueprintz/util"
 	"fmt"
-	"github.com/Machiel/slugify"
 	"github.com/gearboxworks/go-osbridge"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
@@ -26,7 +25,6 @@ type Blueprintz struct {
 	Desc          string
 	Type          global.BlueprintType
 	SaveTo        *CodeLocker
-	Local         global.Domain
 	Theme         global.ComponentName
 	Legend        *Legend
 	Layout        *Layout
@@ -106,7 +104,6 @@ func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
 		Name:          jfbp.Name,
 		Desc:          jfbp.Desc,
 		Type:          jfbp.Type,
-		Local:         jfbp.Local,
 		Theme:         jfbp.Theme,
 		Core:          ConvertJsonfileCore(jfbp.Core),
 		Layout:        ConvertJsonfileLayout(jfbp.Layout),
@@ -167,11 +164,6 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	)
 	if blueprintz.Desc == "" {
 		blueprintz.Desc = fmt.Sprintf("Description about %s", blueprintz.Name)
-	}
-	if blueprintz.Local == "" {
-		blueprintz.Local = fmt.Sprintf("%s.local",
-			slugify.Slugify(blueprintz.Name),
-		)
 	}
 	if blueprintz.Type == "" {
 		blueprintz.Type = global.WebsiteBlueprint
@@ -295,10 +287,6 @@ func (me *Blueprintz) GetJsonDesc() string {
 
 func (me *Blueprintz) GetJsonType() global.BlueprintType {
 	return me.Type
-}
-
-func (me *Blueprintz) GetJsonLocal() global.Domain {
-	return me.Local
 }
 
 func (me *Blueprintz) GetJsonCore() *jsonfile.Core {

@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"syscall"
 )
 
@@ -110,4 +111,8 @@ func UnmarshalJson(j []byte, obj interface{}) (sts status.Status) {
 		}
 	}
 	return sts
+}
+
+func Titleize(t string) string {
+	return strings.Title(strings.ReplaceAll(t, "_", " "))
 }
