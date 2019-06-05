@@ -4,7 +4,6 @@ import (
 	"blueprintz/config"
 	"blueprintz/global"
 	"fmt"
-	"github.com/mitchellh/go-homedir"
 )
 
 func j(a, b string) string {

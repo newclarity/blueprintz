@@ -19,4 +19,4 @@ require (
 
 )
 
-replace github.com/rivo/tview => /Users/mschinkel/go/src/github.com/mikeschinkel/tview/
+replace github.com/rivo/tview => github.com/mikeschinkel/tview v0.0.0-20190605043835-be129da9c6f8
