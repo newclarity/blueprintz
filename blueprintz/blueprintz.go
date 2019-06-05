@@ -121,13 +121,15 @@ func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
 	})
 }
 
-func (me *Blueprintz) LoadJsonfile() (sts Status) {
+func (me *Blueprintz) LoadJsonfile(c *config.Config) (sts Status) {
 	for range only.Once {
 		var jfbp *jsonfile.Blueprintz
 		jfbp, sts = jsonfile.LoadJsonFile()
 		if is.Error(sts) {
 			break
 		}
+		me.Config = c
+		me.OsBridge = c.OsBridge
 		me.RenewFromJsonfile(jfbp)
 	}
 	return sts

@@ -42,7 +42,7 @@ func Research() (sts Status) {
 
 		bpz := blueprintz.Instance
 
-		sts = bpz.LoadJsonfile()
+		sts = bpz.LoadJsonfile(bpz.Config)
 		if is.Error(sts) {
 			break
 		}

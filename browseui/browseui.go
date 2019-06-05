@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
+	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
 	"regexp"
@@ -41,6 +42,11 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 		App:        app,
 		HelpBox:    tview.NewTextView(),
 		Mode:       TreeMode,
+	}
+
+	sts := bpz.LoadJsonfile(bpz.Config)
+	if is.Error(sts) {
+		sts.SetLogAs(status.FatalLog).Log()
 	}
 
 	pn := NewProjectTreeView(&browseui)
