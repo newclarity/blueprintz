@@ -115,7 +115,11 @@ func (me *ProjectTreeView) makeProjectTreeView() (tree *tview.TreeView) {
 				ui.FormBox = ref.GetForm()
 				if ui.FormBox == nil {
 					ui.FormBox = tview.NewForm()
-					break
+				}
+				kids := node.GetChildren()
+				if root != node && kids != nil && len(kids) > 0 {
+					ui.FormBox.Clear(true)
+					ui.FormBox.SetTitle(ref.GetLabel())
 				}
 				ui.FormatForm(ui.FormBox, ref.GetLabel())
 				ui.FullView.RemoveItem(ui.RightHandView)
