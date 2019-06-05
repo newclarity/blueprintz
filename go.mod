@@ -9,6 +9,7 @@ require (
 	github.com/gearboxworks/go-osbridge v0.0.0-20190605062119-0e1c68c1c70f
 	github.com/gearboxworks/go-status v0.0.0-20190528175348-42860fb9e78f
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rivo/tview v0.0.0
 	github.com/spf13/cobra v0.0.3
