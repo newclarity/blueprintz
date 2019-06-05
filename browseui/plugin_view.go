@@ -48,6 +48,6 @@ func (me *PluginView) GetColor() tui.Color {
 	return tcell.ColorWhite
 }
 
-func (me *PluginView) GetHelp() *tview.TextView {
-	return tview.NewTextView()
+func (me *PluginView) GetHelpId() global.Slug {
+	return global.PluginHelpId
 }

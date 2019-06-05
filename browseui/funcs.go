@@ -59,10 +59,4 @@ func formatBox(box *tview.Box, label global.Label) *tview.Box {
 	return box
 }
 
-func makeNewForm(label global.Label) *tview.Form {
-	form := tview.NewForm()
-	formatBox(form.Box, label)
-	return form
-}
-
 func noop(i ...interface{}) interface{} { return nil }

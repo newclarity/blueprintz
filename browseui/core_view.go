@@ -35,6 +35,6 @@ func (me *CoreView) GetLabel() global.Label {
 	return global.CoreLabel
 }
 
-func (me *CoreView) GetHelp() *tview.TextView {
-	return tview.NewTextView()
+func (me *CoreView) GetHelpId() global.Slug {
+	return global.CoreHelpId
 }

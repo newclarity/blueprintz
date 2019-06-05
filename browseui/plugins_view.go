@@ -4,7 +4,6 @@ import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
 	"blueprintz/tui"
-	"github.com/rivo/tview"
 	"sort"
 )
 
@@ -39,6 +38,6 @@ func (me *PluginsView) GetChildren() tui.Viewers {
 	})
 	return tns
 }
-func (me *PluginsView) GetHelp() *tview.TextView {
-	return tview.NewTextView()
+func (me *PluginsView) GetHelpId() global.Slug {
+	return global.PluginsHelpId
 }

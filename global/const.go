@@ -6,10 +6,10 @@ const AboutBlueprintzUrl = "https://blueprintz.dev"
 const JsonSchemaVersion = "0.1.0"
 
 const NavMenuSpacer = "  "
-const BrowseUiNavMenu = "[lightgrey]Move: [yellow]<Tab>" +
-	NavMenuSpacer + "[lightgrey]Select: [yellow]<Enter>" +
-	NavMenuSpacer + "[lightgrey]Return: [yellow]<Escape>" +
-	NavMenuSpacer + "[lightgrey]Exit: [yellow]<Ctrl-C>"
+const BrowseUiNavMenu = "[lightgrey]Select: [yellow]<Enter>[lightgrey]" +
+	NavMenuSpacer + "[lightgrey]Move: [yellow]<Tab>[lightgrey]" +
+	NavMenuSpacer + "[lightgrey]Return: [yellow]<Escape>[lightgrey]" +
+	NavMenuSpacer + "[lightgrey]Exit: [yellow]<Ctrl-C>[lightgrey]"
 
 const BlueprintzFile = "blueprintz.json"
 
@@ -58,4 +58,19 @@ const (
 	YesState   YesNo = "yes"
 	NoState    YesNo = "no"
 	UnsetState YesNo = "   "
+)
+
+type HelpIdType = string
+
+const (
+	CoreHelpId      HelpIdType = "core"
+	LayoutHelpId    HelpIdType = "layout"
+	MuPluginHelpId  HelpIdType = "mu-plugin"
+	MuPluginsHelpId HelpIdType = "mu-plugins"
+	PluginHelpId    HelpIdType = "plugin"
+	PluginsHelpId   HelpIdType = "plugins"
+	ProjectHelpId   HelpIdType = "project"
+	ThemeHelpId     HelpIdType = "theme"
+	ThemesHelpId    HelpIdType = "themes"
+	UnknownHelpId   HelpIdType = "unknown"
 )

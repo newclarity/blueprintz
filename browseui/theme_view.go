@@ -58,6 +58,6 @@ func (me *ThemeView) GetColor() tui.Color {
 func (me *ThemeView) GetChildren() tui.Viewers {
 	return nil
 }
-func (me *ThemeView) GetHelp() *tview.TextView {
-	return tview.NewTextView()
+func (me *ThemeView) GetHelpId() global.Slug {
+	return global.ThemeHelpId
 }

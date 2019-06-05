@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"blueprintz/global"
 	"github.com/rivo/tview"
 )
 
@@ -13,5 +14,5 @@ type Viewer interface {
 	GetChildren() Viewers
 	GetForm() *tview.Form
 	SetForm(*tview.Form)
-	GetHelp() *tview.TextView
+	GetHelpId() global.Slug
 }

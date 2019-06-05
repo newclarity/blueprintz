@@ -49,6 +49,6 @@ func (me *BaseView) GetColor() tui.Color {
 func (me *BaseView) GetChildren() tui.Viewers {
 	return nil
 }
-func (me *BaseView) GetHelp() *tview.TextView {
-	panic("Must implement GetHelp() in embedding struct")
+func (me *BaseView) GetHelpId() global.Slug {
+	panic("Must implement GetHelpId() in embedding struct")
 }

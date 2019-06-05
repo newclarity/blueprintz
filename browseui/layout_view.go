@@ -35,6 +35,6 @@ func (me *LayoutView) GetLabel() global.Label {
 	return global.LayoutLabel
 }
 
-func (me *LayoutView) GetHelp() *tview.TextView {
-	return tview.NewTextView()
+func (me *LayoutView) GetHelpId() global.Slug {
+	return global.LayoutHelpId
 }

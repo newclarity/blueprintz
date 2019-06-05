@@ -4,12 +4,14 @@ import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
+	"blueprintz/tui"
 	"fmt"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
+	"regexp"
 	"strings"
 )
 
@@ -51,6 +53,7 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 
 	browseui.ProjectBox = pn.Tree
 	browseui.FormBox = pn.GetForm()
+
 	browseui.HelpBox = pn.Help
 
 	browseui.RightHandView = browseui.NewRightHandView()
@@ -65,6 +68,8 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 		AddText(global.BrowseUiNavMenu, false, tview.AlignCenter, tcell.ColorLightSteelBlue)
 
 	app.SetRoot(browseui.FrameBox, true)
+
+	browseui.ShowHelp("")
 
 	var exitingForm bool
 	// Shortcuts to navigate the slides.
@@ -81,6 +86,7 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 				if ok {
 					exitingForm = true
 					event = nil
+					browseui.ShowHelp("")
 					app.SetFocus(browseui.ProjectBox)
 					break
 				}
@@ -117,25 +123,60 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 				}
 				formatBox(browseui.FormBox.Box, "Form View")
 				browseui.FormBox.Clear(true)
-				app.Draw()
-				//formatBox(browseui.FormBox.Box, "Form")
-				//form := ref.GetForm()
-				//if form == nil {
-				//	break
-				//}
 
-				//browseui.FullView.RemoveItem(browseui.RightHandView)
-				//browseui.RightHandView = browseui.NewRightHandView()
-				//browseui.FullView.AddItem(browseui.RightHandView, 0, GoldenWide, false)
-
-				formatBox(browseui.HelpBox.Box, "Help")
-				browseui.HelpBox.SetText(fmt.Sprintf("%+v", app.GetFocus()))
 			}
 		}
 		return event
 	})
 
 	return &browseui
+}
+
+func (me *BrowseUi) MakeNewForm(label global.Label) *tview.Form {
+	form := tview.NewForm()
+	return me.FormatForm(form, label)
+}
+
+func (me *BrowseUi) FormatForm(form *tview.Form, label string) *tview.Form {
+	formatBox(form.Box, label)
+	form.SetChangedFunc(func(item tview.FormItem) {
+		me.ShowHelp(item.GetLabel())
+	})
+	return form
+}
+
+func (me *BrowseUi) CurrentNodeLabel() global.Label {
+	return me.ProjectBox.GetCurrentNode().GetText()
+}
+
+var spaceRegexp = regexp.MustCompile(`\s+`)
+var punctRegexp = regexp.MustCompile(`([:?])`)
+
+func (me *BrowseUi) ShowHelp(field global.Label) {
+
+	var helptext string
+
+	node := me.ProjectBox.GetCurrentNode()
+
+	//helptext = fmt.Sprintf("%T %+v", node.GetReference(), node.GetReference())
+
+	ref, ok := node.GetReference().(tui.Viewer)
+	if ok {
+		helptext = ref.GetHelpId()
+	} else {
+		helptext = node.GetText()
+	}
+
+	if field != "" {
+		// Remove spaces, colons and question marks
+		field = spaceRegexp.ReplaceAllString(field, "_")
+		field = punctRegexp.ReplaceAllString(field, "")
+		helptext = fmt.Sprintf("%s:%s", helptext, field)
+	}
+
+	formatBox(me.HelpBox.Box, "Help")
+
+	me.HelpBox.SetText(strings.ToLower(helptext))
 }
 
 func (me *BrowseUi) NewRightHandView() *tview.Flex {

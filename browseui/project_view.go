@@ -42,12 +42,12 @@ func NewProjectTreeView(ui *BrowseUi) *ProjectTreeView {
 	ptv.AddChild(NewMuPluginsView(ui))
 	ptv.AddChild(NewPluginsView(ui))
 	ptv.Tree = ptv.makeProjectTreeView()
-	ptv.Form = makeNewForm(ptv.GetLabel())
+	ptv.Form = ui.MakeNewForm(ptv.GetLabel())
 	return ptv
 }
 
 func (me *ProjectTreeView) AddChild(tn tui.Viewer) {
-	tn.SetForm(makeNewForm(tn.GetLabel()))
+	tn.SetForm(me.Ui.MakeNewForm(tn.GetLabel()))
 	me.children = append(me.children, tn)
 }
 
@@ -80,8 +80,8 @@ func (me *ProjectTreeView) GetForm() *tview.Form {
 
 }
 
-func (me *ProjectTreeView) GetHelp() *tview.TextView {
-	return tview.NewTextView()
+func (me *ProjectTreeView) GetHelpId() global.Slug {
+	return global.ProjectHelpId
 }
 
 func (me *ProjectTreeView) makeProjectTreeView() (tree *tview.TreeView) {
@@ -117,35 +117,21 @@ func (me *ProjectTreeView) makeProjectTreeView() (tree *tview.TreeView) {
 			//}
 			for range only.Once {
 				ui := me.Ui
+				ui.ShowHelp("")
 				ref, ok := node.GetReference().(tui.Viewer)
 				if !ok {
 					break
 				}
-
 				ui.FormBox = ref.GetForm()
 				if ui.FormBox == nil {
+					ui.FormBox = tview.NewForm()
 					break
 				}
-				formatBox(ui.FormBox.Box, ref.GetLabel())
+				ui.FormatForm(ui.FormBox, ref.GetLabel())
 				ui.FullView.RemoveItem(ui.RightHandView)
 				ui.RightHandView = ui.NewRightHandView()
 				ui.FullView.AddItem(ui.RightHandView, 0, GoldenWide, false)
 
-				break
-				//// Load and show files in this directory.
-				//tn, ok := ref.(tui.Viewer)
-				//if !ok {
-				//	changefocus = true
-				//	break
-				//}
-				//c := tn.GetChildren()
-				//if c == nil {
-				//	changefocus = true
-				//	break
-				//}
-				//for _, cn := range c {
-				//	node.AddChild(tui.MakeTreeNode(cn))
-				//}
 			}
 		})
 
