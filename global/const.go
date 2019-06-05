@@ -1,9 +1,10 @@
 package global
 
-const AppName = "Blueprintz Composer for WordPress"
+const AppName Name = "Blueprintz Composer™ for WordPress"
 const JsonSchemaCreatedBy = AppName
-const AboutBlueprintzUrl = "https://blueprintz.dev"
-const JsonSchemaVersion = "0.1.0"
+const AboutBlueprintzUrl Url = "https://blueprintz.dev"
+const JsonSchemaVersion Version = "0.1.0"
+const UserDataPath Path = ".blueprintz"
 
 const NavMenuSpacer = "  "
 const BrowseUiNavMenu = "[lightgrey]Select: [yellow]<Enter>[lightgrey]" +
@@ -72,5 +73,6 @@ const (
 	ProjectHelpId   HelpIdType = "project"
 	ThemeHelpId     HelpIdType = "theme"
 	ThemesHelpId    HelpIdType = "themes"
+	ComponentHelpId HelpIdType = "component"
 	UnknownHelpId   HelpIdType = "unknown"
 )

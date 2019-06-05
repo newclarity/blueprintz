@@ -7,6 +7,8 @@ import (
 	"blueprintz/recognize"
 	"blueprintz/util"
 	"github.com/gearboxworks/go-status"
+	"github.com/gearboxworks/go-status/is"
+	"github.com/gearboxworks/go-status/only"
 	"github.com/spf13/cobra"
 	"path/filepath"
 )
@@ -33,15 +35,27 @@ import (
 var RootCmd = &cobra.Command{
 	Use:   "blueprintz",
 	Short: "Manage and use blueprints for your WordPress websites, plugins and themes.",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		blueprintz.Instance = blueprintz.NewBlueprintz(&blueprintz.Args{
-			Name: filepath.Base(util.GetProjectDir()),
-		})
-		blueprintz.Instance.RegisterRecognizer(
-			global.WordPressOrgRecognizer,
-			recognize.NewWordPressOrg(),
-		)
-		status.Logger = log.NewLogger()
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) (err error) {
+		for range only.Once {
+			blueprintz.Instance = blueprintz.NewBlueprintz(&blueprintz.Args{
+				Name:     filepath.Base(util.GetProjectDir()),
+				OsBridge: blueprintz.GetOsBridge(global.AppName, global.UserDataPath),
+			})
+
+			sts := blueprintz.Instance.Config.Initialize()
+			if is.Error(sts) {
+				err = sts.Cause()
+				break
+			}
+
+			blueprintz.Instance.RegisterRecognizer(
+				global.WordPressOrgRecognizer,
+				recognize.NewWordPressOrg(),
+			)
+
+			status.Logger = log.NewLogger()
+		}
+		return err
 	},
 }
 

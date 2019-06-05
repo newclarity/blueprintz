@@ -69,6 +69,9 @@ type StepType = string
 type StepStatus = string
 type StepStatusMap map[StepType]StepStatus
 
+type Names = []Name
+type Name = string
+
 type Labels = []Label
 type Label = string
 

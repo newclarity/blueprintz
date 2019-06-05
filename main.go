@@ -28,14 +28,4 @@ import (
 
 func main() {
 	_ = cmd.RootCmd.Execute()
-	//sts,ok := err.(status.Status)
-	//if !ok {
-	//	log.Fatal(err)
-	//}
-	//if is.Error(sts) {
-	//	log.Fatal(sts.LongMessage())
-	//}
-	//if is.Success(sts) && sts != nil {
-	//	log.Println(sts.Message())
-	//}
 }

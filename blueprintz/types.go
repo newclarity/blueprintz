@@ -7,7 +7,15 @@ import (
 
 type (
 	Status = status.Status
+)
 
+type (
 	Componenters   = fileheaders.Componenters
 	ComponenterMap = fileheaders.ComponenterMap
+)
+
+type (
+	HeaderFieldsKeyMap = map[HeaderField]bool
+	HeaderFields       = []HeaderField
+	HeaderField        = string
 )

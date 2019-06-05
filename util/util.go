@@ -2,13 +2,17 @@ package util
 
 import (
 	"blueprintz/global"
+	"encoding/json"
 	"fmt"
+	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/only"
 	"github.com/mitchellh/go-homedir"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
+	"syscall"
 )
 
 func GetProjectDir() global.Dir {
@@ -38,29 +42,6 @@ func ToAbsoluteDir(path global.Path) global.Dir {
 	)
 }
 
-func DirExists(dir global.Dir) bool {
-	return EntryExists(global.Entry(dir))
-}
-func MaybeMakeDir(dir global.Dir, perms os.FileMode) (err error) {
-	if !DirExists(dir) {
-		err = os.MkdirAll(string(dir), perms)
-	}
-	return err
-}
-func FileDir(file global.Filepath) global.Dir {
-	return global.Dir(filepath.Dir(string(file)))
-}
-func ParentDir(file global.Dir) global.Dir {
-	return global.Dir(filepath.Dir(string(file)))
-}
-
-func EntryExists(file global.Entry) bool {
-	_, err := os.Stat(string(file))
-	return !os.IsNotExist(err)
-}
-func FileExists(file global.Filepath) bool {
-	return EntryExists(global.Entry(file))
-}
 func GetExecutableFilepath() global.Filepath {
 	fp, err := filepath.Abs(os.Args[0])
 	if err != nil {
@@ -86,4 +67,47 @@ func ExtractDomain(url global.Url) (d global.Domain) {
 		d = match[1]
 	}
 	return d
+}
+
+func ErrorIsFileDoesNotExist(err error) bool {
+	pe, ok := err.(*os.PathError)
+	return ok && pe.Op == "open" && pe.Err == syscall.ENOENT
+}
+
+func ReadBytes(filepath global.Filepath) (b []byte, sts status.Status) {
+	for range only.Once {
+		var err error
+		b, err = ioutil.ReadFile(string(filepath))
+		if err != nil && ErrorIsFileDoesNotExist(err) {
+			sts = status.Success("read %d bytes from '%s'",
+				len(b),
+				filepath,
+			)
+		}
+		if err != nil {
+			sts = status.Wrap(err, &status.Args{
+				Message: fmt.Sprintf("cannot read from '%s' file", filepath),
+				Help:    fmt.Sprintf("confirm file '%s' is readable", filepath),
+			})
+			break
+		}
+	}
+	return b, sts
+}
+
+func UnmarshalJson(j []byte, obj interface{}) (sts status.Status) {
+	for range only.Once {
+		err := json.Unmarshal(j, obj)
+		if err != nil {
+			sts = status.Wrap(err, &status.Args{
+				Message: fmt.Sprintf("failed to unmarshal JSON for '%T'", obj),
+				//Help: fmt.Sprintf("ensure '%s' is in correct format per %s",
+				//	obj.GetFilepath(),
+				//	obj.GetHelpUrl(),
+				//),
+			})
+			break
+		}
+	}
+	return sts
 }

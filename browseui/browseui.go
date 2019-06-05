@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
-	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
 	"regexp"
@@ -42,11 +41,6 @@ func New(bpz *blueprintz.Blueprintz) *BrowseUi {
 		App:        app,
 		HelpBox:    tview.NewTextView(),
 		Mode:       TreeMode,
-	}
-
-	sts := bpz.LoadJsonfile()
-	if is.Error(sts) {
-		sts.SetLogAs(status.FatalLog).Log()
 	}
 
 	pn := NewProjectTreeView(&browseui)
@@ -157,8 +151,6 @@ func (me *BrowseUi) ShowHelp(field global.Label) {
 	var helptext string
 
 	node := me.ProjectBox.GetCurrentNode()
-
-	//helptext = fmt.Sprintf("%T %+v", node.GetReference(), node.GetReference())
 
 	ref, ok := node.GetReference().(tui.Viewer)
 	if ok {

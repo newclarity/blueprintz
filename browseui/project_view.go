@@ -1,16 +1,13 @@
 package browseui
 
 import (
-	"blueprintz/blueprintz"
 	"blueprintz/global"
-	"blueprintz/jsonfile"
 	"blueprintz/tui"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
 	"github.com/rivo/tview"
-	"path/filepath"
 )
 
 var NilProjectTreeView = (*ProjectTreeView)(nil)
@@ -88,15 +85,8 @@ func (me *ProjectTreeView) makeProjectTreeView() (tree *tview.TreeView) {
 	var sts Status
 	for range only.Once {
 		bpz := me.Ui.Blueprintz
-		sts = bpz.LoadJsonfile()
-		bpz, sts = blueprintz.Load()
-		if is.Error(sts) {
-			break
-		}
 		if bpz == nil {
-			sts = status.Fail().SetMessage("no '%s' file found in current directory",
-				filepath.Base(jsonfile.GetFilepath()),
-			)
+			sts = status.Fail().SetMessage("me.Ui.Blueprintz is nil when calling browseui")
 			break
 		}
 

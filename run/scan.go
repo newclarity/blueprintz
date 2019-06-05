@@ -42,10 +42,7 @@ func Scan() (sts Status) {
 			)
 			break
 		}
-		bpz, sts := blueprintz.Load()
-		if is.Error(sts) {
-			break
-		}
+		bpz := blueprintz.Instance
 		bpz.RegisterRecognizer(
 			global.WordPressOrgRecognizer,
 			recognize.NewWordPressOrg(),

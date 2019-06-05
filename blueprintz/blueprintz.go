@@ -1,15 +1,18 @@
 package blueprintz
 
 import (
+	"blueprintz/config"
 	"blueprintz/global"
 	"blueprintz/jsonfile"
 	"blueprintz/recognize"
 	"blueprintz/util"
 	"fmt"
 	"github.com/Machiel/slugify"
+	"github.com/gearboxworks/go-osbridge"
 	"github.com/gearboxworks/go-status"
 	"github.com/gearboxworks/go-status/is"
 	"github.com/gearboxworks/go-status/only"
+	"log"
 	"regexp"
 	"strings"
 )
@@ -32,6 +35,8 @@ type Blueprintz struct {
 	Plugins       Plugins
 	MuPlugins     MuPlugins
 	Meta          *Meta
+	Config        *config.Config
+	OsBridge      osbridge.OsBridger
 	recognizermap recognize.ComponentRecognizerMap
 }
 
@@ -65,20 +70,22 @@ func (me *Blueprintz) Research() {
 
 }
 
-func Load() (bpz *Blueprintz, sts Status) {
+func Load(c *config.Config) (bpz *Blueprintz, sts Status) {
 	for range only.Once {
 		jbp := jsonfile.NewBlueprintz()
 		sts := jbp.LoadFile()
 		if is.Error(sts) {
 			break
 		}
-		bpz = NewBlueprintzFromJsonfile(jbp)
+		bpz = NewBlueprintzFromJsonfile(c, jbp)
 	}
 	return bpz, sts
 }
 
-func NewBlueprintzFromJsonfile(jfbp *jsonfile.Blueprintz) *Blueprintz {
+func NewBlueprintzFromJsonfile(c *config.Config, jfbp *jsonfile.Blueprintz) *Blueprintz {
 	bpz := Blueprintz{}
+	bpz.Config = c
+	bpz.OsBridge = c.OsBridge
 	bpz.RenewFromJsonfile(jfbp)
 	return &bpz
 }
@@ -108,6 +115,8 @@ func (me *Blueprintz) RenewFromJsonfile(jfbp *jsonfile.Blueprintz) {
 		Plugins:       ConvertJsonfilePlugins(jfbp.Plugins),
 		MuPlugins:     ConvertJsonfileMuPlugins(jfbp.MuPlugins),
 		Meta:          ConvertJsonfileMeta(),
+		OsBridge:      me.OsBridge,
+		Config:        me.Config,
 		recognizermap: me.GetRecognizerMap(),
 	})
 }
@@ -138,6 +147,16 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 		blueprintz = (*Blueprintz)(args[0])
 	}
 
+	if blueprintz.OsBridge == nil && me.OsBridge != nil {
+		blueprintz.OsBridge = me.OsBridge
+	}
+	if blueprintz.Config == nil && me.Config != nil {
+		blueprintz.Config = me.Config
+	}
+
+	if blueprintz.OsBridge == nil {
+		log.Fatalf("Blueprintz much have a valid OsBridge.")
+	}
 	if blueprintz.Name == "" {
 		blueprintz.Name = "Unnamed"
 	}
@@ -181,6 +200,9 @@ func (me *Blueprintz) Renew(args ...*Args) *Blueprintz {
 	}
 	if blueprintz.recognizermap == nil {
 		blueprintz.recognizermap = make(recognize.ComponentRecognizerMap, 0)
+	}
+	if blueprintz.Config == nil {
+		blueprintz.Config = config.NewConfig(blueprintz.OsBridge)
 	}
 	*me = *blueprintz
 	return blueprintz
