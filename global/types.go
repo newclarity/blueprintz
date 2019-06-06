@@ -16,13 +16,13 @@ type ComponentTypeBoolMap = map[ComponentType]bool
 type ComponentTypes = []ComponentType
 type ComponentType = string
 
-type Dialects []Dialect
-type Dialect = string
+type DialectNames []DialectName
+type DialectName = string
 
-func (me Dialects) Index(d Dialect) int {
+func (me DialectNames) Index(d DialectName) int {
 	return StringSliceIndex(me, d)
 }
-func (me Dialects) Pad(n int) Dialects {
+func (me DialectNames) Pad(n int) DialectNames {
 	return StringSlicePad(me, n)
 }
 

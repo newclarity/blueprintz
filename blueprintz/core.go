@@ -16,7 +16,7 @@ var _ jsonfile.Coreer = NilCore
 
 type Core struct {
 	Version     global.Version
-	Dialect     global.Dialect
+	Dialect     global.DialectName
 	DownloadUrl global.Url
 }
 
@@ -36,7 +36,7 @@ func ConvertJsonfileCore(jfc *jsonfile.Core) *Core {
 
 func (me *Core) Research() {
 	//me.DownloadUrl = ""
-	//me.Dialect = ""
+	//me.DialectName = ""
 	//for _, r := range bpz.GetRecognizerMap() {
 	//	if !recognize.IsValidComponentType(me, r) {
 	//		continue
@@ -56,7 +56,7 @@ func (me *Core) GetVersion() global.Version {
 	return me.Version
 }
 
-func (me *Core) GetDialect() global.Dialect {
+func (me *Core) GetDialect() global.DialectName {
 	if me.Dialect == "" {
 		me.Dialect = global.WordPressDialect
 	}

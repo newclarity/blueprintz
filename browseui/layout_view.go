@@ -2,6 +2,7 @@ package browseui
 
 import (
 	"blueprintz/global"
+	"blueprintz/help"
 	"blueprintz/tui"
 	"github.com/rivo/tview"
 )
@@ -25,16 +26,22 @@ func NewLayoutView(ui *BrowseUi) *LayoutView {
 func (me *LayoutView) GetForm() *tview.Form {
 	layout := me.Ui.Blueprintz.Layout
 	return me.Form.Clear(true).
-		AddInputField("Project Path:", layout.ProjectPath, 15, nil, nil).
+		AddInputField("Project Path:", layout.ProjectPath, 15, nil, persistProjectPath).
 		AddInputField("Webroot Path:", layout.WebrootPath, 25, nil, nil).
 		AddInputField("Core Path:", layout.CorePath, 35, nil, nil).
 		AddInputField("Content Path:", layout.ContentPath, 45, nil, nil)
+}
+
+func persistProjectPath(text string) {
 }
 
 func (me *LayoutView) GetLabel() global.Label {
 	return global.LayoutLabel
 }
 
-func (me *LayoutView) GetHelpId() global.Slug {
-	return global.LayoutHelpId
+func (me *LayoutView) GetHelpInfo() *help.Info {
+	return &help.Info{
+		Id:    global.LayoutHelpId,
+		Label: global.LayoutLabel,
+	}
 }

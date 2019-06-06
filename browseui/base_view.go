@@ -2,6 +2,7 @@ package browseui
 
 import (
 	"blueprintz/global"
+	"blueprintz/help"
 	"blueprintz/tui"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
@@ -49,6 +50,6 @@ func (me *BaseView) GetColor() tui.Color {
 func (me *BaseView) GetChildren() tui.Viewers {
 	return nil
 }
-func (me *BaseView) GetHelpId() global.Slug {
-	panic("Must implement GetHelpId() in embedding struct")
+func (me *BaseView) GetHelpInfo() *help.Info {
+	panic("Must implement GetHelpInfo() in embedding struct")
 }

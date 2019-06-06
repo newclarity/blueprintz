@@ -4,14 +4,14 @@ import "blueprintz/global"
 
 type Coreer interface {
 	GetVersion() global.Version
-	GetDialect() global.Dialect
+	GetDialect() global.DialectName
 	GetDownloadUrl() global.Url
 }
 
 type Core struct {
-	Version     global.Version `json:"version"`
-	Dialect     global.Dialect `json:"dialect,omitempty"`
-	DownloadUrl global.Url     `json:"url,omitempty"`
+	Version     global.Version     `json:"version"`
+	Dialect     global.DialectName `json:"dialect,omitempty"`
+	DownloadUrl global.Url         `json:"url,omitempty"`
 }
 
 func NewCore() *Core {

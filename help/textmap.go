@@ -1,4 +1,4 @@
-package helptext
+package help
 
 import (
 	"blueprintz/global"
@@ -8,9 +8,14 @@ import (
 var TextMap = map[global.HelpId]string{
 
 	global.ProjectHelpId: fmt.Sprintf("A %s'Project'%s is a directory containing source code for "+
-		"a website implemented using a dialect of WordPress "+
-		"(see %sCore%s for more info on %sdialect%s.)",
+		"a website implemented using a dialect of WordPress (see %sCore%s for more info on "+
+		"%sdialect%s.)\n\nBlueprintz %shighly%s recommends locating your actual website source code "+
+		"in a subdirectory one level from the project root, e.g. %s/www%s; see %sLayout%s for more "+
+		"info on recommended site directory layout.",
 		HelpHighlight, HelpColor,
+		HelpEmphasis, HelpColor,
+		HelpEmphasis, HelpColor,
+		HelpEmphasis, HelpColor,
 		HelpEmphasis, HelpColor,
 		HelpEmphasis, HelpColor,
 	),
@@ -33,7 +38,7 @@ var TextMap = map[global.HelpId]string{
 	),
 
 	global.CoreHelpId: "",
-	j(global.CoreHelpId, "dialect"): fmt.Sprintf("A %s'Dialect'%s of WordPress is a specific %sdistrbution%s of WordPress. "+
+	j(global.CoreHelpId, "dialect"): fmt.Sprintf("A %s'DialectName'%s of WordPress is a specific %sdistrbution%s of WordPress. "+
 		"The default dialect is simply %swordpress%s but certain hosts that offer managed WordPress have their "+
 		"own dialects. A %sfork%s of WordPress — such as %sClassicPress%s — is also a considered a dialect by Blueprintz.",
 		HelpHighlight, HelpColor,

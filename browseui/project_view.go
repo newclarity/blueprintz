@@ -2,6 +2,7 @@ package browseui
 
 import (
 	"blueprintz/global"
+	"blueprintz/help"
 	"blueprintz/tui"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status"
@@ -83,8 +84,11 @@ func (me *ProjectTreeView) GetForm() *tview.Form {
 
 }
 
-func (me *ProjectTreeView) GetHelpId() global.Slug {
-	return global.ProjectHelpId
+func (me *ProjectTreeView) GetHelpInfo() *help.Info {
+	return &help.Info{
+		Id:    global.ProjectHelpId,
+		Label: global.ProjectLabel,
+	}
 }
 
 func (me *ProjectTreeView) makeProjectTreeView() (tree *tview.TreeView) {

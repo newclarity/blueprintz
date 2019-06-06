@@ -2,15 +2,15 @@ package browseui
 
 import (
 	"blueprintz/global"
-	"blueprintz/helptext"
+	"blueprintz/help"
 	"fmt"
 	"github.com/gearboxworks/go-status/only"
 	"strings"
 )
 
-func GetHelp(helpid global.HelpId) (help string) {
+func GetHelp(helpid global.HelpId) (h string) {
 	for range only.Once {
-		helpmap := helptext.TextMap
+		helpmap := help.TextMap
 		helpid = strings.ToLower(helpid)
 		parts := strings.Split(helpid+":", ":")
 
@@ -29,23 +29,23 @@ func GetHelp(helpid global.HelpId) (help string) {
 		ch, _ := helpmap[chid]
 		fh = joinhelp(fh, ch)
 		if fh != "" {
-			help = fh
+			h = fh
 			break
 		}
 		if nh != "" {
-			help = nh
+			h = nh
 			break
 		}
-		//help = joinhelp(fh, nh)
-		//if help != "" {
+		//h = joinhelp(fh, nh)
+		//if h != "" {
 		//	break
 		//}
-		help = fmt.Sprintf(
-			"No helptext specified yet for this Help ID: '%s'",
+		h = fmt.Sprintf(
+			"No help specified yet for this Help ID: '%s'",
 			helpid,
 		)
 	}
-	return help
+	return h
 }
 
 func joinhelp(specific global.HelpId, general global.HelpId) (help string) {

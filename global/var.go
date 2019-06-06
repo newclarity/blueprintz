@@ -13,7 +13,7 @@ var AllBlueprintTypes = BlueprintTypes{
 	WebsiteBlueprint,
 }
 
-var AllDialects = Dialects{
+var AllDialects = DialectNames{
 	WordPressDialect,
 	ClassicPressDialect,
 	PantheonWPDialect,

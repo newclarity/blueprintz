@@ -3,7 +3,7 @@ package browseui
 import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
-	"blueprintz/helptext"
+	"blueprintz/help"
 	"blueprintz/jsonfile"
 	"blueprintz/tui"
 	"blueprintz/util"
@@ -173,9 +173,10 @@ func (me *BrowseUi) ShowHelp(field global.Label) {
 			break
 		}
 
-		helpid = ref.GetHelpId()
+		helpinfo := ref.GetHelpInfo()
+		helpid = helpinfo.Id
 		if field == "" {
-			title = ref.GetLabel()
+			title = helpinfo.Label
 		} else {
 			title = strings.TrimRight(field, ":")
 			// Remove spaces, colons and question marks
@@ -184,8 +185,8 @@ func (me *BrowseUi) ShowHelp(field global.Label) {
 			helpid = fmt.Sprintf("%s:%s", helpid, field)
 		}
 
-		title = util.Titleize(title)
-		helptxt = helptext.HelpColor + GetHelp(helpid) + helptext.HelpColor
+		title = util.Titleize(fmt.Sprintf("%s Help", title))
+		helptxt = help.HelpColor + GetHelp(helpid) + help.HelpColor
 
 	}
 	me.HelpBox.SetTitle(title)

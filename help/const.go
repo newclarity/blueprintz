@@ -1,4 +1,4 @@
-package helptext
+package help
 
 const HelpColor = "[lightgrey]"
 const HelpHighlight = "[yellow]"

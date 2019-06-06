@@ -3,6 +3,7 @@ package browseui
 import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
+	"blueprintz/help"
 	"blueprintz/tui"
 	"sort"
 )
@@ -39,6 +40,9 @@ func (me *ThemesView) GetChildren() tui.Viewers {
 	return tns
 }
 
-func (me *ThemesView) GetHelpId() global.Slug {
-	return global.ThemesHelpId
+func (me *ThemesView) GetHelpInfo() *help.Info {
+	return &help.Info{
+		Id:    global.ThemesHelpId,
+		Label: global.ThemesLabel,
+	}
 }

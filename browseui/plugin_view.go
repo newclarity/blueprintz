@@ -3,6 +3,7 @@ package browseui
 import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
+	"blueprintz/help"
 	"blueprintz/tui"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status/only"
@@ -48,6 +49,9 @@ func (me *PluginView) GetColor() tui.Color {
 	return tcell.ColorWhite
 }
 
-func (me *PluginView) GetHelpId() global.Slug {
-	return global.PluginHelpId
+func (me *PluginView) GetHelpInfo() *help.Info {
+	return &help.Info{
+		Id:    global.PluginHelpId,
+		Label: global.PluginLabel,
+	}
 }

@@ -18,6 +18,7 @@ github.com/gdamore/encoding v1.0.0 h1:+7OoQ1Bc6eTm5niUzBa0Ctsh6JbMW6Ra+YNuAtDBdk
 github.com/gdamore/encoding v1.0.0/go.mod h1:alR0ol34c49FCSBLjhosxzcPHQbf2trDkoo5dl+VrEg=
 github.com/gdamore/tcell v1.1.2 h1:Afe8cU6SECC06UmvaJ55Jr3Eh0tz/ywLjqWYqjGZp3s=
 github.com/gdamore/tcell v1.1.2/go.mod h1:h3kq4HO9l2On+V9ed8w8ewqQEmGCSSHOgQ+2h8uzurE=
+github.com/gearboxworks/go-jsoncache v1.0.0/go.mod h1:AccJk2Wa3ofJyghRu/ITiAkRIZ3gaqbfzWqLcqGjxfI=
 github.com/gearboxworks/go-osbridge v0.0.0-20190605062119-0e1c68c1c70f h1:3kLZyx4wH/JNGikvz3eFCPje3fUPw7kpuL8b0fSc+V0=
 github.com/gearboxworks/go-osbridge v0.0.0-20190605062119-0e1c68c1c70f/go.mod h1:BU1T74QZZ19KsIHnstdN5GuC4TvWiUkNO4qUpkWPRuk=
 github.com/gearboxworks/go-status v0.0.0-20190528175348-42860fb9e78f h1:TP5R7ipjTTpDaCySVdVqAJONPtJZvTrOFCxTKwjL1L4=

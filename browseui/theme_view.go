@@ -3,6 +3,7 @@ package browseui
 import (
 	"blueprintz/blueprintz"
 	"blueprintz/global"
+	"blueprintz/help"
 	"blueprintz/tui"
 	"github.com/gdamore/tcell"
 	"github.com/gearboxworks/go-status/only"
@@ -58,6 +59,9 @@ func (me *ThemeView) GetColor() tui.Color {
 func (me *ThemeView) GetChildren() tui.Viewers {
 	return nil
 }
-func (me *ThemeView) GetHelpId() global.Slug {
-	return global.ThemeHelpId
+func (me *ThemeView) GetHelpInfo() *help.Info {
+	return &help.Info{
+		Id:    global.ThemeHelpId,
+		Label: global.ThemeLabel,
+	}
 }

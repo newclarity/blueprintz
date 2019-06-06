@@ -46,9 +46,9 @@ const (
 )
 
 const (
-	WordPressDialect    Dialect = "wordpress"
-	ClassicPressDialect Dialect = "classicpress"
-	PantheonWPDialect   Dialect = "pantheon-wordpress" //https://github.com/pantheon-systems/WordPress
+	WordPressDialect    DialectName = "wordpress"
+	ClassicPressDialect DialectName = "classicpress"
+	PantheonWPDialect   DialectName = "pantheon-wordpress" //https://github.com/pantheon-systems/WordPress
 )
 
 const (
