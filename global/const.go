@@ -77,3 +77,7 @@ const (
 	ComponentsHelpId HelpId = "components"
 	UnknownHelpId    HelpId = "unknown"
 )
+
+const (
+	HelpLabel Label = "Help"
+)

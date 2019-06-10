@@ -157,9 +157,9 @@ var punctRegexp = regexp.MustCompile(`([:?])`)
 func (me *BrowseUi) ShowHelp(field global.Label) {
 
 	var helptxt string
-	title := "Help"
+	title := global.HelpLabel
 	for range only.Once {
-		formatBox(me.HelpBox.Box, "Help")
+		formatBox(me.HelpBox.Box, title)
 
 		var helpid global.HelpId
 
@@ -175,9 +175,8 @@ func (me *BrowseUi) ShowHelp(field global.Label) {
 
 		helpinfo := ref.GetHelpInfo()
 		helpid = helpinfo.Id
-		if field == "" {
-			title = helpinfo.Label
-		} else {
+		title = helpinfo.Label
+		if field != "" {
 			title = strings.TrimRight(field, ":")
 			// Remove spaces, colons and question marks
 			field = spaceRegexp.ReplaceAllString(field, "_")
