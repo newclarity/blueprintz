@@ -44,8 +44,8 @@ func (me *LayoutView) GetForm() *tview.Form {
 			Label:      "Project Path:",
 			Text:       layout.ProjectPath,
 			FieldWidth: 15,
-			DoneFunc: func(key tcell.Key) {
-				return
+			ValidateFunc: func(i *tview.InputField, key *tcell.EventKey) bool {
+				return true
 			},
 		}).
 		AddFormItem(NewInputField(), &InputFieldArgs{
