@@ -60,3 +60,19 @@ func formatBox(box *tview.Box, label global.Label) *tview.Box {
 }
 
 func noop(i ...interface{}) interface{} { return nil }
+
+func NewInputField() *InputField {
+	return tview.NewInputField()
+}
+
+func NewPassword() *InputField {
+	return tview.NewPasswordField()
+}
+
+func NewCheckbox() *Checkbox {
+	return tview.NewCheckbox()
+}
+
+func NewDropDown() *DropDown {
+	return tview.NewDropDown()
+}
