@@ -65,7 +65,7 @@ func NewInputField() *InputField {
 	return tview.NewInputField()
 }
 
-func NewPassword() *InputField {
+func NewPasswordField() *InputField {
 	return tview.NewPasswordField()
 }
 
