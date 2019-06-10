@@ -19,4 +19,4 @@ require (
 	gopkg.in/src-d/go-git.v4 v4.11.0
 )
 
-replace github.com/rivo/tview => github.com/mikeschinkel/tview v0.0.0-20190605043835-be129da9c6f8
+replace github.com/rivo/tview => /Users/mschinkel/go/src/github.com/mikeschinkel/tview
