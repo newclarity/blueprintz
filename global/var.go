@@ -18,3 +18,9 @@ var AllDialects = DialectNames{
 	ClassicPressDialect,
 	PantheonWPDialect,
 }
+
+var YesNoOptions = YesNos{
+	UnsetState,
+	YesState,
+	NoState,
+}

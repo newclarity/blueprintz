@@ -74,11 +74,22 @@ func (me *ProjectTreeView) GetForm() *tview.Form {
 	bpz := me.Ui.Blueprintz
 
 	form := me.Form.Clear(true).
-		AddInputField("Project name:", bpz.Name, 20, nil, nil).
-		AddInputField("Description:", bpz.Desc, 40, nil, nil).
-		AddDropDown(bpt, global.AllBlueprintTypes, global.AllBlueprintTypes.Index(bpz.Type), nil)
-
-	form.GetFormItemByLabel(bpt).(*tview.DropDown).SetFieldWidth(10)
+		AddFormItem(NewInputField(), &InputFieldArgs{
+			Label:      "Project name:",
+			Text:       bpz.Name,
+			FieldWidth: 20,
+		}).
+		AddFormItem(NewInputField(), &InputFieldArgs{
+			Label:      "Description:",
+			Text:       bpz.Desc,
+			FieldWidth: 40,
+		}).
+		AddFormItem(NewDropDown(), &DropDownArgs{
+			Label:         bpt,
+			Options:       global.AllBlueprintTypes,
+			InitialOption: global.AllBlueprintTypes.Index(bpz.Type),
+			FieldWidth:    10,
+		})
 
 	return form
 

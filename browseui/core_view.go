@@ -28,13 +28,18 @@ func (me *CoreView) GetForm() *tview.Form {
 	core := me.Ui.Blueprintz.Core
 
 	return me.Form.Clear(true).
-		AddDropDown("DialectName:",
-			global.AllDialects,
-			global.AllDialects.Index(core.Dialect),
-			func(option string, optionIndex int) {
-
-			}).
-		AddDropDown("Version:", wordpress.Versions, wordpress.Versions.Index(core.Version), nil)
+		AddFormItem(NewDropDown(), &DropDownArgs{
+			Label:         "Dialect Name:",
+			Options:       global.AllDialects,
+			InitialOption: global.AllDialects.Index(core.Dialect),
+			FieldWidth:    20,
+		}).
+		AddFormItem(NewDropDown(), &DropDownArgs{
+			Label:         "Version:",
+			Options:       wordpress.Versions,
+			InitialOption: wordpress.Versions.Index(core.Version),
+			FieldWidth:    10,
+		})
 }
 
 func (me *CoreView) GetLabel() global.Label {

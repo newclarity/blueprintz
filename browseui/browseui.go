@@ -211,21 +211,42 @@ func (me *BrowseUi) MakeFormView() (form *tview.Box, sts Status) {
 	return tview.NewBox().SetBorder(true).SetTitle("Form"), nil
 }
 
-var externalOptions = global.YesNos{
-	global.UnsetState,
-	global.YesState,
-	global.NoState,
-}
-
 func (me *BrowseUi) AddComponentFormFields(form *tview.Form, c jsonfile.Componenter) *tview.Form {
-	name := fmt.Sprintf("%s Name", strings.Title(c.GetType()))
+	label := fmt.Sprintf("%s Name", strings.Title(c.GetType()))
 	return form.Clear(true).
-		AddInputField(name, c.GetName(), 65, nil, nil).
-		AddInputField("Version:", c.GetVersion(), 16, nil, nil).
-		AddInputField("Subdir/Slug:", c.GetSubdir(), 30, nil, nil).
-		AddInputField("Main file:", c.GetBasefile(), 30, nil, nil).
-		AddInputField("Website:", c.GetWebsite(), 60, nil, nil).
-		AddInputField("Download URL:", c.GetDownloadUrl(), 80, nil, nil).
-		AddDropDown("External?", externalOptions, externalOptions.Index(c.GetExternal()), nil)
-
+		AddFormItem(NewInputField(), &InputFieldArgs{
+			Label:      label,
+			Text:       c.GetName(),
+			FieldWidth: 65,
+		}).
+		AddFormItem(NewInputField(), &InputFieldArgs{
+			Label:      "Version:",
+			Text:       c.GetVersion(),
+			FieldWidth: 16,
+		}).
+		AddFormItem(NewInputField(), &InputFieldArgs{
+			Label:      "Subdir/Slug:",
+			Text:       c.GetSubdir(),
+			FieldWidth: 30,
+		}).
+		AddFormItem(NewInputField(), &InputFieldArgs{
+			Label:      "Main file:",
+			Text:       c.GetBasefile(),
+			FieldWidth: 30,
+		}).
+		AddFormItem(NewInputField(), &InputFieldArgs{
+			Label:      "Website:",
+			Text:       c.GetWebsite(),
+			FieldWidth: 60,
+		}).
+		AddFormItem(NewInputField(), &InputFieldArgs{
+			Label:      "Download URL:",
+			Text:       c.GetDownloadUrl(),
+			FieldWidth: 80,
+		}).
+		AddFormItem(NewDropDown(), &DropDownArgs{
+			Label:         "External?",
+			Options:       global.YesNoOptions,
+			InitialOption: global.YesNoOptions.Index(c.GetExternal()),
+		})
 }
