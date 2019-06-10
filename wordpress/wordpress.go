@@ -3,6 +3,7 @@ package wordpress
 import "blueprintz/global"
 
 // https://api.wordpress.org/core/stable-check/1.0/
+// http://displaywp.com/version/
 
 var Versions = global.Versions{
 	"5.3",
